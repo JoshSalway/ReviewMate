@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Quick Send — ReviewMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;
+  --black:#0c0f0a;--gray-900:#111827;--gray-600:#4b5563;--gray-400:#9ca3af;
+  --gray-300:#d1d5db;--gray-100:#f3f4f6;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{height:100%;}
+body{
+  font-family:'DM Sans',sans-serif;color:var(--gray-900);
+  background:var(--black);min-height:100vh;
+  display:flex;flex-direction:column;
+}
+h1,h2,h3{font-family:'Fraunces',serif;}
+
+/* TOP BAR */
+.topbar{
+  padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid #1a2018;
+}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:white;}
+.logo em{color:var(--teal-mid);font-style:normal;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.dash-link{
+  display:flex;align-items:center;gap:6px;
+  font-size:13px;color:#6b7280;text-decoration:none;
+  padding:7px 14px;border:1px solid #1f2937;border-radius:8px;
+  transition:all .2s;
+}
+.dash-link:hover{color:#9ca3af;border-color:#374151;}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 20px 40px;}
+
+/* CARD */
+.card{
+  background:white;border-radius:22px;width:100%;max-width:420px;
+  overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.4);
+}
+
+/* CARD TOP */
+.card-top{
+  background:var(--teal);padding:28px 28px 24px;
+  position:relative;overflow:hidden;
+}
+.card-top::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:160px;height:160px;background:rgba(255,255,255,.06);
+  border-radius:50%;
+}
+.card-top::after{
+  content:'';position:absolute;bottom:-60px;left:-20px;
+  width:200px;height:200px;background:rgba(255,255,255,.04);
+  border-radius:50%;
+}
+.business-name{
+  font-size:12px;font-weight:600;color:rgba(255,255,255,.7);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;
+  position:relative;z-index:1;
+}
+.card-top h2{
+  font-size:26px;font-weight:800;color:white;line-height:1.2;
+  position:relative;z-index:1;
+}
+.card-top p{
+  font-size:14px;color:rgba(255,255,255,.75);margin-top:8px;
+  font-weight:300;line-height:1.5;position:relative;z-index:1;
+}
+
+/* SPEED BADGE */
+.speed-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.2);
+  padding:5px 12px;border-radius:100px;
+  font-size:12px;font-weight:500;color:white;
+  margin-top:14px;position:relative;z-index:1;
+}
+.speed-dot{width:6px;height:6px;background:#4ade80;border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+/* FORM */
+.card-form{padding:28px;}
+
+.form-group{margin-bottom:18px;}
+.form-group label{
+  display:block;font-size:13px;font-weight:600;
+  color:var(--gray-900);margin-bottom:7px;
+}
+.form-control{
+  width:100%;padding:14px 16px;
+  border:2px solid var(--gray-300);border-radius:12px;
+  font-family:'DM Sans',sans-serif;font-size:16px;
+  color:var(--gray-900);outline:none;
+  transition:border-color .2s,box-shadow .2s;
+  -webkit-appearance:none;
+}
+.form-control:focus{
+  border-color:var(--teal);
+  box-shadow:0 0 0 4px rgba(13,148,136,.12);
+}
+.form-control::placeholder{color:var(--gray-400);}
+
+/* TEMPLATE QUICK-SELECT */
+.template-row{
+  display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;
+}
+.tpl-chip{
+  padding:7px 14px;border-radius:100px;
+  border:1.5px solid var(--gray-300);
+  font-size:13px;font-weight:500;color:var(--gray-600);
+  cursor:pointer;transition:all .15s;background:white;
+  white-space:nowrap;
+}
+.tpl-chip:hover{border-color:var(--teal);color:var(--teal);}
+.tpl-chip.active{background:var(--teal-light);border-color:var(--teal);color:var(--teal-dark);}
+
+/* SEND BUTTON */
+.btn-send{
+  width:100%;padding:17px;
+  background:var(--teal);color:white;border:none;
+  border-radius:14px;font-family:'DM Sans',sans-serif;
+  font-size:17px;font-weight:600;cursor:pointer;
+  transition:all .2s;display:flex;align-items:center;
+  justify-content:center;gap:10px;
+  -webkit-appearance:none;
+}
+.btn-send:hover{background:#0f766e;transform:translateY(-1px);box-shadow:0 6px 20px rgba(13,148,136,.35);}
+.btn-send:active{transform:translateY(0);}
+.btn-send .icon{font-size:20px;}
+
+/* DIVIDER */
+.or-divider{
+  display:flex;align-items:center;gap:12px;
+  margin:20px 0;font-size:13px;color:var(--gray-400);
+}
+.or-divider::before,.or-divider::after{
+  content:'';flex:1;height:1px;background:var(--gray-100);
+}
+
+/* WHATSAPP */
+.btn-whatsapp{
+  width:100%;padding:14px;
+  background:#dcfce7;color:#15803d;
+  border:1.5px solid #86efac;border-radius:14px;
+  font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;
+  cursor:pointer;transition:all .2s;display:flex;
+  align-items:center;justify-content:center;gap:10px;
+  -webkit-appearance:none;text-decoration:none;
+}
+.btn-whatsapp:hover{background:#bbf7d0;transform:translateY(-1px);}
+
+/* RECENT */
+.recent-section{margin-top:24px;padding-top:20px;border-top:1px solid var(--gray-100);}
+.recent-label{font-size:12px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.6px;margin-bottom:12px;}
+.recent-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid var(--gray-100);
+}
+.recent-item:last-child{border-bottom:none;}
+.ri-left{display:flex;align-items:center;gap:10px;}
+.ri-av{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:12px;color:white;flex-shrink:0;
+}
+.ri-name{font-size:14px;font-weight:600;color:var(--gray-900);}
+.ri-time{font-size:12px;color:var(--gray-400);}
+.ri-status{font-size:12px;font-weight:600;}
+.ri-status.sent{color:var(--teal);}
+.ri-status.reviewed{color:#16a34a;}
+.ri-status.pending{color:var(--amber);}
+
+/* SUCCESS STATE */
+.success-state{
+  display:none;flex-direction:column;align-items:center;
+  justify-content:center;padding:44px 28px;text-align:center;
+}
+.success-icon{font-size:56px;margin-bottom:16px;animation:pop .4s ease;}
+@keyframes pop{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.success-state h3{font-size:24px;font-weight:800;color:var(--black);margin-bottom:8px;}
+.success-state p{font-size:15px;color:var(--gray-600);line-height:1.6;margin-bottom:24px;}
+.btn-another{
+  padding:14px 28px;background:var(--teal);color:white;
+  border:none;border-radius:12px;font-family:'DM Sans',sans-serif;
+  font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;
+}
+.btn-another:hover{background:#0f766e;}
+
+/* FOOTER NOTE */
+.footer-note{
+  text-align:center;margin-top:20px;
+  font-size:13px;color:#4b5563;
+}
+.footer-note a{color:var(--teal-mid);font-weight:500;}
+
+/* RESPONSIVE */
+@media(max-width:480px){
+  .card-top{padding:24px 22px 20px;}
+  .card-form{padding:22px;}
+  .card-top h2{font-size:22px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Review<em>Mate</em></div>
+  <div class="topbar-right">
+    <a href="dashboard.html" class="dash-link">📊 Dashboard</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="card" id="mainCard">
+
+    <!-- CARD TOP -->
+    <div class="card-top">
+      <div class="business-name">Mario's Cafe</div>
+      <h2>Send a review request</h2>
+      <p>Enter the customer's details and we'll send the email straight away.</p>
+      <div class="speed-badge">
+        <span class="speed-dot"></span>
+        Takes less than 20 seconds
+      </div>
+    </div>
+
+    <!-- FORM -->
+    <div class="card-form" id="formSection">
+      <div class="form-group">
+        <label>Customer Name</label>
+        <input class="form-control" type="text" id="custName" placeholder="e.g. Sarah Johnson" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label>Customer Email</label>
+        <input class="form-control" type="email" id="custEmail" placeholder="e.g. sarah@gmail.com" autocomplete="off"/>
+      </div>
+
+      <!-- TEMPLATE QUICK SELECT -->
+      <div class="form-group">
+        <label>Email style <span style="font-weight:400;color:var(--gray-400);">(optional)</span></label>
+        <div class="template-row">
+          <div class="tpl-chip active" onclick="selectTpl(this)">☕ Default</div>
+          <div class="tpl-chip" onclick="selectTpl(this)">🔧 After job</div>
+          <div class="tpl-chip" onclick="selectTpl(this)">💇 After appt</div>
+          <div class="tpl-chip" onclick="selectTpl(this)">🛒 After purchase</div>
+        </div>
+      </div>
+
+      <!-- SEND BUTTON -->
+      <button class="btn-send" onclick="sendRequest()">
+        <span class="icon">📬</span> Send Review Request
+      </button>
+
+      <!-- WHATSAPP OPTION -->
+      <div class="or-divider">or send via</div>
+      <a class="btn-whatsapp" href="#" onclick="sendWhatsapp(event)">
+        <span style="font-size:20px;">💬</span> Send via WhatsApp instead
+      </a>
+
+      <!-- RECENT SENDS -->
+      <div class="recent-section">
+        <div class="recent-label">Recently sent</div>
+        <div class="recent-item">
+          <div class="ri-left">
+            <div class="ri-av" style="background:#0d9488;">SJ</div>
+            <div><div class="ri-name">Sarah Johnson</div><div class="ri-time">2 hours ago</div></div>
+          </div>
+          <div class="ri-status reviewed">✓ Reviewed</div>
+        </div>
+        <div class="recent-item">
+          <div class="ri-left">
+            <div class="ri-av" style="background:#7c3aed;">MT</div>
+            <div><div class="ri-name">Mike Tran</div><div class="ri-time">Yesterday</div></div>
+          </div>
+          <div class="ri-status sent">📬 Sent</div>
+        </div>
+        <div class="recent-item">
+          <div class="ri-left">
+            <div class="ri-av" style="background:#d97706;">AL</div>
+            <div><div class="ri-name">Anna Liu</div><div class="ri-time">2 days ago</div></div>
+          </div>
+          <div class="ri-status pending">⏳ Follow-up sent</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div class="success-state" id="successSection">
+      <div class="success-icon">🎉</div>
+      <h3>Request sent!</h3>
+      <p>We've sent a review request to <strong id="sentName"></strong>. If they don't review within 3 days, we'll send a gentle follow-up automatically.</p>
+      <button class="btn-another" onclick="resetForm()">Send Another →</button>
+    </div>
+
+  </div>
+
+  <div class="footer-note">
+    <a href="dashboard.html">← Back to dashboard</a> · 
+    <a href="customers.html">View all customers</a>
+  </div>
+</div>
+
+<script>
+function selectTpl(el){
+  document.querySelectorAll('.tpl-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function sendRequest(){
+  const name = document.getElementById('custName').value.trim();
+  const email = document.getElementById('custEmail').value.trim();
+  if(!name){document.getElementById('custName').focus();shake('custName');return;}
+  if(!email || !email.includes('@')){document.getElementById('custEmail').focus();shake('custEmail');return;}
+  
+  // Show success
+  document.getElementById('sentName').textContent = name;
+  document.getElementById('formSection').style.display = 'none';
+  const s = document.getElementById('successSection');
+  s.style.display = 'flex';
+}
+
+function sendWhatsapp(e){
+  e.preventDefault();
+  const name = document.getElementById('custName').value.trim() || 'there';
+  const msg = encodeURIComponent(`Hi ${name}, thanks for visiting us! We'd really appreciate it if you could leave us a quick Google review — it only takes 60 seconds: https://g.page/marios-cafe-burleigh/review 😊 No worries if not!`);
+  window.open(`https://wa.me/?text=${msg}`, '_blank');
+}
+
+function resetForm(){
+  document.getElementById('custName').value = '';
+  document.getElementById('custEmail').value = '';
+  document.getElementById('formSection').style.display = 'block';
+  document.getElementById('successSection').style.display = 'none';
+  document.getElementById('custName').focus();
+}
+
+function shake(id){
+  const el = document.getElementById(id);
+  el.style.borderColor = '#dc2626';
+  el.style.animation = 'shake .3s ease';
+  setTimeout(()=>{el.style.animation='';el.style.borderColor='';},500);
+}
+
+// Add shake keyframes
+const style = document.createElement('style');
+style.textContent = '@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}';
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Choose Business Type — ReviewMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#f0f4f3;min-height:100vh;display:flex;flex-direction:column;}
+h2,h3{font-family:'Fraunces',serif;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:var(--black);}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:white;}
+.logo em{color:var(--teal-mid);font-style:normal;}
+.step-bar-wrap{padding:20px 40px;background:var(--black);border-top:1px solid #1a2018;}
+.step-bar{display:flex;gap:8px;max-width:640px;}
+.sb{flex:1;height:3px;border-radius:2px;background:#1f2937;}
+.sb.done{background:#0d9488;}
+.sb.active{background:var(--teal-mid);}
+.step-labels{display:flex;gap:0;max-width:640px;margin-top:8px;}
+.sl{flex:1;font-size:11px;color:#6b7280;}
+.sl.active{color:var(--teal-mid);}
+.sl.done{color:#0d9488;}
+
+.wrap{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:48px 24px;}
+.card{background:white;border-radius:18px;padding:44px;width:100%;max-width:680px;box-shadow:0 4px 20px rgba(0,0,0,.07);border:1px solid #e5e7eb;}
+.card h2{font-size:28px;font-weight:800;color:var(--black);margin-bottom:8px;}
+.card>p{font-size:15px;color:var(--gray-600);margin-bottom:32px;font-weight:300;}
+.types-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px;}
+.type-card{border:2px solid var(--gray-300);border-radius:14px;padding:22px 16px;text-align:center;cursor:pointer;transition:all .18s;background:white;position:relative;}
+.type-card:hover{border-color:var(--teal);background:var(--teal-light);}
+.type-card.selected{border-color:var(--teal);background:var(--teal-light);}
+.type-card.selected::after{content:'✓';position:absolute;top:10px;right:12px;width:20px;height:20px;background:var(--teal);border-radius:50%;color:white;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.type-icon{font-size:32px;margin-bottom:10px;}
+.type-name{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--black);margin-bottom:4px;}
+.type-desc{font-size:12px;color:var(--gray-600);line-height:1.4;}
+.btn{display:block;width:100%;padding:15px;background:var(--teal);color:white;border:none;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:500;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;opacity:.5;pointer-events:none;}
+.btn.ready{opacity:1;pointer-events:auto;}
+.btn.ready:hover{background:#0f766e;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">Review<em>Mate</em></div>
+</nav>
+<div style="background:var(--black);">
+  <div style="padding:20px 40px;max-width:760px;margin:0 auto;">
+    <div style="font-size:12px;color:#6b7280;margin-bottom:8px;">Step 1 of 3 — Choose your business type</div>
+    <div style="display:flex;gap:8px;">
+      <div style="flex:1;height:3px;border-radius:2px;background:var(--teal-mid);"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#1f2937;"></div>
+      <div style="flex:1;height:3px;border-radius:2px;background:#1f2937;"></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="card">
+    <h2>What kind of business are you?</h2>
+    <p>We'll pre-load the best email templates for your industry so you don't have to start from scratch.</p>
+    <div class="types-grid">
+      <div class="type-card" onclick="select(this)">
+        <div class="type-icon">🔧</div>
+        <div class="type-name">Tradie</div>
+        <div class="type-desc">Plumbers, electricians, builders, cleaners</div>
+      </div>
+      <div class="type-card" onclick="select(this)">
+        <div class="type-icon">☕</div>
+        <div class="type-name">Cafe / Restaurant</div>
+        <div class="type-desc">Coffee shops, restaurants, food & bev</div>
+      </div>
+      <div class="type-card" onclick="select(this)">
+        <div class="type-icon">💇</div>
+        <div class="type-name">Salon / Beauty</div>
+        <div class="type-desc">Hair, nails, beauty, massage, spa</div>
+      </div>
+      <div class="type-card" onclick="select(this)">
+        <div class="type-icon">🏥</div>
+        <div class="type-name">Healthcare</div>
+        <div class="type-desc">Dentists, physios, GPs, allied health</div>
+      </div>
+      <div class="type-card" onclick="select(this)">
+        <div class="type-icon">🏠</div>
+        <div class="type-name">Real Estate</div>
+        <div class="type-desc">Agents, property management, buyers agents</div>
+      </div>
+      <div class="type-card" onclick="select(this)">
+        <div class="type-icon">🛒</div>
+        <div class="type-name">Retail</div>
+        <div class="type-desc">Shops, boutiques, online & local stores</div>
+      </div>
+      <div class="type-card" onclick="select(this)">
+        <div class="type-icon">🐾</div>
+        <div class="type-name">Pet Services</div>
+        <div class="type-desc">Vets, groomers, boarding, dog walking</div>
+      </div>
+      <div class="type-card" onclick="select(this)">
+        <div class="type-icon">💪</div>
+        <div class="type-name">Fitness</div>
+        <div class="type-desc">Gyms, personal trainers, yoga, pilates</div>
+      </div>
+      <div class="type-card" onclick="select(this)">
+        <div class="type-icon">🔷</div>
+        <div class="type-name">Other</div>
+        <div class="type-desc">Any other local service business</div>
+      </div>
+    </div>
+    <a href="onboarding-2.html" class="btn" id="nextBtn">Continue →</a>
+  </div>
+</div>
+
+<script>
+function select(el){
+  document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('nextBtn').classList.add('ready');
+}
+</script>
+</body>
+</html>

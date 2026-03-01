@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Templates — ReviewMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-700:#374151;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--sidebar-w:248px;--red:#dc2626;--amber:#d97706;--blue:#2563eb;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#f0f4f3;}
+h1,h2,h3,h4,h5{font-family:'Fraunces',serif;}a{text-decoration:none;color:inherit;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .18s;}
+.btn-primary{background:var(--teal);color:white;border-radius:10px;}.btn-primary:hover{background:#0f766e;transform:translateY(-1px);box-shadow:0 4px 14px rgba(13,148,136,.3);}
+.btn-ghost{background:white;color:var(--gray-900);border:1.5px solid var(--gray-300);border-radius:10px;}.btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+.btn-dark{background:var(--black);color:white;border-radius:10px;}.btn-dark:hover{background:#1c2018;}
+.btn-sm{padding:8px 16px;font-size:13px;border-radius:8px;}.btn-md{padding:11px 22px;font-size:14px;}.btn-lg{padding:15px 32px;font-size:16px;}
+.sidebar{width:var(--sidebar-w);background:var(--black);min-height:100vh;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:50;}
+.sidebar-logo{padding:26px 24px 18px;border-bottom:1px solid #1a2018;}
+.sidebar-logo a{font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:white;letter-spacing:-.5px;}
+.sidebar-logo a em{color:var(--teal-mid);font-style:normal;}
+.sidebar-nav{padding:16px 0;flex:1;}
+.nav-section{padding:8px 20px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#4b5563;font-weight:600;margin-top:8px;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 20px;color:#6b7280;font-size:14px;font-weight:500;transition:all .15s;cursor:pointer;border-left:2px solid transparent;text-decoration:none;}
+.nav-item:hover{background:#111810;color:#d1fae5;}.nav-item.active{background:#0d2015;color:var(--teal-mid);border-left-color:var(--teal);}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sidebar-footer{padding:16px 20px;border-top:1px solid #1a2018;}
+.biz-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#111810;border-radius:10px;}
+.biz-av{width:30px;height:30px;background:var(--teal);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:white;flex-shrink:0;}
+.biz-info strong{display:block;font-size:13px;color:white;font-weight:600;}.biz-info span{font-size:11px;color:#6b7280;}
+.nav-logout{display:flex;align-items:center;gap:8px;padding:10px 4px 0;font-size:13px;color:#4b5563;text-decoration:none;}.nav-logout:hover{color:#6b7280;}
+.main{margin-left:var(--sidebar-w);flex:1;padding:36px 40px;min-height:100vh;}
+.card{background:white;border-radius:14px;border:1px solid #e5e7eb;}.card-pad{padding:28px;}
+.card-head{padding:22px 28px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--gray-900);}.card-sub{font-size:13px;color:var(--gray-400);margin-top:2px;}
+.form-group{margin-bottom:20px;}.form-group label{display:block;font-size:13px;font-weight:500;color:var(--gray-700);margin-bottom:6px;}
+.form-control{width:100%;padding:12px 15px;border:1.5px solid var(--gray-300);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--gray-900);outline:none;transition:border-color .2s;background:white;}
+.form-control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);}.form-control::placeholder{color:var(--gray-400);}
+.form-control[readonly]{background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;}
+textarea.form-control{resize:vertical;min-height:100px;line-height:1.6;}.form-hint{font-size:12px;color:var(--gray-400);margin-top:5px;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600;}
+.badge-green{background:var(--teal-light);color:var(--teal-dark);}.badge-amber{background:#fef3c7;color:#92400e;}
+.badge-red{background:#fee2e2;color:#991b1b;}.badge-blue{background:#dbeafe;color:#1e40af;}.badge-gray{background:var(--gray-100);color:var(--gray-600);}
+.page-hdr{margin-bottom:32px;display:flex;align-items:flex-start;justify-content:space-between;}
+.page-hdr h1{font-size:28px;font-weight:700;color:var(--black);}.page-hdr p{font-size:14px;color:var(--gray-600);margin-top:5px;}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--teal);color:white;padding:12px 20px;border-radius:10px;font-size:14px;display:none;box-shadow:0 4px 16px rgba(13,148,136,.35);z-index:999;}
+</style>
+<style>
+body{display:flex;}
+.tpl-layout{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:start;}
+
+/* LEFT NAV */
+.tpl-nav{background:white;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;position:sticky;top:24px;}
+.tn-head{padding:18px 20px;border-bottom:1px solid var(--gray-100);}
+.tn-head h3{font-size:15px;font-weight:700;color:var(--black);}
+.tn-head p{font-size:12px;color:var(--gray-400);margin-top:3px;}
+.tn-item{display:flex;align-items:center;gap:12px;padding:13px 20px;cursor:pointer;transition:all .15s;border-left:2px solid transparent;}
+.tn-item:hover{background:var(--gray-50);}
+.tn-item.active{background:var(--teal-light);border-left-color:var(--teal);}
+.tn-icon{font-size:18px;width:24px;text-align:center;}
+.tn-name{font-size:14px;font-weight:500;color:var(--gray-900);}
+.tn-item.active .tn-name{color:var(--teal-dark);font-weight:600;}
+.tn-badge{font-size:10px;background:var(--teal);color:white;padding:2px 8px;border-radius:100px;margin-left:auto;}
+
+/* MAIN CONTENT */
+.tpl-main{}
+.tpl-header{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:22px 26px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;}
+.th-left h2{font-size:20px;font-weight:800;color:var(--black);}
+.th-left p{font-size:14px;color:var(--gray-600);margin-top:4px;}
+.th-right{display:flex;gap:10px;align-items:center;}
+.active-tpl{font-size:13px;color:var(--gray-400);}
+.active-tpl strong{color:var(--teal);}
+
+/* EMAIL EDITOR */
+.email-editor{background:white;border-radius:14px;border:1px solid #e5e7eb;overflow:hidden;}
+.ee-tabs{display:flex;border-bottom:1px solid var(--gray-100);}
+.ee-tab{padding:14px 22px;font-size:14px;font-weight:500;color:var(--gray-600);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;}
+.ee-tab.active{color:var(--teal);border-bottom-color:var(--teal);}
+.ee-body{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.ee-edit{padding:24px;border-right:1px solid var(--gray-100);}
+.ee-preview{padding:24px;background:var(--gray-50);}
+.ee-label{font-size:12px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
+.ee-field{width:100%;padding:11px 14px;border:1.5px solid var(--gray-300);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--gray-900);outline:none;margin-bottom:14px;transition:border-color .2s;}
+.ee-field:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);}
+.ee-field::placeholder{color:var(--gray-400);}
+textarea.ee-field{resize:vertical;min-height:160px;line-height:1.7;}
+.vars{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.var-tag{font-size:12px;background:#fef9c3;color:#92400e;padding:3px 10px;border-radius:100px;cursor:pointer;font-family:monospace;border:1px solid #fde68a;transition:all .15s;}
+.var-tag:hover{background:#fde68a;}
+.ee-actions{display:flex;gap:10px;margin-top:8px;}
+
+/* PREVIEW EMAIL */
+.email-card{background:white;border-radius:12px;border:1px solid var(--gray-200);padding:22px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.em-meta{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--gray-100);}
+.em-row{display:flex;gap:8px;font-size:12px;margin-bottom:4px;}
+.em-l{color:var(--gray-400);width:42px;flex-shrink:0;}
+.em-v{color:var(--gray-900);}
+.email-s{font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--black);margin-bottom:14px;}
+.email-b{font-size:13px;color:var(--gray-600);line-height:1.8;}
+.email-b p{margin-bottom:10px;}
+.rev-b{display:inline-block;padding:11px 22px;background:var(--teal);color:white;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;margin:6px 0;}
+.e-sig{margin-top:16px;padding-top:12px;border-top:1px solid var(--gray-100);font-size:12px;color:var(--gray-600);}
+.var-hi{background:#fef9c3;color:#92400e;padding:1px 5px;border-radius:4px;font-size:11px;font-family:monospace;}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sidebar-logo"><a href="index.html">Review<em>Mate</em></a></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+    <a href="quick-send.html" style="display:flex;align-items:center;gap:11px;padding:10px 16px;margin:8px 12px;background:var(--teal);border-radius:10px;color:white;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='#0f766e'" onmouseout="this.style.background='var(--teal)'">
+  <span style="font-size:16px;">⚡</span> Quick Send
+</a>
+<div class="nav-section">Customers</div>
+    <a href="customers.html" class="nav-item"><span class="nav-icon">👥</span> Customers</a>
+    <a href="requests.html" class="nav-item"><span class="nav-icon">📬</span> Requests</a>
+    <div class="nav-section">Emails</div>
+    <a href="email-flow.html" class="nav-item"><span class="nav-icon">🔀</span> Email Flow</a>
+    <a href="templates.html" class="nav-item active"><span class="nav-icon">📋</span> Templates</a>
+    <div class="nav-section">Account</div>
+    <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="biz-chip"><div class="biz-av">MC</div><div class="biz-info"><strong>Mario's Cafe</strong><span>Pro Plan</span></div></div>
+    <a href="login.html" class="nav-logout">← Log out</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-hdr">
+    <div><h1>Email Templates</h1><p>Choose a template library for your business type, then customise every word</p></div>
+  </div>
+
+  <div class="tpl-layout">
+    <!-- LEFT NAV -->
+    <div class="tpl-nav">
+      <div class="tn-head"><h3>Template Libraries</h3><p>Pick your business type</p></div>
+      <div class="tn-item" onclick="switchLib(this,'cafe')"><span class="tn-icon">☕</span><span class="tn-name">Cafe / Restaurant</span></div>
+      <div class="tn-item active" onclick="switchLib(this,'tradie')"><span class="tn-icon">🔧</span><span class="tn-name">Tradie</span><span class="tn-badge">Active</span></div>
+      <div class="tn-item" onclick="switchLib(this,'salon')"><span class="tn-icon">💇</span><span class="tn-name">Salon / Beauty</span></div>
+      <div class="tn-item" onclick="switchLib(this,'health')"><span class="tn-icon">🏥</span><span class="tn-name">Healthcare</span></div>
+      <div class="tn-item" onclick="switchLib(this,'realestate')"><span class="tn-icon">🏠</span><span class="tn-name">Real Estate</span></div>
+      <div class="tn-item" onclick="switchLib(this,'retail')"><span class="tn-icon">🛒</span><span class="tn-name">Retail</span></div>
+      <div class="tn-item" onclick="switchLib(this,'fitness')"><span class="tn-icon">💪</span><span class="tn-name">Fitness</span></div>
+      <div style="padding:16px 20px;border-top:1px solid var(--gray-100);">
+        <div style="font-size:12px;color:var(--gray-400);line-height:1.6;">Switching library updates the default text. Your customisations are saved separately.</div>
+      </div>
+    </div>
+
+    <!-- EDITOR -->
+    <div class="tpl-main">
+      <div class="tpl-header">
+        <div class="th-left">
+          <h2 id="libTitle">🔧 Tradie Templates</h2>
+          <p id="libDesc">Pre-written for trade businesses — plumbers, electricians, builders, cleaners. Direct and friendly tone.</p>
+        </div>
+        <div class="th-right">
+          <div class="active-tpl">Currently using: <strong id="activeName">Tradie - After job</strong></div>
+          <button class="btn btn-primary btn-sm" onclick="showToast()">Save Changes</button>
+        </div>
+      </div>
+
+      <div class="email-editor">
+        <div class="ee-tabs">
+          <div class="ee-tab active" onclick="showEmailTab('request',this)">📬 Request Email</div>
+          <div class="ee-tab" onclick="showEmailTab('followup',this)">🔔 Follow-up Email</div>
+        </div>
+
+        <!-- REQUEST EMAIL EDITOR -->
+        <div id="requestTab">
+          <div class="ee-body">
+            <div class="ee-edit">
+              <div class="ee-label">Subject Line</div>
+              <input class="ee-field" type="text" id="subjectField" value="How did we go, {customer_name}?"/>
+              <div class="ee-label">Available Variables <span style="font-size:11px;color:var(--gray-400);font-weight:400;">(click to insert)</span></div>
+              <div class="vars">
+                <span class="var-tag" onclick="insertVar('{customer_name}')">{customer_name}</span>
+                <span class="var-tag" onclick="insertVar('{business_name}')">{business_name}</span>
+                <span class="var-tag" onclick="insertVar('{review_link}')">{review_link}</span>
+                <span class="var-tag" onclick="insertVar('{owner_name}')">{owner_name}</span>
+                <span class="var-tag" onclick="insertVar('{job_type}')">{job_type}</span>
+              </div>
+              <div class="ee-label">Email Body</div>
+              <textarea class="ee-field" id="bodyField" oninput="updatePreview()">Hi {customer_name},
+
+Thanks for having us out today — it was great to help you get that sorted!
+
+We're a small local business and honest Google reviews make a huge difference for us. If you had a good experience, would you mind leaving us a quick one?
+
+It takes less than 60 seconds. Just click the button below:
+
+{review_link}
+
+No worries at all if you're busy — we really appreciate your support either way.</textarea>
+              <div class="ee-actions">
+                <button class="btn btn-ghost btn-sm" onclick="resetTemplate()">↩ Reset to default</button>
+                <button class="btn btn-primary btn-sm" onclick="showToast()">Save Changes</button>
+              </div>
+            </div>
+            <div class="ee-preview">
+              <div class="ee-label">Live Preview</div>
+              <div class="email-card">
+                <div class="em-meta">
+                  <div class="em-row"><span class="em-l">From:</span><span class="em-v">Mario's Cafe</span></div>
+                  <div class="em-row"><span class="em-l">To:</span><span class="em-v"><span class="var-hi">{customer_email}</span></span></div>
+                  <div class="em-row"><span class="em-l">When:</span><span class="em-v">Same day, 9:00 AM</span></div>
+                </div>
+                <div class="email-s" id="previewSubj">How did we go, <span class="var-hi">{customer_name}</span>?</div>
+                <div class="email-b">
+                  <p>Hi <span class="var-hi">{customer_name}</span>,</p>
+                  <p>Thanks for having us out today — it was great to help you get that sorted!</p>
+                  <p>We're a small local business and honest Google reviews make a huge difference for us. If you had a good experience, would you mind leaving us a quick one?</p>
+                  <p>It takes less than 60 seconds. Just click the button below:</p>
+                  <a class="rev-b" href="#">⭐ Leave a Google Review</a>
+                  <p>No worries at all if you're busy — we really appreciate your support either way.</p>
+                </div>
+                <div class="e-sig">Cheers,<br><strong>Mario</strong><br>Mario's Cafe</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOLLOWUP TAB -->
+        <div id="followupTab" style="display:none;">
+          <div class="ee-body">
+            <div class="ee-edit">
+              <div class="ee-label">Subject Line</div>
+              <input class="ee-field" type="text" value="Just a quick follow-up 👋"/>
+              <div class="ee-label">Available Variables</div>
+              <div class="vars">
+                <span class="var-tag">{customer_name}</span>
+                <span class="var-tag">{business_name}</span>
+                <span class="var-tag">{review_link}</span>
+                <span class="var-tag">{owner_name}</span>
+              </div>
+              <div class="ee-label">Email Body</div>
+              <textarea class="ee-field">Hey {customer_name},
+
+Just following up on my earlier message — if you had a good experience with us, it would really mean a lot if you could leave a quick Google review.
+
+{review_link}
+
+This is the only follow-up I'll send — promise! And no worries at all if it's not for you.</textarea>
+              <div style="background:#fef3c7;border-radius:9px;padding:12px;font-size:13px;color:#78350f;margin-top:12px;">
+                ⏰ <strong>Sent automatically</strong> 3 days after the first email, only if the customer hasn't left a review. <a href="email-flow.html" style="color:var(--teal);font-weight:500;">Change timing →</a>
+              </div>
+              <div class="ee-actions" style="margin-top:12px;">
+                <button class="btn btn-ghost btn-sm">↩ Reset to default</button>
+                <button class="btn btn-primary btn-sm" onclick="showToast()">Save Changes</button>
+              </div>
+            </div>
+            <div class="ee-preview">
+              <div class="ee-label">Live Preview</div>
+              <div class="email-card">
+                <div class="em-meta">
+                  <div class="em-row"><span class="em-l">From:</span><span class="em-v">Mario's Cafe</span></div>
+                  <div class="em-row"><span class="em-l">When:</span><span class="em-v">3 days after request</span></div>
+                </div>
+                <div class="email-s">Just a quick follow-up 👋</div>
+                <div class="email-b">
+                  <p>Hey <span class="var-hi">{customer_name}</span>,</p>
+                  <p>Just following up on my earlier message — if you had a good experience with us, it would really mean a lot if you could leave a quick Google review.</p>
+                  <a class="rev-b" href="#">⭐ Leave a Google Review</a>
+                  <p>This is the only follow-up I'll send — promise! No worries if it's not for you.</p>
+                </div>
+                <div class="e-sig">Cheers,<br><strong>Mario</strong><br>Mario's Cafe</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Template saved successfully!</div>
+
+<script>
+const libs = {
+  cafe: { title:'☕ Cafe / Restaurant Templates', desc:'Warm and welcoming tone. Great for hospitality businesses wanting regulars to review.', active:'Cafe — Visit follow-up', subject:'Thanks for visiting us today, {customer_name}!', body:'Hi {customer_name},\n\nIt was lovely having you in today. We hope you enjoyed your visit!\n\nAs a small local cafe, Google reviews really help other people in the area find us. If you had a good time, would you be happy to share your experience?\n\nIt only takes a minute. Click the link below:\n\n{review_link}\n\nWe\'d love to see you again soon!' },
+  tradie: { title:'🔧 Tradie Templates', desc:'Pre-written for trade businesses — plumbers, electricians, builders, cleaners. Direct and friendly tone.', active:'Tradie — After job', subject:'How did we go, {customer_name}?', body:'Hi {customer_name},\n\nThanks for having us out today — it was great to help you get that sorted!\n\nWe\'re a small local business and honest Google reviews make a huge difference for us. If you had a good experience, would you mind leaving us a quick one?\n\nIt takes less than 60 seconds. Just click the button below:\n\n{review_link}\n\nNo worries at all if you\'re busy — we really appreciate your support either way.' },
+  salon: { title:'💇 Salon / Beauty Templates', desc:'Complimentary and personal tone. Perfect for after appointments and treatments.', active:'Salon — Appointment follow-up', subject:'Hope you love your new look, {customer_name} ✨', body:'Hi {customer_name},\n\nIt was so lovely to have you in today! We hope you\'re feeling fabulous.\n\nIf you\'re happy with your experience, leaving us a Google review would mean the world to us — it helps us grow and lets other locals know what to expect.\n\n{review_link}\n\nWe can\'t wait to see you for your next appointment!' },
+  health: { title:'🏥 Healthcare Templates', desc:'Professional and considerate tone. Mindful of patient privacy and medical context.', active:'Healthcare — Patient follow-up', subject:'How was your recent visit, {customer_name}?', body:'Dear {customer_name},\n\nThank you for visiting us recently. We hope you\'re feeling well.\n\nWe\'re always looking to improve, and patient feedback helps other people in the community find trusted healthcare. If you\'re comfortable, we\'d appreciate a brief Google review.\n\n{review_link}\n\nYour privacy is important to us — please only share what you\'re comfortable with.' },
+  realestate: { title:'🏠 Real Estate Templates', desc:'Professional and milestone-focused. Perfect after settlements, rentals, or property management.', active:'Real Estate — Settlement', subject:'Congratulations on your settlement, {customer_name}!', body:'Hi {customer_name},\n\nCongratulations on settling on your property — it\'s been a pleasure working with you!\n\nAs a local agent, Google reviews make a big difference to how we\'re found online. If you\'re happy with the service you received, would you mind leaving a quick review?\n\n{review_link}\n\nThank you so much and best wishes in your new home!' },
+  retail: { title:'🛒 Retail Templates', desc:'Friendly and appreciative tone. Works well for both in-store and online purchases.', active:'Retail — Purchase follow-up', subject:'Thanks for shopping with us, {customer_name}!', body:'Hi {customer_name},\n\nThank you so much for your recent purchase — we really appreciate your support!\n\nAs a small local retailer, Google reviews help other shoppers discover us. If you\'re happy with what you bought, we\'d love it if you left us a quick review.\n\n{review_link}\n\nThanks again and hope to see you back soon!' },
+  fitness: { title:'💪 Fitness Templates', desc:'Motivating and community-focused. Great for gyms, personal trainers, yoga studios.', active:'Fitness — Session follow-up', subject:'Great work today, {customer_name}! 💪', body:'Hey {customer_name},\n\nAwesome session today — you\'re smashing it!\n\nIf you\'re loving your training with us, would you mind leaving a quick Google review? It really helps other people in the area find us and join the community.\n\n{review_link}\n\nSee you next session!' }
+};
+
+function switchLib(el, key) {
+  document.querySelectorAll('.tn-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  const l = libs[key];
+  document.getElementById('libTitle').textContent = l.title;
+  document.getElementById('libDesc').textContent = l.desc;
+  document.getElementById('activeName').textContent = l.active;
+  document.getElementById('subjectField').value = l.subject;
+  document.getElementById('bodyField').value = l.body;
+  updatePreview();
+}
+
+function showEmailTab(tab, el) {
+  document.querySelectorAll('.ee-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('requestTab').style.display = tab==='request'?'block':'none';
+  document.getElementById('followupTab').style.display = tab==='followup'?'block':'none';
+}
+
+function updatePreview() {
+  const s = document.getElementById('subjectField').value;
+  document.getElementById('previewSubj').innerHTML = s.replace(/{customer_name}/g,'<span class="var-hi">{customer_name}</span>');
+}
+
+function insertVar(v) {
+  const f = document.getElementById('bodyField');
+  const pos = f.selectionStart;
+  f.value = f.value.substring(0,pos) + v + f.value.substring(pos);
+  f.focus();
+}
+
+function resetTemplate() {
+  document.getElementById('subjectField').value = libs.tradie.subject;
+  document.getElementById('bodyField').value = libs.tradie.body;
+  updatePreview();
+}
+
+function showToast(){const t=document.getElementById('toast');t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
+</script>
+</body>
+</html>
