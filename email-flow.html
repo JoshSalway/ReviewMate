@@ -5,7 +5,6 @@
 <title>Email Flow — ReviewMate</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap');
 :root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-700:#374151;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--sidebar-w:248px;--red:#dc2626;--amber:#d97706;--blue:#2563eb;}
 *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
 body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#f0f4f3;}
@@ -120,9 +119,36 @@ body{display:flex;}
 .toggle.off{background:var(--gray-300);}
 .toggle.off::after{right:21px;}
 select.fs-sel{padding:8px 12px;border:1.5px solid var(--gray-300);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--gray-900);background:white;cursor:pointer;outline:none;}
+.biz-switcher{position:relative;cursor:pointer;}
+.biz-arrow{color:#6b7280;font-size:12px;margin-left:auto;}
+.biz-menu{display:none;position:absolute;bottom:100%;left:0;right:0;background:#1a1f1a;border-radius:10px;border:1px solid #2a302a;padding:6px;margin-bottom:8px;box-shadow:0 -8px 24px rgba(0,0,0,.4);}
+.biz-menu.open{display:block;}
+.biz-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:13px;color:#d1d5db;transition:background .15s;cursor:pointer;}
+.biz-option:hover{background:#111810;}
+.biz-option.active{color:white;}
+.biz-option.add{color:var(--teal-mid);text-decoration:none;}
+.biz-divider{height:1px;background:#2a302a;margin:4px 0;}
+.mobile-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:40;background:var(--black);padding:14px 20px;align-items:center;gap:14px;}
+.hamburger{background:none;border:none;color:white;font-size:22px;cursor:pointer;padding:0;}
+.mobile-logo{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:white;}
+.mobile-logo em{color:var(--teal-mid);font-style:normal;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:45;}
+.sidebar-overlay.open{display:block;}
+@media(max-width:768px){
+  .mobile-bar{display:flex;}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:80px 20px 36px;}
+  .flow-wrap{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
+<div class="mobile-bar">
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  <div class="mobile-logo">Review<em>Mate</em></div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <div class="sidebar">
   <div class="sidebar-logo"><a href="index.html">Review<em>Mate</em></a></div>
   <nav class="sidebar-nav">
@@ -137,11 +163,35 @@ select.fs-sel{padding:8px 12px;border:1.5px solid var(--gray-300);border-radius:
     <div class="nav-section">Emails</div>
     <a href="email-flow.html" class="nav-item active"><span class="nav-icon">🔀</span> Email Flow</a>
     <a href="templates.html" class="nav-item"><span class="nav-icon">📋</span> Templates</a>
+    <div class="nav-section">Marketing</div>
+    <a href="qr-code.html" class="nav-item"><span class="nav-icon">📱</span> QR Code</a>
     <div class="nav-section">Account</div>
     <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
   </nav>
   <div class="sidebar-footer">
-    <div class="biz-chip"><div class="biz-av">MC</div><div class="biz-info"><strong>Mario's Cafe</strong><span>Pro Plan</span></div></div>
+    <div class="biz-switcher" onclick="toggleBizMenu()">
+      <div class="biz-chip">
+        <div class="biz-av">MC</div>
+        <div class="biz-info"><strong>Mario's Cafe</strong><span>Pro Plan</span></div>
+        <span class="biz-arrow">▾</span>
+      </div>
+      <div class="biz-menu" id="bizMenu">
+        <div class="biz-option active">
+          <div class="biz-av" style="width:24px;height:24px;font-size:10px;">MC</div>
+          <span>Mario's Cafe</span>
+          <span style="margin-left:auto;color:var(--teal);">✓</span>
+        </div>
+        <div class="biz-option" onclick="window.location='dashboard-empty.html'">
+          <div class="biz-av" style="width:24px;height:24px;font-size:10px;background:#2563eb;">GC</div>
+          <span>Gold Coast Plumbing</span>
+        </div>
+        <div class="biz-divider"></div>
+        <a href="add-business.html" class="biz-option add">
+          <span style="font-size:16px;">+</span>
+          <span>Add new business</span>
+        </a>
+      </div>
+    </div>
     <a href="login.html" class="nav-logout">← Log out</a>
   </div>
 </div>
@@ -174,6 +224,16 @@ select.fs-sel{padding:8px 12px;border:1.5px solid var(--gray-300);border-radius:
       <div class="fs-label"><strong>Stop after review</strong><span>Stop all emails once customer leaves a review</span></div>
       <div class="toggle" onclick="this.classList.toggle('off')"></div>
     </div>
+    <div class="fs-row">
+      <div class="fs-label"><strong>SMS requests</strong><span>Also send an SMS alongside the email request</span></div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:13px;color:var(--gray-400);" id="smsStatus">Off</span>
+        <div class="toggle off" onclick="this.classList.toggle('off');document.getElementById('smsStatus').textContent=this.classList.contains('off')?'Off':'On';document.getElementById('smsNote').style.display=this.classList.contains('off')?'none':'block';"></div>
+      </div>
+    </div>
+    <div id="smsNote" style="display:none;background:var(--teal-light);border-radius:8px;padding:12px;margin-top:8px;font-size:13px;color:var(--teal-dark);">
+      💬 When enabled, customers will receive both an email and SMS review request. SMS are sent immediately when the customer is added.
+    </div>
   </div>
 
   <!-- FLOW + PREVIEW -->
@@ -189,6 +249,10 @@ select.fs-sel{padding:8px 12px;border:1.5px solid var(--gray-300);border-radius:
           <div class="fn-icon">👤</div>
           <div class="fn-title">Customer Added</div>
           <div class="fn-desc">Triggered manually when you add a customer to ReviewMate after a job</div>
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            <span style="font-size:10px;background:#0d2015;color:#5eead4;padding:2px 8px;border-radius:100px;">📧 Email</span>
+            <span style="font-size:10px;background:#0d2015;color:#9ca3af;padding:2px 8px;border-radius:100px;">💬 SMS</span>
+          </div>
         </div>
 
         <div class="connector"><div class="conn-line"></div><div class="conn-label">Immediately</div><div class="conn-arrow">▼</div></div>
@@ -347,6 +411,9 @@ function showTab(tab, el) {
   document.getElementById('previewPane').style.display = tab==='preview'?'block':'none';
   document.getElementById('editPane').style.display = tab==='edit'?'block':'none';
 }
+function toggleBizMenu(){document.getElementById('bizMenu').classList.toggle('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.biz-switcher'))document.getElementById('bizMenu')?.classList.remove('open');});
+function toggleSidebar(){document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');}
 </script>
 </body>
 </html>

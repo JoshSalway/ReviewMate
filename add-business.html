@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add New Business — ReviewMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#f0f4f3;min-height:100vh;display:flex;flex-direction:column;}
+h2,h3{font-family:'Fraunces',serif;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:var(--black);}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:white;}
+.logo em{color:var(--teal-mid);font-style:normal;}
+
+.wrap{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:48px 24px;}
+.card{background:white;border-radius:18px;padding:44px;width:100%;max-width:580px;box-shadow:0 4px 20px rgba(0,0,0,.07);border:1px solid #e5e7eb;}
+.card h2{font-size:28px;font-weight:800;color:var(--black);margin-bottom:8px;}
+.card>.sub{font-size:15px;color:var(--gray-600);margin-bottom:32px;font-weight:300;line-height:1.6;}
+
+/* Form inputs */
+.form-group{margin-bottom:20px;}
+label{display:block;font-size:13px;font-weight:500;color:var(--gray-900);margin-bottom:6px;}
+input{width:100%;padding:12px 15px;border:1.5px solid var(--gray-300);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--gray-900);outline:none;transition:border-color .2s;}
+input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);}
+input::placeholder{color:var(--gray-400);}
+.hint{font-size:12px;color:var(--gray-400);margin-top:5px;}
+
+/* Business type grid */
+.section-label{font-size:13px;font-weight:500;color:var(--gray-900);margin-bottom:10px;display:block;}
+.types-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.type-card{border:2px solid var(--gray-300);border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:all .18s;background:white;position:relative;}
+.type-card:hover{border-color:var(--teal);background:var(--teal-light);}
+.type-card.active{border-color:var(--teal);background:var(--teal-light);}
+.type-card.active::after{content:'\2713';position:absolute;top:8px;right:10px;width:20px;height:20px;background:var(--teal);border-radius:50%;color:white;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.type-icon{font-size:28px;margin-bottom:8px;}
+.type-name{font-family:'Fraunces',serif;font-size:13px;font-weight:700;color:var(--black);line-height:1.3;}
+
+/* Tip box */
+.tip-box{border:1.5px solid #99f6e4;border-radius:12px;overflow:hidden;margin-bottom:24px;}
+.tip-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;background:#f0fdf9;user-select:none;}
+.tip-head span{font-size:14px;font-weight:500;color:var(--teal-dark);display:flex;align-items:center;gap:8px;}
+.tip-arr{font-size:11px;color:var(--teal);transition:transform .2s;}
+.tip-arr.open{transform:rotate(180deg);}
+.tip-body{display:none;padding:18px;background:#f0fdf9;border-top:1px solid #99f6e4;}
+.tip-body.open{display:block;}
+.ts{display:flex;gap:11px;margin-bottom:12px;font-size:14px;color:var(--gray-600);line-height:1.6;align-items:flex-start;}
+.ts:last-child{margin-bottom:0;}
+.tn{width:22px;height:22px;background:var(--teal);border-radius:50%;color:white;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+
+/* Buttons */
+.btn-row{display:flex;gap:12px;margin-top:8px;}
+.btn-primary{flex:1;padding:15px;background:var(--teal);color:white;border:none;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:500;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;}
+.btn-primary:hover{background:#0f766e;}
+.btn-ghost{flex:0 0 auto;padding:15px 28px;background:transparent;color:var(--gray-600);border:1.5px solid var(--gray-300);border-radius:11px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:500;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;justify-content:center;}
+.btn-ghost:hover{border-color:var(--gray-400);color:var(--gray-900);background:var(--gray-100);}
+
+@media(max-width:540px){
+  .types-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .card{padding:28px 20px;}
+  .btn-row{flex-direction:column;}
+  .btn-ghost{flex:1;}
+  nav{padding:16px 20px;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">Review<em>Mate</em></div>
+</nav>
+
+<div class="wrap">
+  <div class="card">
+    <h2>Add a new business</h2>
+    <p class="sub">You can manage multiple businesses from one ReviewMate account.</p>
+
+    <!-- Business Name -->
+    <div class="form-group">
+      <label>Business Name</label>
+      <input type="text" placeholder="e.g. Gold Coast Plumbing" id="bizName"/>
+    </div>
+
+    <!-- Business Type -->
+    <div class="form-group">
+      <span class="section-label">Business Type</span>
+      <div class="types-grid">
+        <div class="type-card" onclick="selectType(this)">
+          <div class="type-icon">&#x2615;</div>
+          <div class="type-name">Cafe / Restaurant</div>
+        </div>
+        <div class="type-card" onclick="selectType(this)">
+          <div class="type-icon">&#x1F527;</div>
+          <div class="type-name">Tradie / Trade</div>
+        </div>
+        <div class="type-card" onclick="selectType(this)">
+          <div class="type-icon">&#x1F487;</div>
+          <div class="type-name">Salon / Beauty</div>
+        </div>
+        <div class="type-card" onclick="selectType(this)">
+          <div class="type-icon">&#x1F3E5;</div>
+          <div class="type-name">Healthcare</div>
+        </div>
+        <div class="type-card" onclick="selectType(this)">
+          <div class="type-icon">&#x1F3E0;</div>
+          <div class="type-name">Real Estate</div>
+        </div>
+        <div class="type-card" onclick="selectType(this)">
+          <div class="type-icon">&#x1F6D2;</div>
+          <div class="type-name">Retail</div>
+        </div>
+        <div class="type-card" onclick="selectType(this)">
+          <div class="type-icon">&#x1F4AA;</div>
+          <div class="type-name">Fitness</div>
+        </div>
+        <div class="type-card" onclick="selectType(this)">
+          <div class="type-icon">&#x1F355;</div>
+          <div class="type-name">Restaurant / Bar</div>
+        </div>
+        <div class="type-card" onclick="selectType(this)">
+          <div class="type-icon">&#x1F3E2;</div>
+          <div class="type-name">Other / Service</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Google Place ID -->
+    <div class="form-group">
+      <label>Google Place ID</label>
+      <input type="text" placeholder="Starts with ChIJ..." id="placeId"/>
+      <div class="hint">Paste exactly as copied from Google — starts with "ChIJ"</div>
+    </div>
+
+    <!-- Collapsible tip -->
+    <div class="tip-box">
+      <div class="tip-head" onclick="toggleTip()">
+        <span>&#x1F4A1; How to find your Place ID</span>
+        <div class="tip-arr" id="tipArrow">&#x25BC;</div>
+      </div>
+      <div class="tip-body" id="tipContent">
+        <div class="ts"><div class="tn">1</div><div>Go to <strong>Google Maps</strong> and search for your business name</div></div>
+        <div class="ts"><div class="tn">2</div><div>Click on your business listing in the results</div></div>
+        <div class="ts"><div class="tn">3</div><div>Look at the URL — find the part after <strong>/place/</strong> — copy that whole section</div></div>
+        <div class="ts"><div class="tn">4</div><div>Or use the official <strong style="color:var(--teal);">Google Place ID Finder</strong> tool</div></div>
+        <div class="ts"><div class="tn">5</div><div>Your Place ID will start with <strong>"ChIJ"</strong> — paste it above</div></div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="btn-row">
+      <a href="dashboard-empty.html" class="btn-primary">Add Business &rarr;</a>
+      <a href="dashboard.html" class="btn-ghost">Cancel</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function selectType(el){
+  document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function toggleTip(){
+  const tip=document.getElementById('tipContent'),arr=document.getElementById('tipArrow');
+  tip.classList.toggle('open');
+  arr.classList.toggle('open');
+}
+</script>
+</body>
+</html>

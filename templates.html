@@ -5,7 +5,6 @@
 <title>Templates — ReviewMate</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap');
 :root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-700:#374151;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--sidebar-w:248px;--red:#dc2626;--amber:#d97706;--blue:#2563eb;}
 *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
 body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#f0f4f3;}
@@ -101,9 +100,37 @@ textarea.ee-field{resize:vertical;min-height:160px;line-height:1.7;}
 .rev-b{display:inline-block;padding:11px 22px;background:var(--teal);color:white;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;margin:6px 0;}
 .e-sig{margin-top:16px;padding-top:12px;border-top:1px solid var(--gray-100);font-size:12px;color:var(--gray-600);}
 .var-hi{background:#fef9c3;color:#92400e;padding:1px 5px;border-radius:4px;font-size:11px;font-family:monospace;}
+.biz-switcher{position:relative;cursor:pointer;}
+.biz-arrow{color:#6b7280;font-size:12px;margin-left:auto;}
+.biz-menu{display:none;position:absolute;bottom:100%;left:0;right:0;background:#1a1f1a;border-radius:10px;border:1px solid #2a302a;padding:6px;margin-bottom:8px;box-shadow:0 -8px 24px rgba(0,0,0,.4);}
+.biz-menu.open{display:block;}
+.biz-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:13px;color:#d1d5db;transition:background .15s;cursor:pointer;}
+.biz-option:hover{background:#111810;}
+.biz-option.active{color:white;}
+.biz-option.add{color:var(--teal-mid);text-decoration:none;}
+.biz-divider{height:1px;background:#2a302a;margin:4px 0;}
+.mobile-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:40;background:var(--black);padding:14px 20px;align-items:center;gap:14px;}
+.hamburger{background:none;border:none;color:white;font-size:22px;cursor:pointer;padding:0;}
+.mobile-logo{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:white;}
+.mobile-logo em{color:var(--teal-mid);font-style:normal;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:45;}
+.sidebar-overlay.open{display:block;}
+@media(max-width:768px){
+  .mobile-bar{display:flex;}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:80px 20px 36px;}
+  .tpl-layout{grid-template-columns:1fr;}
+  .ee-body{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
+<div class="mobile-bar">
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  <div class="mobile-logo">Review<em>Mate</em></div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <div class="sidebar">
   <div class="sidebar-logo"><a href="index.html">Review<em>Mate</em></a></div>
   <nav class="sidebar-nav">
@@ -118,11 +145,35 @@ textarea.ee-field{resize:vertical;min-height:160px;line-height:1.7;}
     <div class="nav-section">Emails</div>
     <a href="email-flow.html" class="nav-item"><span class="nav-icon">🔀</span> Email Flow</a>
     <a href="templates.html" class="nav-item active"><span class="nav-icon">📋</span> Templates</a>
+    <div class="nav-section">Marketing</div>
+    <a href="qr-code.html" class="nav-item"><span class="nav-icon">📱</span> QR Code</a>
     <div class="nav-section">Account</div>
     <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
   </nav>
   <div class="sidebar-footer">
-    <div class="biz-chip"><div class="biz-av">MC</div><div class="biz-info"><strong>Mario's Cafe</strong><span>Pro Plan</span></div></div>
+    <div class="biz-switcher" onclick="toggleBizMenu()">
+      <div class="biz-chip">
+        <div class="biz-av">MC</div>
+        <div class="biz-info"><strong>Mario's Cafe</strong><span>Pro Plan</span></div>
+        <span class="biz-arrow">▾</span>
+      </div>
+      <div class="biz-menu" id="bizMenu">
+        <div class="biz-option active">
+          <div class="biz-av" style="width:24px;height:24px;font-size:10px;">MC</div>
+          <span>Mario's Cafe</span>
+          <span style="margin-left:auto;color:var(--teal);">✓</span>
+        </div>
+        <div class="biz-option" onclick="window.location='dashboard-empty.html'">
+          <div class="biz-av" style="width:24px;height:24px;font-size:10px;background:#2563eb;">GC</div>
+          <span>Gold Coast Plumbing</span>
+        </div>
+        <div class="biz-divider"></div>
+        <a href="add-business.html" class="biz-option add">
+          <span style="font-size:16px;">+</span>
+          <span>Add new business</span>
+        </a>
+      </div>
+    </div>
     <a href="login.html" class="nav-logout">← Log out</a>
   </div>
 </div>
@@ -165,6 +216,7 @@ textarea.ee-field{resize:vertical;min-height:160px;line-height:1.7;}
         <div class="ee-tabs">
           <div class="ee-tab active" onclick="showEmailTab('request',this)">📬 Request Email</div>
           <div class="ee-tab" onclick="showEmailTab('followup',this)">🔔 Follow-up Email</div>
+          <div class="ee-tab" onclick="showEmailTab('sms',this)">💬 SMS Template</div>
         </div>
 
         <!-- REQUEST EMAIL EDITOR -->
@@ -269,6 +321,53 @@ This is the only follow-up I'll send — promise! And no worries at all if it's 
             </div>
           </div>
         </div>
+
+        <!-- SMS TAB -->
+        <div id="smsTab" style="display:none;">
+          <div class="ee-body">
+            <div class="ee-edit">
+              <div class="ee-label">SMS Message</div>
+              <textarea class="ee-field" id="smsField" oninput="updateSmsCount()" style="min-height:120px;">Hi {customer_name}, thanks for choosing {business_name}! We'd really appreciate a quick Google review: {review_link} — it only takes 30 seconds 🙏</textarea>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                <span id="smsCount" style="font-size:12px;color:var(--gray-400);">138 / 160 characters</span>
+                <span id="smsWarn" style="font-size:12px;color:#d97706;display:none;">⚠️ Over 160 chars — may send as 2 messages</span>
+              </div>
+              <div class="ee-label">Available Variables</div>
+              <div class="vars">
+                <span class="var-tag" onclick="insertSmsVar('{customer_name}')">{customer_name}</span>
+                <span class="var-tag" onclick="insertSmsVar('{business_name}')">{business_name}</span>
+                <span class="var-tag" onclick="insertSmsVar('{review_link}')">{review_link}</span>
+              </div>
+              <div style="background:#fef3c7;border-radius:9px;padding:12px;font-size:13px;color:#78350f;margin-top:12px;">
+                💬 <strong>SMS tips:</strong> Keep under 160 characters for a single message. Review link will be shortened automatically.
+              </div>
+              <div class="ee-actions" style="margin-top:12px;">
+                <button class="btn btn-ghost btn-sm" onclick="resetSms()">↩ Reset to default</button>
+                <button class="btn btn-primary btn-sm" onclick="showToast()">Save Changes</button>
+              </div>
+            </div>
+            <div class="ee-preview">
+              <div class="ee-label">SMS Preview</div>
+              <div style="max-width:280px;margin:0 auto;">
+                <div style="background:var(--black);border-radius:24px;padding:12px;box-shadow:0 8px 32px rgba(0,0,0,.15);">
+                  <div style="text-align:center;padding:8px 0 12px;">
+                    <div style="width:40px;height:5px;background:#374151;border-radius:3px;margin:0 auto;"></div>
+                  </div>
+                  <div style="background:white;border-radius:16px;padding:16px;min-height:200px;">
+                    <div style="text-align:center;margin-bottom:12px;">
+                      <div style="width:36px;height:36px;background:var(--teal-light);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--teal-dark);">MC</div>
+                      <div style="font-size:12px;color:var(--gray-400);margin-top:4px;">Mario's Cafe</div>
+                    </div>
+                    <div style="background:var(--gray-100);border-radius:14px;padding:12px;font-size:13px;color:var(--gray-700);line-height:1.6;" id="smsPreviewText">
+                      Hi {customer_name}, thanks for choosing Mario's Cafe! We'd really appreciate a quick Google review: g.page/r/marios — it only takes 30 seconds 🙏
+                    </div>
+                    <div style="font-size:11px;color:var(--gray-400);text-align:right;margin-top:6px;">Now</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -304,6 +403,7 @@ function showEmailTab(tab, el) {
   el.classList.add('active');
   document.getElementById('requestTab').style.display = tab==='request'?'block':'none';
   document.getElementById('followupTab').style.display = tab==='followup'?'block':'none';
+  document.getElementById('smsTab').style.display = tab==='sms'?'block':'none';
 }
 
 function updatePreview() {
@@ -324,7 +424,29 @@ function resetTemplate() {
   updatePreview();
 }
 
+function updateSmsCount(){
+  const f=document.getElementById('smsField');
+  const c=f.value.length;
+  document.getElementById('smsCount').textContent=c+' / 160 characters';
+  document.getElementById('smsWarn').style.display=c>160?'inline':'none';
+  document.getElementById('smsCount').style.color=c>160?'#d97706':'var(--gray-400)';
+  document.getElementById('smsPreviewText').textContent=f.value.replace(/{customer_name}/g,'Sarah').replace(/{business_name}/g,"Mario's Cafe").replace(/{review_link}/g,'g.page/r/marios');
+}
+function insertSmsVar(v){
+  const f=document.getElementById('smsField');
+  const pos=f.selectionStart;
+  f.value=f.value.substring(0,pos)+v+f.value.substring(pos);
+  f.focus();
+  updateSmsCount();
+}
+function resetSms(){
+  document.getElementById('smsField').value="Hi {customer_name}, thanks for choosing {business_name}! We'd really appreciate a quick Google review: {review_link} — it only takes 30 seconds 🙏";
+  updateSmsCount();
+}
 function showToast(){const t=document.getElementById('toast');t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
+function toggleBizMenu(){document.getElementById('bizMenu').classList.toggle('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.biz-switcher'))document.getElementById('bizMenu')?.classList.remove('open');});
+function toggleSidebar(){document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');}
 </script>
 </body>
 </html>

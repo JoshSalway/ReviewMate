@@ -5,7 +5,6 @@
 <title>Customers — ReviewMate</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap');
 :root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-700:#374151;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--sidebar-w:248px;--red:#dc2626;--amber:#d97706;--blue:#2563eb;}
 *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
 body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#f0f4f3;}
@@ -96,9 +95,36 @@ tr:hover td{background:#fafbfa;}
 .btn-sm.view{background:var(--gray-100);color:var(--gray-700);}
 .btn-sm.view:hover{background:var(--gray-200);}
 .no-req{font-size:12px;color:var(--gray-400);font-style:italic;}
+.biz-switcher{position:relative;cursor:pointer;}
+.biz-arrow{color:#6b7280;font-size:12px;margin-left:auto;}
+.biz-menu{display:none;position:absolute;bottom:100%;left:0;right:0;background:#1a1f1a;border-radius:10px;border:1px solid #2a302a;padding:6px;margin-bottom:8px;box-shadow:0 -8px 24px rgba(0,0,0,.4);}
+.biz-menu.open{display:block;}
+.biz-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:13px;color:#d1d5db;transition:background .15s;cursor:pointer;}
+.biz-option:hover{background:#111810;}
+.biz-option.active{color:white;}
+.biz-option.add{color:var(--teal-mid);text-decoration:none;}
+.biz-divider{height:1px;background:#2a302a;margin:4px 0;}
+.mobile-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:40;background:var(--black);padding:14px 20px;align-items:center;gap:14px;}
+.hamburger{background:none;border:none;color:white;font-size:22px;cursor:pointer;padding:0;}
+.mobile-logo{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:white;}
+.mobile-logo em{color:var(--teal-mid);font-style:normal;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:45;}
+.sidebar-overlay.open{display:block;}
+@media(max-width:768px){
+  .mobile-bar{display:flex;}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:80px 20px 36px;}
+  .table-wrap{overflow-x:auto;}
+}
 </style>
 </head>
 <body>
+<div class="mobile-bar">
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  <div class="mobile-logo">Review<em>Mate</em></div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 <div class="sidebar">
   <div class="sidebar-logo"><a href="index.html">Review<em>Mate</em></a></div>
   <nav class="sidebar-nav">
@@ -113,11 +139,35 @@ tr:hover td{background:#fafbfa;}
     <div class="nav-section">Emails</div>
     <a href="email-flow.html" class="nav-item"><span class="nav-icon">🔀</span> Email Flow</a>
     <a href="templates.html" class="nav-item"><span class="nav-icon">📋</span> Templates</a>
+    <div class="nav-section">Marketing</div>
+    <a href="qr-code.html" class="nav-item"><span class="nav-icon">📱</span> QR Code</a>
     <div class="nav-section">Account</div>
     <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
   </nav>
   <div class="sidebar-footer">
-    <div class="biz-chip"><div class="biz-av">MC</div><div class="biz-info"><strong>Mario's Cafe</strong><span>Pro Plan</span></div></div>
+    <div class="biz-switcher" onclick="toggleBizMenu()">
+      <div class="biz-chip">
+        <div class="biz-av">MC</div>
+        <div class="biz-info"><strong>Mario's Cafe</strong><span>Pro Plan</span></div>
+        <span class="biz-arrow">▾</span>
+      </div>
+      <div class="biz-menu" id="bizMenu">
+        <div class="biz-option active">
+          <div class="biz-av" style="width:24px;height:24px;font-size:10px;">MC</div>
+          <span>Mario's Cafe</span>
+          <span style="margin-left:auto;color:var(--teal);">✓</span>
+        </div>
+        <div class="biz-option" onclick="window.location='dashboard-empty.html'">
+          <div class="biz-av" style="width:24px;height:24px;font-size:10px;background:#2563eb;">GC</div>
+          <span>Gold Coast Plumbing</span>
+        </div>
+        <div class="biz-divider"></div>
+        <a href="add-business.html" class="biz-option add">
+          <span style="font-size:16px;">+</span>
+          <span>Add new business</span>
+        </a>
+      </div>
+    </div>
     <a href="login.html" class="nav-logout">← Log out</a>
   </div>
 </div>
@@ -153,6 +203,7 @@ tr:hover td{background:#fafbfa;}
       <thead>
         <tr>
           <th>Customer</th>
+          <th>Phone</th>
           <th>Added</th>
           <th>Request Sent</th>
           <th>Status</th>
@@ -161,49 +212,56 @@ tr:hover td{background:#fafbfa;}
       </thead>
       <tbody>
         <tr>
-          <td><div class="cust-name"><div class="cust-av" style="background:#0d9488;">SJ</div><div><strong>Sarah Johnson</strong><div style="font-size:12px;color:var(--gray-400);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2a594b584b4204406a4d474b434604494547">[email&#160;protected]</a></div></div></div></td>
+          <td><div class="cust-name"><div class="cust-av" style="background:#0d9488;">SJ</div><div><strong>Sarah Johnson</strong><div style="font-size:12px;color:var(--gray-400);">sarah.j@email.com</div></div></div></td>
+          <td>0412 345 678</td>
           <td>2 days ago</td>
           <td>2 days ago</td>
           <td><span class="badge badge-green">✓ Reviewed</span></td>
           <td><div class="actions"><button class="btn-sm view">View</button></div></td>
         </tr>
         <tr>
-          <td><div class="cust-name"><div class="cust-av" style="background:#2563eb;">MT</div><div><strong>Mike Tran</strong><div style="font-size:12px;color:var(--gray-400);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e489ca9096858aa48b9190888b8b8fca878b89">[email&#160;protected]</a></div></div></div></td>
+          <td><div class="cust-name"><div class="cust-av" style="background:#2563eb;">MT</div><div><strong>Mike Tran</strong><div style="font-size:12px;color:var(--gray-400);">mike.tran@gmail.com</div></div></div></td>
+          <td>0423 456 789</td>
           <td>5 days ago</td>
           <td>5 days ago</td>
           <td><span class="badge badge-amber">⏳ Pending</span></td>
           <td><div class="actions"><button class="btn-sm view">View</button><button class="btn-sm send" onclick="showToast()">Resend</button></div></td>
         </tr>
         <tr>
-          <td><div class="cust-name"><div class="cust-av" style="background:#7c3aed;">AL</div><div><strong>Anna Liu</strong><div style="font-size:12px;color:var(--gray-400);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6706090906490b0e12270a024904080a">[email&#160;protected]</a></div></div></div></td>
+          <td><div class="cust-name"><div class="cust-av" style="background:#7c3aed;">AL</div><div><strong>Anna Liu</strong><div style="font-size:12px;color:var(--gray-400);">anna.liu@email.com</div></div></div></td>
+          <td style="color:var(--gray-400);">—</td>
           <td>1 week ago</td>
           <td>1 week ago</td>
           <td><span class="badge badge-green">✓ Reviewed</span></td>
           <td><div class="actions"><button class="btn-sm view">View</button></div></td>
         </tr>
         <tr>
-          <td><div class="cust-name"><div class="cust-av" style="background:#d97706;">JP</div><div><strong>James Parker</strong><div style="font-size:12px;color:var(--gray-400);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="cda7bdacbfa6a8bf8da4aea1a2b8a9e3aea2a0">[email&#160;protected]</a></div></div></div></td>
+          <td><div class="cust-name"><div class="cust-av" style="background:#d97706;">JP</div><div><strong>James Parker</strong><div style="font-size:12px;color:var(--gray-400);">james.p@outlook.com</div></div></div></td>
+          <td>0434 567 890</td>
           <td>1 week ago</td>
           <td>1 week ago</td>
           <td><span class="badge badge-red">✗ No response</span></td>
           <td><div class="actions"><button class="btn-sm view">View</button><button class="btn-sm send" onclick="showToast()">Resend</button></div></td>
         </tr>
         <tr>
-          <td><div class="cust-name"><div class="cust-av" style="background:#be185d;">RK</div><div><strong>Rachel Kim</strong><div style="font-size:12px;color:var(--gray-400);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="99ebf2f0f4d9fef4f8f0f5b7faf6f4">[email&#160;protected]</a></div></div></div></td>
+          <td><div class="cust-name"><div class="cust-av" style="background:#be185d;">RK</div><div><strong>Rachel Kim</strong><div style="font-size:12px;color:var(--gray-400);">rachel.k@email.com</div></div></div></td>
+          <td style="color:var(--gray-400);">—</td>
           <td>2 weeks ago</td>
           <td>2 weeks ago</td>
           <td><span class="badge badge-green">✓ Reviewed</span></td>
           <td><div class="actions"><button class="btn-sm view">View</button></div></td>
         </tr>
         <tr>
-          <td><div class="cust-name"><div class="cust-av" style="background:#0f766e;">DW</div><div><strong>Dan Wilson</strong><div style="font-size:12px;color:var(--gray-400);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dfbba8b6b3acb0b19fb8b2beb6b3f1bcb0b2">[email&#160;protected]</a></div></div></div></td>
+          <td><div class="cust-name"><div class="cust-av" style="background:#0f766e;">DW</div><div><strong>Dan Wilson</strong><div style="font-size:12px;color:var(--gray-400);">dan.w@email.com</div></div></div></td>
+          <td>0456 789 012</td>
           <td>3 weeks ago</td>
           <td style="color:var(--gray-400);">—</td>
           <td><span class="badge badge-gray">No request</span></td>
           <td><div class="actions"><button class="btn-sm send" onclick="showToast()">Send Request</button></div></td>
         </tr>
         <tr>
-          <td><div class="cust-name"><div class="cust-av" style="background:#9d174d;">LM</div><div><strong>Lucy Martinez</strong><div style="font-size:12px;color:var(--gray-400);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1b776e786235765b627a73747435787476">[email&#160;protected]</a></div></div></div></td>
+          <td><div class="cust-name"><div class="cust-av" style="background:#9d174d;">LM</div><div><strong>Lucy Martinez</strong><div style="font-size:12px;color:var(--gray-400);">lucy.m@email.com</div></div></div></td>
+          <td>0467 890 123</td>
           <td>3 weeks ago</td>
           <td>3 weeks ago</td>
           <td><span class="badge badge-blue">👁 Opened</span></td>
@@ -222,6 +280,7 @@ tr:hover td{background:#fafbfa;}
     <p>Fill in their details and we'll send the review request email straight away.</p>
     <div class="form-group"><label>Customer Name</label><input class="form-control" type="text" placeholder="First and last name"/></div>
     <div class="form-group"><label>Email Address</label><input class="form-control" type="email" placeholder="customer@email.com"/></div>
+    <div class="form-group"><label>Phone Number (optional)</label><input class="form-control" type="tel" placeholder="e.g. 0412 345 678"/></div>
     <div class="form-group"><label>Job / Service (optional)</label><input class="form-control" type="text" placeholder="e.g. Bathroom renovation, Coffee & cake..."/></div>
     <div class="form-group"><label>Send request</label><select class="form-control"><option>Immediately</option><option>In 2 hours</option><option>Tomorrow morning</option><option>In 3 days</option></select></div>
     <div class="modal-btns">
@@ -235,10 +294,32 @@ tr:hover td{background:#fafbfa;}
 <div class="modal-overlay" id="csvModal">
   <div class="modal">
     <h3>Import Customers via CSV</h3>
-    <p>Upload a CSV with columns: <strong>name, email</strong> (optional: job_type). We'll send requests to all of them.</p>
+    <p>Upload a CSV with columns: <strong>name, email, phone</strong> (optional: job_type). We'll send requests to all of them.</p>
     <div class="csv-drop" onclick="showToast();closeModals();">
       <span>📁</span>
       <p>Click to upload or drag and drop your CSV file</p>
       <small>Max 500 customers per import · .csv files only</small>
     </div>
-    <div style="background:var(--gray-100);border-radius:8px;padding:12px;font-size:13px;color:var(--gray-600);font-family:monospace;margin-bottom:16px;">name,em
+    <div style="background:var(--gray-100);border-radius:8px;padding:12px;font-size:13px;color:var(--gray-600);font-family:monospace;margin-bottom:16px;">name,email,phone
+Sarah Johnson,sarah.j@email.com,0412345678
+Mike Tran,mike.tran@gmail.com,0423456789</div>
+    <div class="modal-btns">
+      <button class="btn-m ghost" onclick="closeModals()">Cancel</button>
+      <button class="btn-m primary" onclick="showToast();closeModals();">Import & Send All →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Action completed successfully!</div>
+
+<script>
+function openAdd(){document.getElementById('addModal').classList.add('open');}
+function openCsv(){document.getElementById('csvModal').classList.add('open');}
+function closeModals(){document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('open'));}
+function showToast(){const t=document.getElementById('toast');t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
+function toggleBizMenu(){document.getElementById('bizMenu').classList.toggle('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.biz-switcher'))document.getElementById('bizMenu')?.classList.remove('open');});
+function toggleSidebar(){document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');}
+</script>
+</body>
+</html>

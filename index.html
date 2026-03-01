@@ -101,6 +101,34 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:20px 5
 footer{background:var(--black);padding:36px 56px;text-align:center;}
 footer p{color:#4b5563;font-size:13px;}
 footer a{color:#6b7280;margin:0 10px;}
+.hamburger-btn{display:none;background:none;border:none;font-size:24px;cursor:pointer;color:var(--black);padding:4px;}
+.mobile-menu{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;}
+.mobile-menu.open{display:block;}
+.mobile-menu-inner{position:absolute;top:0;right:0;width:260px;height:100%;background:white;padding:24px;box-shadow:-8px 0 32px rgba(0,0,0,.15);}
+.mobile-menu-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--gray-600);position:absolute;top:16px;right:16px;}
+.mobile-menu-inner a{display:block;padding:14px 0;font-size:16px;font-weight:500;color:var(--gray-900);border-bottom:1px solid var(--gray-100);}
+.mobile-menu-inner a:last-child{border-bottom:none;}
+.mobile-menu-inner .btn-p{display:block;text-align:center;margin-top:16px;border-bottom:none;color:white;padding:14px;border-radius:10px;}
+@media(max-width:768px){
+  nav{padding:16px 20px;}
+  .nav-r{display:none;}
+  .hamburger-btn{display:block;}
+  .hero{grid-template-columns:1fr;padding:48px 20px 40px;gap:40px;}
+  .hero h1{font-size:36px;}
+  .hero-visual{display:none;}
+  .features{padding:48px 20px;}
+  .feat-grid{grid-template-columns:1fr;}
+  .how{padding:48px 20px;}
+  .steps{grid-template-columns:1fr 1fr;gap:20px;}
+  .step-arr{display:none;}
+  .pricing{padding:48px 20px;}
+  .price-card{padding:32px 24px;}
+  .logos-strip{padding:20px;}
+  footer{padding:24px 20px;}
+}
+@media(max-width:480px){
+  .steps{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
@@ -110,7 +138,15 @@ footer a{color:#6b7280;margin:0 10px;}
     <a href="login.html" class="btn-ghost">Log in</a>
     <a href="signup.html" class="btn-p">Start Free Trial</a>
   </div>
+  <button class="hamburger-btn" onclick="document.getElementById('mobileMenu').classList.add('open')">☰</button>
 </nav>
+<div class="mobile-menu" id="mobileMenu" onclick="this.classList.remove('open')">
+  <div class="mobile-menu-inner" onclick="event.stopPropagation()">
+    <button class="mobile-menu-close" onclick="document.getElementById('mobileMenu').classList.remove('open')">✕</button>
+    <a href="login.html">Log in</a>
+    <a href="signup.html" class="btn-p">Start Free Trial</a>
+  </div>
+</div>
 
 <section style="background:white;">
 <div class="hero">

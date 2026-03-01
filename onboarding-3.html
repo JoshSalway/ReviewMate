@@ -92,7 +92,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
     <p style="font-size:13px;color:var(--gray-400);margin-bottom:16px;">You can change your template and edit every word from the Templates page after setup.</p>
     <div class="btn-wrap">
       <a href="onboarding-2.html" class="btn btn-ghost">← Back</a>
-      <a href="dashboard.html" class="btn">Finish Setup →</a>
+      <a href="dashboard-empty.html" class="btn">Finish Setup →</a>
     </div>
   </div>
 
@@ -108,7 +108,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
       </div>
       <div class="preview-email" id="emailPane">
         <div class="email-meta">
-          <div class="em-row"><span class="em-label">From:</span><span class="em-val">Mario's Cafe &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7618190413061a0f360413001f13011b17021358170606">[email&#160;protected]</a>&gt;</span></div>
+          <div class="em-row"><span class="em-label">From:</span><span class="em-val">Mario's Cafe &lt;hello@marioscafe.com.au&gt;</span></div>
           <div class="em-row"><span class="em-label">To:</span><span class="em-val"><span class="var-chip">{customer_email}</span></span></div>
           <div class="em-row"><span class="em-label">Sent:</span><span class="em-val">Same day job completed</span></div>
         </div>
@@ -129,7 +129,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
       </div>
       <div class="preview-email" id="followupPane" style="display:none;">
         <div class="email-meta">
-          <div class="em-row"><span class="em-label">From:</span><span class="em-val">Mario's Cafe &lt;<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0967667b6c796570497b6c7f606c7e64687d6c27687979">[email&#160;protected]</a>&gt;</span></div>
+          <div class="em-row"><span class="em-label">From:</span><span class="em-val">Mario's Cafe &lt;hello@marioscafe.com.au&gt;</span></div>
           <div class="em-row"><span class="em-label">To:</span><span class="em-val"><span class="var-chip">{customer_email}</span></span></div>
           <div class="em-row"><span class="em-label">Sent:</span><span class="em-val">3 days after request (if no review)</span></div>
         </div>
@@ -150,7 +150,7 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:18px 4
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const templates = {
   tradie: {
     subject: "How did we go, {customer_name}?",
@@ -193,4 +193,15 @@ function selectTpl(el, type) {
   el.classList.add('active');
   const t = templates[type];
   document.getElementById('emailSubject').textContent = t.subject;
-  document.getElementById('emailBody').innerH
+  document.getElementById('emailBody').innerHTML = t.body;
+}
+
+function showTab(tab, el) {
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('emailPane').style.display = tab === 'email' ? 'block' : 'none';
+  document.getElementById('followupPane').style.display = tab === 'followup' ? 'block' : 'none';
+}
+</script>
+</body>
+</html>
