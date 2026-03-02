@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code — ReviewMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-700:#374151;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--sidebar-w:248px;--red:#dc2626;--amber:#d97706;--blue:#2563eb;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#f0f4f3;}
+h1,h2,h3,h4,h5{font-family:'Fraunces',serif;}a{text-decoration:none;color:inherit;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .18s;}
+.btn-primary{background:var(--teal);color:white;border-radius:10px;}.btn-primary:hover{background:#0f766e;transform:translateY(-1px);box-shadow:0 4px 14px rgba(13,148,136,.3);}
+.btn-ghost{background:white;color:var(--gray-900);border:1.5px solid var(--gray-300);border-radius:10px;}.btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+.btn-dark{background:var(--black);color:white;border-radius:10px;}.btn-dark:hover{background:#1c2018;}
+.btn-sm{padding:8px 16px;font-size:13px;border-radius:8px;}.btn-md{padding:11px 22px;font-size:14px;}.btn-lg{padding:15px 32px;font-size:16px;}
+.sidebar{width:var(--sidebar-w);background:var(--black);min-height:100vh;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:50;}
+.sidebar-logo{padding:26px 24px 18px;border-bottom:1px solid #1a2018;}
+.sidebar-logo a{font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:white;letter-spacing:-.5px;}
+.sidebar-logo a em{color:var(--teal-mid);font-style:normal;}
+.sidebar-nav{padding:16px 0;flex:1;}
+.nav-section{padding:8px 20px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#4b5563;font-weight:600;margin-top:8px;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 20px;color:#6b7280;font-size:14px;font-weight:500;transition:all .15s;cursor:pointer;border-left:2px solid transparent;text-decoration:none;}
+.nav-item:hover{background:#111810;color:#d1fae5;}.nav-item.active{background:#0d2015;color:var(--teal-mid);border-left-color:var(--teal);}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sidebar-footer{padding:16px 20px;border-top:1px solid #1a2018;}
+.biz-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#111810;border-radius:10px;}
+.biz-av{width:30px;height:30px;background:var(--teal);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:white;flex-shrink:0;}
+.biz-info strong{display:block;font-size:13px;color:white;font-weight:600;}.biz-info span{font-size:11px;color:#6b7280;}
+.nav-logout{display:flex;align-items:center;gap:8px;padding:10px 4px 0;font-size:13px;color:#4b5563;text-decoration:none;}.nav-logout:hover{color:#6b7280;}
+.main{margin-left:var(--sidebar-w);flex:1;padding:36px 40px;min-height:100vh;}
+.card{background:white;border-radius:14px;border:1px solid #e5e7eb;}.card-pad{padding:28px;}
+.card-head{padding:22px 28px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--gray-900);}.card-sub{font-size:13px;color:var(--gray-400);margin-top:2px;}
+.form-group{margin-bottom:20px;}.form-group label{display:block;font-size:13px;font-weight:500;color:var(--gray-700);margin-bottom:6px;}
+.form-control{width:100%;padding:12px 15px;border:1.5px solid var(--gray-300);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--gray-900);outline:none;transition:border-color .2s;background:white;}
+.form-control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);}.form-control::placeholder{color:var(--gray-400);}
+.form-control[readonly]{background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;}
+textarea.form-control{resize:vertical;min-height:100px;line-height:1.6;}.form-hint{font-size:12px;color:var(--gray-400);margin-top:5px;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600;}
+.badge-green{background:var(--teal-light);color:var(--teal-dark);}.badge-amber{background:#fef3c7;color:#92400e;}
+.badge-red{background:#fee2e2;color:#991b1b;}.badge-blue{background:#dbeafe;color:#1e40af;}.badge-gray{background:var(--gray-100);color:var(--gray-600);}
+.page-hdr{margin-bottom:32px;display:flex;align-items:flex-start;justify-content:space-between;}
+.page-hdr h1{font-size:28px;font-weight:700;color:var(--black);}.page-hdr p{font-size:14px;color:var(--gray-600);margin-top:5px;}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--teal);color:white;padding:12px 20px;border-radius:10px;font-size:14px;display:none;box-shadow:0 4px 16px rgba(13,148,136,.35);z-index:999;}
+</style>
+<style>
+body{display:flex;}
+
+/* Business Switcher */
+.biz-switcher{position:relative;cursor:pointer;}
+.biz-arrow{color:#6b7280;font-size:12px;margin-left:auto;}
+.biz-menu{display:none;position:absolute;bottom:100%;left:0;right:0;background:#1a1f1a;border-radius:10px;border:1px solid #2a302a;padding:6px;margin-bottom:8px;box-shadow:0 -8px 24px rgba(0,0,0,.4);}
+.biz-menu.open{display:block;}
+.biz-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:13px;color:#d1d5db;transition:background .15s;cursor:pointer;}
+.biz-option:hover{background:#111810;}
+.biz-option.active{color:white;}
+.biz-option.add{color:var(--teal-mid);text-decoration:none;}
+.biz-divider{height:1px;background:#2a302a;margin:4px 0;}
+
+/* Mobile */
+.mobile-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:40;background:var(--black);padding:14px 20px;align-items:center;gap:14px;}
+.hamburger{background:none;border:none;color:white;font-size:22px;cursor:pointer;padding:0;}
+.mobile-logo{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:white;}
+.mobile-logo em{color:var(--teal-mid);font-style:normal;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:45;}
+.sidebar-overlay.open{display:block;}
+
+/* QR Layout */
+.qr-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px;}
+
+/* Config Card */
+.config-card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:28px;}
+.config-card .card-title{margin-bottom:20px;}
+
+/* Radio Group */
+.radio-group{display:flex;gap:10px;margin-bottom:0;}
+.radio-group label{display:flex;align-items:center;gap:7px;padding:9px 16px;border:1.5px solid var(--gray-300);border-radius:8px;font-size:13px;font-weight:500;color:var(--gray-700);cursor:pointer;transition:all .15s;}
+.radio-group label:hover{border-color:var(--teal);color:var(--teal);}
+.radio-group input[type="radio"]{accent-color:var(--teal);margin:0;}
+.radio-group input[type="radio"]:checked + span{color:var(--teal);}
+.radio-group label:has(input:checked){border-color:var(--teal);background:var(--teal-light);color:var(--teal-dark);}
+
+/* Toggle (same as settings.html) */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--gray-100);}
+.toggle-row:last-child{border-bottom:none;padding-bottom:0;}
+.tr-info strong{display:block;font-size:14px;font-weight:600;color:var(--gray-900);}
+.tr-info span{font-size:13px;color:var(--gray-400);}
+.toggle{width:42px;height:24px;background:var(--teal);border-radius:100px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;}
+.toggle::after{content:'';position:absolute;top:3px;right:3px;width:18px;height:18px;background:white;border-radius:50%;transition:all .2s;}
+.toggle.off{background:var(--gray-300);}
+.toggle.off::after{right:21px;}
+
+/* Download Buttons */
+.dl-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px;}
+.dl-btns .btn{padding:12px 18px;font-size:14px;width:100%;}
+
+/* Preview Card */
+.preview-card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.preview-inner{background:white;border:2px dashed var(--gray-300);border-radius:16px;padding:36px 40px;text-align:center;width:100%;max-width:320px;}
+.preview-inner svg{margin-bottom:18px;}
+.preview-biz{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--black);margin-bottom:6px;}
+.preview-tagline{font-size:13px;color:var(--gray-600);line-height:1.5;}
+.preview-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--gray-400);font-weight:600;margin-bottom:16px;}
+
+/* Tips Grid */
+.tips-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.tip-card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:22px;text-align:center;transition:all .18s;}
+.tip-card:hover{border-color:var(--teal);transform:translateY(-2px);box-shadow:0 4px 16px rgba(13,148,136,.1);}
+.tip-icon{font-size:28px;margin-bottom:10px;}
+.tip-title{font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:5px;}
+.tip-desc{font-size:12px;color:var(--gray-600);line-height:1.5;}
+
+.section-label{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--black);margin-bottom:16px;}
+
+@media(max-width:768px){
+  .mobile-bar{display:flex;}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:80px 20px 36px;}
+  .qr-layout{grid-template-columns:1fr !important;}
+  .tips-grid{grid-template-columns:repeat(2,1fr) !important;}
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile Bar -->
+<div class="mobile-bar">
+  <button class="hamburger" onclick="document.querySelector('.sidebar').classList.add('open');document.querySelector('.sidebar-overlay').classList.add('open');">&#9776;</button>
+  <div class="mobile-logo">Review<em>Mate</em></div>
+</div>
+<div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open');this.classList.remove('open');"></div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <div class="sidebar-logo"><a href="index.html">Review<em>Mate</em></a></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+    <a href="quick-send.html" style="display:flex;align-items:center;gap:11px;padding:10px 16px;margin:8px 12px;background:var(--teal);border-radius:10px;color:white;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='#0f766e'" onmouseout="this.style.background='var(--teal)'">
+  <span style="font-size:16px;">⚡</span> Quick Send
+</a>
+<div class="nav-section">Customers</div>
+    <a href="customers.html" class="nav-item"><span class="nav-icon">👥</span> Customers</a>
+    <a href="requests.html" class="nav-item"><span class="nav-icon">📬</span> Requests</a>
+    <div class="nav-section">Emails</div>
+    <a href="email-flow.html" class="nav-item"><span class="nav-icon">🔀</span> Email Flow</a>
+    <a href="templates.html" class="nav-item"><span class="nav-icon">📋</span> Templates</a>
+    <div class="nav-section">Marketing</div>
+    <a href="qr-code.html" class="nav-item active"><span class="nav-icon">📱</span> QR Code</a>
+    <div class="nav-section">Account</div>
+    <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="biz-switcher" onclick="document.getElementById('bizMenu').classList.toggle('open')">
+      <div class="biz-chip">
+        <div class="biz-av">MC</div>
+        <div class="biz-info"><strong>Mario's Cafe</strong><span>Pro Plan</span></div>
+        <span class="biz-arrow">&#9660;</span>
+      </div>
+      <div class="biz-menu" id="bizMenu">
+        <div class="biz-option active">
+          <div class="biz-av" style="width:26px;height:26px;font-size:10px;">MC</div>
+          Mario's Cafe
+        </div>
+        <a href="dashboard-empty.html" class="biz-option">
+          <div class="biz-av" style="width:26px;height:26px;font-size:10px;background:var(--blue);">GC</div>
+          Gold Coast Plumbing
+        </a>
+        <div class="biz-divider"></div>
+        <a href="#" class="biz-option add">+ Add Business</a>
+      </div>
+    </div>
+    <a href="login.html" class="nav-logout">← Log out</a>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+  <div class="page-hdr">
+    <div>
+      <h1>QR Code</h1>
+      <p>Generate a printable QR code for your review link</p>
+    </div>
+  </div>
+
+  <!-- Two Column Layout -->
+  <div class="qr-layout">
+
+    <!-- Left: Config -->
+    <div class="config-card">
+      <div class="card-title">Configure QR Code</div>
+
+      <!-- Review Link -->
+      <div class="form-group">
+        <label>Your Review Link</label>
+        <input class="form-control" type="text" value="g.page/marios-cafe-burleigh/review" readonly />
+        <div class="form-hint">This is your Google review link. Update it in Settings.</div>
+      </div>
+
+      <!-- Size Selector -->
+      <div class="form-group">
+        <label>QR Code Size</label>
+        <div class="radio-group">
+          <label><input type="radio" name="size" value="small"><span>Small</span></label>
+          <label><input type="radio" name="size" value="medium" checked><span>Medium</span></label>
+          <label><input type="radio" name="size" value="large"><span>Large</span></label>
+        </div>
+      </div>
+
+      <!-- Show Business Name Toggle -->
+      <div class="form-group" style="margin-bottom:20px;">
+        <div class="toggle-row" style="padding:0;border-bottom:none;">
+          <div class="tr-info">
+            <strong>Show business name below QR</strong>
+            <span>Display your business name on the printable card</span>
+          </div>
+          <div class="toggle" onclick="this.classList.toggle('off')"></div>
+        </div>
+      </div>
+
+      <!-- Style Selector -->
+      <div class="form-group">
+        <label>Style</label>
+        <div class="radio-group">
+          <label><input type="radio" name="style" value="teal" checked><span>Teal branded</span></label>
+          <label><input type="radio" name="style" value="bw"><span>Black &amp; white</span></label>
+        </div>
+      </div>
+
+      <!-- Download Buttons -->
+      <div class="dl-btns">
+        <button class="btn btn-primary btn-md" onclick="showToast('PNG downloaded successfully!')">📥 Download PNG</button>
+        <button class="btn btn-ghost btn-md" onclick="showToast('PDF downloaded successfully!')">📄 Download PDF</button>
+      </div>
+    </div>
+
+    <!-- Right: Preview -->
+    <div class="preview-card">
+      <div class="preview-label">Preview</div>
+      <div class="preview-inner">
+        <svg viewBox="0 0 200 200" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+          <!-- Finder patterns (3 corners) -->
+          <rect x="10" y="10" width="50" height="50" rx="4" fill="#0d9488"/>
+          <rect x="17" y="17" width="36" height="36" rx="2" fill="white"/>
+          <rect x="23" y="23" width="24" height="24" rx="2" fill="#0d9488"/>
+
+          <rect x="140" y="10" width="50" height="50" rx="4" fill="#0d9488"/>
+          <rect x="147" y="17" width="36" height="36" rx="2" fill="white"/>
+          <rect x="153" y="23" width="24" height="24" rx="2" fill="#0d9488"/>
+
+          <rect x="10" y="140" width="50" height="50" rx="4" fill="#0d9488"/>
+          <rect x="17" y="147" width="36" height="36" rx="2" fill="white"/>
+          <rect x="23" y="153" width="24" height="24" rx="2" fill="#0d9488"/>
+
+          <!-- Data modules (random pattern) -->
+          <rect x="70" y="10" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="82" y="10" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="106" y="10" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="118" y="10" width="8" height="8" rx="1" fill="#0d9488"/>
+
+          <rect x="70" y="22" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="94" y="22" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="118" y="22" width="8" height="8" rx="1" fill="#0d9488"/>
+
+          <rect x="82" y="34" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="94" y="34" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="106" y="34" width="8" height="8" rx="1" fill="#0d9488"/>
+
+          <rect x="70" y="46" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="82" y="46" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="118" y="46" width="8" height="8" rx="1" fill="#0d9488"/>
+
+          <rect x="10" y="70" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="22" y="70" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="46" y="70" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="70" y="70" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="94" y="70" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="118" y="70" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="142" y="70" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="166" y="70" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="182" y="70" width="8" height="8" rx="1" fill="#0d9488"/>
+
+          <rect x="10" y="82" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="34" y="82" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="70" y="82" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="82" y="82" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="106" y="82" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="142" y="82" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="166" y="82" width="8" height="8" rx="1" fill="#0d9488"/>
+
+          <rect x="22" y="94" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="46" y="94" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="82" y="94" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="94" y="94" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="118" y="94" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="154" y="94" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="182" y="94" width="8" height="8" rx="1" fill="#0d9488"/>
+
+          <rect x="10" y="106" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="34" y="106" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="46" y="106" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="70" y="106" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="106" y="106" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="142" y="106" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="154" y="106" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="182" y="106" width="8" height="8" rx="1" fill="#0d9488"/>
+
+          <rect x="22" y="118" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="46" y="118" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="70" y="118" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="82" y="118" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="94" y="118" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="118" y="118" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="154" y="118" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="166" y="118" width="8" height="8" rx="1" fill="#0d9488"/>
+
+          <!-- Bottom right data -->
+          <rect x="142" y="142" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="166" y="142" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="182" y="142" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="70" y="142" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="94" y="142" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="106" y="142" width="8" height="8" rx="1" fill="#0d9488"/>
+
+          <rect x="154" y="154" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="142" y="166" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="166" y="166" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="70" y="154" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="82" y="166" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="106" y="166" width="8" height="8" rx="1" fill="#0d9488"/>
+
+          <rect x="142" y="182" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="154" y="182" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="182" y="182" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="70" y="182" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="94" y="182" width="8" height="8" rx="1" fill="#0d9488"/>
+          <rect x="118" y="182" width="8" height="8" rx="1" fill="#0d9488"/>
+        </svg>
+        <div class="preview-biz">Mario's Cafe</div>
+        <div class="preview-tagline">Scan to leave us a Google review</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Use Case Suggestions -->
+  <div class="section-label">Use case ideas</div>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-icon">🧾</div>
+      <div class="tip-title">Receipts</div>
+      <div class="tip-desc">Print on the bottom of receipts</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🪧</div>
+      <div class="tip-title">Counter display</div>
+      <div class="tip-desc">Print as table tent or counter card</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">💳</div>
+      <div class="tip-title">Business cards</div>
+      <div class="tip-desc">Add to the back of your business card</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">📱</div>
+      <div class="tip-title">Social media</div>
+      <div class="tip-desc">Share in Instagram stories or posts</div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✓ Downloaded!</div>
+
+<script>
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent='✓ '+(msg||'Downloaded!');
+  t.style.display='block';
+  setTimeout(()=>t.style.display='none',2500);
+}
+
+// Close biz menu when clicking outside
+document.addEventListener('click',function(e){
+  const switcher=document.querySelector('.biz-switcher');
+  const menu=document.getElementById('bizMenu');
+  if(switcher && menu && !switcher.contains(e.target)){
+    menu.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>

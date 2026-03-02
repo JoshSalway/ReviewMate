@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Requests — ReviewMate</title>
+<title>Dashboard — ReviewMate</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-700:#374151;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--sidebar-w:248px;--red:#dc2626;--amber:#d97706;--blue:#2563eb;}
@@ -46,36 +46,54 @@ textarea.form-control{resize:vertical;min-height:100px;line-height:1.6;}.form-hi
 </style>
 <style>
 body{display:flex;}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
-.stat{background:white;border-radius:12px;padding:20px;border:1px solid #e5e7eb;text-align:center;}
-.stat-n{font-family:'Fraunces',serif;font-size:32px;font-weight:800;color:var(--black);}
-.stat-l{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--gray-400);font-weight:600;margin-top:6px;}
-.stat.green .stat-n{color:var(--teal);}
-.stat.amber .stat-n{color:var(--amber);}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px;}
+.stat{background:white;border-radius:14px;padding:22px;border:1px solid #e5e7eb;}
+.stat.hi{background:var(--teal);border-color:var(--teal);}
+.stat-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);font-weight:600;margin-bottom:10px;}
+.stat.hi .stat-lbl{color:#99f6e4;}
+.stat-val{font-family:'Fraunces',serif;font-size:34px;font-weight:800;color:var(--black);line-height:1;}
+.stat.hi .stat-val{color:white;}
+.stat-sub{font-size:13px;color:var(--gray-400);margin-top:8px;}
+.stat.hi .stat-sub{color:#99f6e4;}
+.stat-up{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--teal);background:var(--teal-light);padding:3px 8px;border-radius:100px;margin-top:8px;}
 
-.filters{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
-.filter-btn{padding:8px 16px;border-radius:100px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--gray-300);background:white;color:var(--gray-600);transition:all .15s;}
-.filter-btn:hover,.filter-btn.active{background:var(--teal);color:white;border-color:var(--teal);}
+.grid2{display:grid;grid-template-columns:1fr 340px;gap:22px;}
+.chart-card,.reviews-card,.link-card,.add-card,.digest-card{background:white;border-radius:14px;border:1px solid #e5e7eb;}
+.ch{padding:24px 28px;}
+.chart-wrap{height:150px;position:relative;margin-top:16px;}
+svg.line{width:100%;height:100%;}
 
-.req-list{display:flex;flex-direction:column;gap:12px;}
-.req-card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:20px 24px;display:flex;align-items:center;gap:16px;transition:box-shadow .2s;}
-.req-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.07);}
-.r-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:white;flex-shrink:0;}
-.r-info{flex:1;}
-.r-name{font-size:14px;font-weight:600;color:var(--gray-900);}
-.r-email{font-size:12px;color:var(--gray-400);margin-top:2px;}
-.r-timeline{flex:2;display:flex;align-items:center;gap:0;}
-.tl-step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
-.tl-step:not(:last-child)::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:2px;background:var(--gray-200);z-index:0;}
-.tl-step.done::after{background:var(--teal);}
-.tl-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--gray-300);background:white;display:flex;align-items:center;justify-content:center;font-size:12px;z-index:1;flex-shrink:0;}
-.tl-step.done .tl-dot{background:var(--teal);border-color:var(--teal);color:white;}
-.tl-step.current .tl-dot{border-color:var(--teal);background:var(--teal-light);color:var(--teal);}
-.tl-label{font-size:10px;color:var(--gray-400);margin-top:4px;text-align:center;white-space:nowrap;}
-.tl-step.done .tl-label{color:var(--teal);}
-.tl-step.current .tl-label{color:var(--teal);font-weight:600;}
-.r-status{width:120px;text-align:right;flex-shrink:0;}
-.r-date{font-size:11px;color:var(--gray-400);margin-top:4px;text-align:right;}
+/* Reviews */
+.rv-item{display:flex;gap:13px;padding:16px 0;border-bottom:1px solid var(--gray-100);}
+.rv-item:first-child{padding-top:0;}
+.rv-item:last-child{border-bottom:none;padding-bottom:0;}
+.rv-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;}
+.rv-name{font-size:13px;font-weight:600;color:var(--gray-900);}
+.rv-stars{color:#f59e0b;font-size:12px;margin:2px 0;}
+.rv-text{font-size:13px;color:var(--gray-600);line-height:1.6;}
+.rv-meta{font-size:11px;color:var(--gray-400);margin-top:4px;}
+.rv-meta .via{color:var(--teal);}
+
+/* Right panel */
+.rp{display:flex;flex-direction:column;gap:18px;}
+.link-box{background:var(--gray-100);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--gray-600);font-family:monospace;word-break:break-all;margin:12px 0;}
+.btn-copy{width:100%;padding:10px;background:var(--teal);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-copy:hover{background:#0f766e;}
+.copied{display:none;text-align:center;font-size:13px;color:var(--teal);margin-top:6px;font-weight:500;}
+.mini-in{width:100%;padding:10px 12px;border:1.5px solid var(--gray-300);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:10px;outline:none;transition:border-color .2s;}
+.mini-in:focus{border-color:var(--teal);}
+.mini-in::placeholder{color:var(--gray-400);}
+.btn-send{width:100%;padding:10px;background:var(--black);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:background .2s;}
+.btn-send:hover{background:#1c2018;}
+.req-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;}
+.req-s{background:var(--gray-100);border-radius:8px;padding:11px;text-align:center;}
+.req-s.good{background:var(--teal-light);}
+.req-n{font-family:'Fraunces',serif;font-size:19px;font-weight:700;color:var(--black);}
+.req-s.good .req-n{color:var(--teal-dark);}
+.req-l{font-size:10px;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+.digest-box{background:var(--gray-100);border-radius:8px;padding:13px;font-size:13px;color:var(--gray-600);line-height:1.8;}
+
+/* Business switcher */
 .biz-switcher{position:relative;cursor:pointer;}
 .biz-arrow{color:#6b7280;font-size:12px;margin-left:auto;}
 .biz-menu{display:none;position:absolute;bottom:100%;left:0;right:0;background:#1a1f1a;border-radius:10px;border:1px solid #2a302a;padding:6px;margin-bottom:8px;box-shadow:0 -8px 24px rgba(0,0,0,.4);}
@@ -85,6 +103,8 @@ body{display:flex;}
 .biz-option.active{color:white;}
 .biz-option.add{color:var(--teal-mid);text-decoration:none;}
 .biz-divider{height:1px;background:#2a302a;margin:4px 0;}
+
+/* Mobile responsive */
 .mobile-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:40;background:var(--black);padding:14px 20px;align-items:center;gap:14px;}
 .hamburger{background:none;border:none;color:white;font-size:22px;cursor:pointer;padding:0;}
 .mobile-logo{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:white;}
@@ -97,28 +117,47 @@ body{display:flex;}
   .sidebar.open{transform:translateX(0);}
   .main{margin-left:0;padding:80px 20px 36px;}
   .stats{grid-template-columns:repeat(2,1fr);}
-  .r-timeline{display:none;}
-  .r-status{width:auto;}
 }
+
+/* Empty state styles */
+.checklist{list-style:none;padding:0;margin:0;}
+.checklist li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--gray-100);font-size:14px;color:var(--gray-700);}
+.checklist li:last-child{border-bottom:none;}
+.checklist li .check{font-size:18px;flex-shrink:0;width:24px;text-align:center;}
+.checklist li.done{color:var(--gray-400);}
+.checklist li.done .step-text{text-decoration:line-through;}
+.stat-val.muted{color:var(--gray-300);}
+.empty-chart{display:flex;align-items:center;justify-content:center;height:150px;background:var(--gray-50);border-radius:10px;margin-top:16px;border:2px dashed var(--gray-300);}
+.empty-chart p{font-size:13px;color:var(--gray-400);text-align:center;max-width:280px;line-height:1.6;}
+.empty-reviews{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;text-align:center;}
+.empty-reviews .empty-icon{font-size:40px;margin-bottom:14px;opacity:.5;}
+.empty-reviews p{font-size:14px;color:var(--gray-400);line-height:1.6;max-width:260px;}
+.cta-banner{background:linear-gradient(135deg,var(--teal),#0f766e);border-radius:14px;padding:32px;text-align:center;margin-top:28px;}
+.cta-banner h2{color:white;font-size:22px;margin-bottom:8px;}
+.cta-banner p{color:#99f6e4;font-size:14px;margin-bottom:20px;}
+.cta-banner .btn-cta{display:inline-flex;align-items:center;gap:8px;background:white;color:var(--teal-dark);padding:14px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;border:none;cursor:pointer;transition:all .18s;}
+.cta-banner .btn-cta:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2);}
 </style>
 </head>
 <body>
+
 <div class="mobile-bar">
   <button class="hamburger" onclick="toggleSidebar()">☰</button>
   <div class="mobile-logo">Review<em>Mate</em></div>
 </div>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
 <div class="sidebar">
   <div class="sidebar-logo"><a href="index.html">Review<em>Mate</em></a></div>
   <nav class="sidebar-nav">
     <div class="nav-section">Overview</div>
-    <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+    <a href="dashboard-empty.html" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
     <a href="quick-send.html" style="display:flex;align-items:center;gap:11px;padding:10px 16px;margin:8px 12px;background:var(--teal);border-radius:10px;color:white;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='#0f766e'" onmouseout="this.style.background='var(--teal)'">
   <span style="font-size:16px;">⚡</span> Quick Send
 </a>
 <div class="nav-section">Customers</div>
     <a href="customers.html" class="nav-item"><span class="nav-icon">👥</span> Customers</a>
-    <a href="requests.html" class="nav-item active"><span class="nav-icon">📬</span> Requests</a>
+    <a href="requests.html" class="nav-item"><span class="nav-icon">📬</span> Requests</a>
     <div class="nav-section">Emails</div>
     <a href="email-flow.html" class="nav-item"><span class="nav-icon">🔀</span> Email Flow</a>
     <a href="templates.html" class="nav-item"><span class="nav-icon">📋</span> Templates</a>
@@ -130,19 +169,19 @@ body{display:flex;}
   <div class="sidebar-footer">
     <div class="biz-switcher" onclick="toggleBizMenu()">
       <div class="biz-chip">
-        <div class="biz-av">MC</div>
-        <div class="biz-info"><strong>Mario's Cafe</strong><span>Pro Plan</span></div>
+        <div class="biz-av" style="background:#2563eb;">GC</div>
+        <div class="biz-info"><strong>Gold Coast Plumbing</strong><span>Pro Plan</span></div>
         <span class="biz-arrow">▾</span>
       </div>
       <div class="biz-menu" id="bizMenu">
-        <div class="biz-option active">
+        <div class="biz-option" onclick="window.location='dashboard.html'">
           <div class="biz-av" style="width:24px;height:24px;font-size:10px;">MC</div>
           <span>Mario's Cafe</span>
-          <span style="margin-left:auto;color:var(--teal);">✓</span>
         </div>
-        <div class="biz-option" onclick="window.location='dashboard-empty.html'">
+        <div class="biz-option active">
           <div class="biz-av" style="width:24px;height:24px;font-size:10px;background:#2563eb;">GC</div>
           <span>Gold Coast Plumbing</span>
+          <span style="margin-left:auto;color:var(--teal);">✓</span>
         </div>
         <div class="biz-divider"></div>
         <a href="add-business.html" class="biz-option add">
@@ -157,112 +196,71 @@ body{display:flex;}
 
 <div class="main">
   <div class="page-hdr">
-    <div><h1>Review Requests</h1><p>Track every request and see exactly where each customer is in the flow</p></div>
+    <div><h1>Welcome to ReviewMate!</h1><p>Gold Coast Plumbing</p></div>
+    <span class="badge badge-green" style="font-size:13px;padding:6px 14px;">⭐ Pro Plan Active</span>
   </div>
 
+  <!-- Progress Checklist -->
+  <div class="card" style="margin-bottom:28px;">
+    <div class="card-head">
+      <div><div class="card-title">Getting Started</div><div class="card-sub">Complete these steps to start collecting reviews</div></div>
+      <span class="badge badge-amber">4 of 6 done</span>
+    </div>
+    <div class="card-pad">
+      <ul class="checklist">
+        <li class="done"><span class="check">✅</span><span class="step-text">Create your account</span><span class="badge badge-green" style="margin-left:auto;">Done</span></li>
+        <li class="done"><span class="check">✅</span><span class="step-text">Choose your business type</span><span class="badge badge-green" style="margin-left:auto;">Done</span></li>
+        <li class="done"><span class="check">✅</span><span class="step-text">Connect Google listing</span><span class="badge badge-green" style="margin-left:auto;">Done</span></li>
+        <li class="done"><span class="check">✅</span><span class="step-text">Pick email template</span><span class="badge badge-green" style="margin-left:auto;">Done</span></li>
+        <li><span class="check">⬜</span><span class="step-text">Send your first review request</span><a href="quick-send.html" class="btn btn-primary btn-sm" style="margin-left:auto;">Send First Request →</a></li>
+        <li><span class="check">⬜</span><span class="step-text">Get your first Google review</span><span class="badge badge-gray" style="margin-left:auto;">Waiting</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Empty Stats -->
   <div class="stats">
-    <div class="stat"><div class="stat-n">38</div><div class="stat-l">Total Sent</div></div>
-    <div class="stat"><div class="stat-n">26</div><div class="stat-l">Opened</div></div>
-    <div class="stat green"><div class="stat-n">8</div><div class="stat-l">Reviewed ✓</div></div>
-    <div class="stat amber"><div class="stat-n">10</div><div class="stat-l">No Response</div></div>
+    <div class="stat"><div class="stat-lbl">Overall Rating</div><div class="stat-val muted">—</div><div class="stat-sub">No reviews yet</div></div>
+    <div class="stat"><div class="stat-lbl">Total Reviews</div><div class="stat-val muted">—</div><div class="stat-sub">No reviews yet</div></div>
+    <div class="stat"><div class="stat-lbl">Requests Sent</div><div class="stat-val muted">—</div><div class="stat-sub">None sent yet</div></div>
+    <div class="stat"><div class="stat-lbl">Conversion Rate</div><div class="stat-val muted">—</div><div class="stat-sub">No data yet</div></div>
   </div>
 
-  <div class="filters">
-    <button class="filter-btn active" onclick="setFilter(this)">All (38)</button>
-    <button class="filter-btn" onclick="setFilter(this)">✓ Reviewed (8)</button>
-    <button class="filter-btn" onclick="setFilter(this)">👁 Opened (18)</button>
-    <button class="filter-btn" onclick="setFilter(this)">📬 Sent (10)</button>
-    <button class="filter-btn" onclick="setFilter(this)">✗ No Response (10)</button>
-    <button class="filter-btn" onclick="setFilter(this)">🔔 Follow-up Sent (12)</button>
+  <!-- Empty Chart -->
+  <div class="chart-card" style="margin-bottom:22px;">
+    <div class="ch">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div><div class="card-title">Rating Trend</div><div class="card-sub">Last 6 months</div></div>
+      </div>
+      <div class="empty-chart">
+        <p>Your rating trend will appear here once you start collecting reviews</p>
+      </div>
+    </div>
   </div>
 
-  <div class="req-list">
-    <!-- REVIEWED -->
-    <div class="req-card">
-      <div class="r-av" style="background:#0d9488;">SJ</div>
-      <div class="r-info"><div class="r-name">Sarah Johnson</div><div class="r-email">sarah.j@email.com</div></div>
-      <div class="r-timeline">
-        <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Sent</div></div>
-        <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Opened</div></div>
-        <div class="tl-step done"><div class="tl-dot">⭐</div><div class="tl-label">Reviewed</div></div>
-        <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Done</div></div>
-      </div>
-      <div class="r-status"><span class="badge badge-green">✓ Reviewed</span><div class="r-date">2 days ago</div></div>
+  <!-- Empty Reviews -->
+  <div class="reviews-card" style="margin-bottom:22px;">
+    <div class="card-head"><div><div class="card-title">Recent Reviews</div><div class="card-sub">From your Google listing</div></div></div>
+    <div class="empty-reviews">
+      <div class="empty-icon">⭐</div>
+      <p>No reviews yet. Send your first request to get started!</p>
     </div>
+  </div>
 
-    <!-- OPENED - FOLLOW UP SENT -->
-    <div class="req-card">
-      <div class="r-av" style="background:#2563eb;">MT</div>
-      <div class="r-info"><div class="r-name">Mike Tran</div><div class="r-email">mike.tran@gmail.com</div></div>
-      <div class="r-timeline">
-        <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Sent</div></div>
-        <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Opened</div></div>
-        <div class="tl-step current"><div class="tl-dot">🔔</div><div class="tl-label">Follow-up</div></div>
-        <div class="tl-step"><div class="tl-dot" style="color:var(--gray-300);">⭐</div><div class="tl-label">Waiting...</div></div>
-      </div>
-      <div class="r-status"><span class="badge badge-amber">🔔 Follow-up sent</span><div class="r-date">5 days ago</div></div>
-    </div>
-
-    <!-- REVIEWED -->
-    <div class="req-card">
-      <div class="r-av" style="background:#7c3aed;">AL</div>
-      <div class="r-info"><div class="r-name">Anna Liu</div><div class="r-email">anna.liu@email.com</div></div>
-      <div class="r-timeline">
-        <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Sent</div></div>
-        <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Opened</div></div>
-        <div class="tl-step done"><div class="tl-dot">⭐</div><div class="tl-label">Reviewed</div></div>
-        <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Done</div></div>
-      </div>
-      <div class="r-status"><span class="badge badge-green">✓ Reviewed</span><div class="r-date">1 week ago</div></div>
-    </div>
-
-    <!-- NO RESPONSE -->
-    <div class="req-card">
-      <div class="r-av" style="background:#d97706;">JP</div>
-      <div class="r-info"><div class="r-name">James Parker</div><div class="r-email">james.p@outlook.com</div></div>
-      <div class="r-timeline">
-        <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Sent</div></div>
-        <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Opened</div></div>
-        <div class="tl-step done"><div class="tl-dot">🔔</div><div class="tl-label">Follow-up</div></div>
-        <div class="tl-step"><div class="tl-dot" style="color:var(--gray-300);">✗</div><div class="tl-label">No response</div></div>
-      </div>
-      <div class="r-status"><span class="badge badge-red">✗ No response</span><div class="r-date">1 week ago</div></div>
-    </div>
-
-    <!-- JUST SENT -->
-    <div class="req-card">
-      <div class="r-av" style="background:#0f766e;">DW</div>
-      <div class="r-info"><div class="r-name">Dan Wilson</div><div class="r-email">dan.w@email.com</div></div>
-      <div class="r-timeline">
-        <div class="tl-step current"><div class="tl-dot">📬</div><div class="tl-label">Sent</div></div>
-        <div class="tl-step"><div class="tl-dot">👁</div><div class="tl-label">Waiting...</div></div>
-        <div class="tl-step"><div class="tl-dot">🔔</div><div class="tl-label">Follow-up</div></div>
-        <div class="tl-step"><div class="tl-dot">⭐</div><div class="tl-label">Review</div></div>
-      </div>
-      <div class="r-status"><span class="badge badge-blue">📬 Sent</span><div class="r-date">Today</div></div>
-    </div>
-
-    <!-- OPENED -->
-    <div class="req-card">
-      <div class="r-av" style="background:#9d174d;">LM</div>
-      <div class="r-info"><div class="r-name">Lucy Martinez</div><div class="r-email">lucy.m@email.com</div></div>
-      <div class="r-timeline">
-        <div class="tl-step done"><div class="tl-dot">✓</div><div class="tl-label">Sent</div></div>
-        <div class="tl-step current"><div class="tl-dot">👁</div><div class="tl-label">Opened</div></div>
-        <div class="tl-step"><div class="tl-dot">🔔</div><div class="tl-label">Follow-up</div></div>
-        <div class="tl-step"><div class="tl-dot">⭐</div><div class="tl-label">Review</div></div>
-      </div>
-      <div class="r-status"><span class="badge badge-blue">👁 Opened</span><div class="r-date">3 days ago</div></div>
-    </div>
-
+  <!-- CTA Banner -->
+  <div class="cta-banner">
+    <h2>Ready to grow your reputation?</h2>
+    <p>Send a review request to your most recent customer and watch the reviews roll in.</p>
+    <a href="quick-send.html" class="btn-cta">Send Your First Review Request →</a>
   </div>
 </div>
 
+<div class="toast" id="toast">✓ Review request sent to customer!</div>
 <script>
-function setFilter(el){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');}
 function toggleBizMenu(){document.getElementById('bizMenu').classList.toggle('open');}
 document.addEventListener('click',function(e){if(!e.target.closest('.biz-switcher'))document.getElementById('bizMenu')?.classList.remove('open');});
 function toggleSidebar(){document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');}
+function showToast(){const t=document.getElementById('toast');t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
 </script>
 </body>
 </html>

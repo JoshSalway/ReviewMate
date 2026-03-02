@@ -107,6 +107,9 @@ h1,h2,h3{font-family:'Fraunces',serif;}
   box-shadow:0 0 0 4px rgba(13,148,136,.12);
 }
 .form-control::placeholder{color:var(--gray-400);}
+.ch-btn{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--gray-300);background:white;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--gray-600);cursor:pointer;transition:all .15s;}
+.ch-btn:hover{border-color:var(--teal);color:var(--teal);}
+.ch-btn.active{background:var(--teal-light);border-color:var(--teal);color:var(--teal-dark);}
 
 /* TEMPLATE QUICK-SELECT */
 .template-row{
@@ -234,13 +237,23 @@ h1,h2,h3{font-family:'Fraunces',serif;}
 
     <!-- FORM -->
     <div class="card-form" id="formSection">
+      <!-- CHANNEL SELECTOR -->
+      <div style="display:flex;gap:6px;margin-bottom:20px;">
+        <button class="ch-btn active" onclick="switchChannel('email',this)">📧 Email</button>
+        <button class="ch-btn" onclick="switchChannel('sms',this)">💬 SMS</button>
+        <button class="ch-btn" onclick="switchChannel('both',this)">📧+💬 Both</button>
+      </div>
       <div class="form-group">
         <label>Customer Name</label>
         <input class="form-control" type="text" id="custName" placeholder="e.g. Sarah Johnson" autocomplete="off"/>
       </div>
-      <div class="form-group">
+      <div class="form-group" id="emailGroup">
         <label>Customer Email</label>
         <input class="form-control" type="email" id="custEmail" placeholder="e.g. sarah@gmail.com" autocomplete="off"/>
+      </div>
+      <div class="form-group" id="phoneGroup" style="display:none;">
+        <label>Phone Number</label>
+        <input class="form-control" type="tel" id="custPhone" placeholder="e.g. 0412 345 678" autocomplete="off"/>
       </div>
 
       <!-- TEMPLATE QUICK SELECT -->
@@ -264,6 +277,15 @@ h1,h2,h3{font-family:'Fraunces',serif;}
       <a class="btn-whatsapp" href="#" onclick="sendWhatsapp(event)">
         <span style="font-size:20px;">💬</span> Send via WhatsApp instead
       </a>
+
+      <!-- SMS PREVIEW -->
+      <div id="smsPreview" style="display:none;margin-top:16px;background:var(--gray-100);border-radius:12px;padding:16px;">
+        <div style="font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;">SMS Preview</div>
+        <div style="background:white;border-radius:10px;padding:14px;font-size:14px;color:var(--gray-700);line-height:1.6;border:1px solid var(--gray-100);">
+          Hi Sarah, thanks for choosing Mario's Cafe! We'd really appreciate a quick Google review: g.page/marios-cafe-burleigh/review — it only takes 30 seconds 🙏
+        </div>
+        <div style="font-size:11px;color:var(--gray-400);margin-top:6px;">138 / 160 characters</div>
+      </div>
 
       <!-- RECENT SENDS -->
       <div class="recent-section">
@@ -309,6 +331,13 @@ h1,h2,h3{font-family:'Fraunces',serif;}
 </div>
 
 <script>
+function switchChannel(ch, el){
+  document.querySelectorAll('.ch-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('emailGroup').style.display = (ch==='email'||ch==='both') ? 'block' : 'none';
+  document.getElementById('phoneGroup').style.display = (ch==='sms'||ch==='both') ? 'block' : 'none';
+  document.getElementById('smsPreview').style.display = (ch==='sms'||ch==='both') ? 'block' : 'none';
+}
 function selectTpl(el){
   document.querySelectorAll('.tpl-chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
@@ -318,7 +347,11 @@ function sendRequest(){
   const name = document.getElementById('custName').value.trim();
   const email = document.getElementById('custEmail').value.trim();
   if(!name){document.getElementById('custName').focus();shake('custName');return;}
-  if(!email || !email.includes('@')){document.getElementById('custEmail').focus();shake('custEmail');return;}
+  const phone = document.getElementById('custPhone').value.trim();
+  const emailVisible = document.getElementById('emailGroup').style.display !== 'none';
+  const phoneVisible = document.getElementById('phoneGroup').style.display !== 'none';
+  if(emailVisible && (!email || !email.includes('@'))){document.getElementById('custEmail').focus();shake('custEmail');return;}
+  if(phoneVisible && !phone){document.getElementById('custPhone').focus();shake('custPhone');return;}
   
   // Show success
   document.getElementById('sentName').textContent = name;
