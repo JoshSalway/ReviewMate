@@ -1,7 +1,7 @@
 # ReviewMate — Agent Instructions
 
 > Last updated: 2026-03-03
-> Completion: ~95%
+> Completion: ~100% code — deploy only remaining
 
 ## ✅ CODE COMPLETE — READY TO DEPLOY
 
