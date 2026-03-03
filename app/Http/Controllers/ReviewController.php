@@ -25,27 +25,28 @@ class ReviewController extends Controller
             ->whereNotNull('google_review_name')
             ->whereNull('google_reply')
             ->latest('reviewed_at')
-            ->get()
-            ->map(fn ($review) => $this->formatReview($review));
+            ->paginate(20, ['*'], 'page')
+            ->withQueryString()
+            ->through(fn ($review) => $this->formatReview($review));
 
         $replied = $business->reviews()
             ->whereNotNull('google_reply')
             ->latest('google_reply_posted_at')
-            ->limit(20)
-            ->get()
-            ->map(fn ($review) => $this->formatReview($review));
+            ->paginate(20, ['*'], 'repliedPage')
+            ->withQueryString()
+            ->through(fn ($review) => $this->formatReview($review));
 
         $allReviews = $business->reviews()
             ->whereNull('google_review_name')
             ->latest('reviewed_at')
-            ->limit(20)
-            ->get()
-            ->map(fn ($review) => $this->formatReview($review));
+            ->paginate(20, ['*'], 'allPage')
+            ->withQueryString()
+            ->through(fn ($review) => $this->formatReview($review));
 
         return Inertia::render('reviews/index', [
-            'needsReply'    => $needsReply,
-            'replied'       => $replied,
-            'allReviews'    => $allReviews,
+            'needsReply'        => $needsReply,
+            'replied'           => $replied,
+            'allReviews'        => $allReviews,
             'isGoogleConnected' => $business->isGoogleConnected(),
         ]);
     }

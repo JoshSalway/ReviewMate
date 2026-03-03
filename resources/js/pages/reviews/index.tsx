@@ -21,10 +21,24 @@ interface Review {
     has_google_link: boolean;
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface Paginated<T> {
+    data: T[];
+    links: PaginationLink[];
+    total: number;
+    from: number | null;
+    to: number | null;
+}
+
 interface Props {
-    needsReply: Review[];
-    replied: Review[];
-    allReviews: Review[];
+    needsReply: Paginated<Review>;
+    replied: Paginated<Review>;
+    allReviews: Paginated<Review>;
     isGoogleConnected: boolean;
 }
 
@@ -103,7 +117,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
         setExpandedReplies((prev) => ({ ...prev, [id]: !prev[id] }));
     };
 
-    const isEmpty = needsReply.length === 0 && replied.length === 0 && allReviews.length === 0;
+    const isEmpty = needsReply.total === 0 && replied.total === 0 && allReviews.total === 0;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -113,10 +127,10 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                 <div className="flex items-center gap-3">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">Reviews</h1>
-                        {needsReply.length > 0 && (
+                        {needsReply.total > 0 && (
                             <div className="mt-1 flex items-center gap-2">
                                 <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">
-                                    {needsReply.length} needing reply
+                                    {needsReply.total} needing reply
                                 </Badge>
                             </div>
                         )}
@@ -147,16 +161,16 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                 )}
 
                 {/* Needs Reply Section */}
-                {needsReply.length > 0 && (
+                {needsReply.total > 0 && (
                     <section className="space-y-4">
                         <div className="flex items-center gap-2">
                             <AlertCircle className="h-5 w-5 text-amber-500" />
                             <h2 className="text-lg font-semibold text-gray-900">Needs Reply</h2>
-                            <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">{needsReply.length}</Badge>
+                            <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">{needsReply.total}</Badge>
                         </div>
 
                         <div className="space-y-4">
-                            {needsReply.map((review) => {
+                            {needsReply.data.map((review) => {
                                 const state = getReviewState(review.id);
                                 return (
                                     <Card key={review.id}>
@@ -271,20 +285,36 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                 );
                             })}
                         </div>
+
+                        {needsReply.links.length > 3 && (
+                            <div className="flex items-center justify-center gap-1">
+                                {needsReply.links.map((link, i) => (
+                                    <Button
+                                        key={i}
+                                        variant={link.active ? 'default' : 'outline'}
+                                        size="sm"
+                                        disabled={!link.url}
+                                        className={link.active ? 'bg-teal-600 hover:bg-teal-700 text-white' : ''}
+                                        onClick={() => link.url && router.visit(link.url)}
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </section>
                 )}
 
                 {/* Replied Section */}
-                {replied.length > 0 && (
+                {replied.total > 0 && (
                     <section className="space-y-4">
                         <div className="flex items-center gap-2">
                             <CheckCircle className="h-5 w-5 text-teal-600" />
                             <h2 className="text-lg font-semibold text-gray-900">Replied</h2>
-                            <Badge className="bg-teal-100 text-teal-700 hover:bg-teal-100">{replied.length}</Badge>
+                            <Badge className="bg-teal-100 text-teal-700 hover:bg-teal-100">{replied.total}</Badge>
                         </div>
 
                         <div className="space-y-4">
-                            {replied.map((review) => (
+                            {replied.data.map((review) => (
                                 <Card key={review.id}>
                                     <CardHeader className="border-b bg-gray-50">
                                         <div className="flex items-center gap-3">
@@ -357,20 +387,36 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                 </Card>
                             ))}
                         </div>
+
+                        {replied.links.length > 3 && (
+                            <div className="flex items-center justify-center gap-1">
+                                {replied.links.map((link, i) => (
+                                    <Button
+                                        key={i}
+                                        variant={link.active ? 'default' : 'outline'}
+                                        size="sm"
+                                        disabled={!link.url}
+                                        className={link.active ? 'bg-teal-600 hover:bg-teal-700 text-white' : ''}
+                                        onClick={() => link.url && router.visit(link.url)}
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </section>
                 )}
 
                 {/* All Reviews Section (non-Google reviews) */}
-                {allReviews.length > 0 && (
+                {allReviews.total > 0 && (
                     <section className="space-y-4">
                         <div className="flex items-center gap-2">
                             <MessageSquare className="h-5 w-5 text-gray-500" />
                             <h2 className="text-lg font-semibold text-gray-900">All Reviews</h2>
-                            <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-100">{allReviews.length}</Badge>
+                            <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-100">{allReviews.total}</Badge>
                         </div>
 
                         <div className="space-y-4">
-                            {allReviews.map((review) => (
+                            {allReviews.data.map((review) => (
                                 <Card key={review.id}>
                                     <CardHeader className="border-b bg-gray-50">
                                         <div className="flex items-center gap-3">
@@ -407,6 +453,22 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                 </Card>
                             ))}
                         </div>
+
+                        {allReviews.links.length > 3 && (
+                            <div className="flex items-center justify-center gap-1">
+                                {allReviews.links.map((link, i) => (
+                                    <Button
+                                        key={i}
+                                        variant={link.active ? 'default' : 'outline'}
+                                        size="sm"
+                                        disabled={!link.url}
+                                        className={link.active ? 'bg-teal-600 hover:bg-teal-700 text-white' : ''}
+                                        onClick={() => link.url && router.visit(link.url)}
+                                        dangerouslySetInnerHTML={{ __html: link.label }}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </section>
                 )}
             </div>
