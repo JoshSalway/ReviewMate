@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ReviewRequestController extends Controller
 {
@@ -83,7 +84,7 @@ class ReviewRequestController extends Controller
 
         if (in_array($validated['channel'], ['email', 'both']) && $customer->email) {
             Mail::to($customer->email, $customer->name)
-                ->queue(new ReviewRequestMail($business, $customer));
+                ->queue(new ReviewRequestMail($business, $customer, $reviewRequest));
         }
 
         if (in_array($validated['channel'], ['sms', 'both']) && $customer->phone && TwilioSmsService::isConfigured()) {
@@ -91,5 +92,19 @@ class ReviewRequestController extends Controller
         }
 
         return back()->with('success', "Review request sent to {$customer->name}.");
+    }
+
+    public function track(string $token): RedirectResponse
+    {
+        $reviewRequest = ReviewRequest::where('tracking_token', $token)->firstOrFail();
+
+        if ($reviewRequest->status === 'sent') {
+            $reviewRequest->markAsOpened();
+        }
+
+        $destination = $reviewRequest->business->googleReviewUrl()
+            ?? 'https://search.google.com/local/writereview';
+
+        return redirect()->away($destination);
     }
 }

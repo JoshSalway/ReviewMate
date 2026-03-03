@@ -116,7 +116,7 @@ class CustomerController extends Controller
 
         $sent = 0;
         foreach ($customers as $customer) {
-            ReviewRequest::create([
+            $reviewRequest = ReviewRequest::create([
                 'business_id' => $business->id,
                 'customer_id' => $customer->id,
                 'status'      => 'sent',
@@ -126,7 +126,7 @@ class CustomerController extends Controller
 
             if (in_array($validated['channel'], ['email', 'both']) && $customer->email) {
                 Mail::to($customer->email, $customer->name)
-                    ->queue(new ReviewRequestMail($business, $customer));
+                    ->queue(new ReviewRequestMail($business, $customer, $reviewRequest));
             }
 
             if (in_array($validated['channel'], ['sms', 'both']) && $customer->phone && TwilioSmsService::isConfigured()) {

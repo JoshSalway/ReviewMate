@@ -40,7 +40,7 @@ class SendFollowUpRequests implements ShouldQueue
 
             if (in_array($request->channel, ['email', 'both']) && $customer->email) {
                 Mail::to($customer->email, $customer->name)
-                    ->queue(new FollowUpMail($business, $customer));
+                    ->queue(new FollowUpMail($business, $customer, $request));
             }
 
             if (in_array($request->channel, ['sms', 'both']) && $customer->phone && TwilioSmsService::isConfigured()) {
