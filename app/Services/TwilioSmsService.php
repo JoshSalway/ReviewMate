@@ -41,7 +41,7 @@ class TwilioSmsService
 
         $url = $business->googleReviewUrl();
         $message = "Hi {$customer->name}, {$business->name} would love a Google review! "
-            . "It only takes a minute: {$url}";
+            ."It only takes a minute: {$url}";
 
         $this->send($customer->phone, $message);
     }
@@ -54,7 +54,7 @@ class TwilioSmsService
 
         $url = $business->googleReviewUrl();
         $message = "Hi {$customer->name}, just a friendly reminder from {$business->name} — "
-            . "we'd really appreciate your Google review: {$url}";
+            ."we'd really appreciate your Google review: {$url}";
 
         $this->send($customer->phone, $message);
     }

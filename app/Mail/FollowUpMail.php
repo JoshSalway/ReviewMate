@@ -30,7 +30,7 @@ class FollowUpMail extends Mailable implements ShouldQueue
         public ?ReviewRequest $reviewRequest = null,
     ) {
         $trackingUrl = $reviewRequest?->tracking_token
-            ? url('/r/' . $reviewRequest->tracking_token)
+            ? url('/r/'.$reviewRequest->tracking_token)
             : $business->googleReviewUrl();
 
         $template = $business->emailTemplates()->where('type', 'followup')->first();
@@ -51,7 +51,7 @@ class FollowUpMail extends Mailable implements ShouldQueue
 
         $this->reviewLink = $variables['review_link'];
         $this->unsubscribeUrl = $customer->unsubscribe_token
-            ? url('/unsubscribe/' . $customer->unsubscribe_token)
+            ? url('/unsubscribe/'.$customer->unsubscribe_token)
             : null;
 
         $this->renderedBody = $template

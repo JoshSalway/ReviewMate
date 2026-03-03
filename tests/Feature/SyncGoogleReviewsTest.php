@@ -14,21 +14,21 @@ beforeEach(function () {
     Mail::fake();
     $this->user = User::factory()->create(['notification_preferences' => ['new_review_alert' => true]]);
     $this->business = Business::factory()->onboarded()->create([
-        'user_id'            => $this->user->id,
-        'google_access_token'  => 'fake-token',
-        'google_location_id'   => 'accounts/123/locations/456',
+        'user_id' => $this->user->id,
+        'google_access_token' => 'fake-token',
+        'google_location_id' => 'accounts/123/locations/456',
     ]);
 });
 
 function fakeReviewData(array $overrides = []): array
 {
     return array_merge([
-        'reviewId'   => 'review-abc',
-        'name'       => 'accounts/123/locations/456/reviews/review-abc',
+        'reviewId' => 'review-abc',
+        'name' => 'accounts/123/locations/456/reviews/review-abc',
         'starRating' => 'FIVE',
-        'comment'    => 'Excellent service!',
+        'comment' => 'Excellent service!',
         'createTime' => now()->toIso8601String(),
-        'reviewer'   => ['displayName' => 'Jane Smith'],
+        'reviewer' => ['displayName' => 'Jane Smith'],
     ], $overrides);
 }
 
@@ -45,9 +45,9 @@ test('sync creates new reviews from google', function () {
 
 test('sync does not duplicate existing reviews', function () {
     Review::factory()->create([
-        'business_id'     => $this->business->id,
+        'business_id' => $this->business->id,
         'google_review_id' => 'review-abc',
-        'rating'          => 4,
+        'rating' => 4,
     ]);
 
     $service = Mockery::mock(GoogleBusinessProfileService::class);
@@ -68,14 +68,13 @@ test('sync sends new review alert email for newly created reviews', function () 
 
     (new SyncGoogleReviews($this->business))->handle($service);
 
-    Mail::assertQueued(NewReviewAlertMail::class, fn ($mail) =>
-        $mail->hasTo($this->user->email)
+    Mail::assertQueued(NewReviewAlertMail::class, fn ($mail) => $mail->hasTo($this->user->email)
     );
 });
 
 test('sync does not send alert for existing reviews', function () {
     Review::factory()->create([
-        'business_id'     => $this->business->id,
+        'business_id' => $this->business->id,
         'google_review_id' => 'review-abc',
     ]);
 
@@ -101,14 +100,14 @@ test('sync does not send alert when user has disabled new review alerts', functi
 test('sync links new review to matching pending review request', function () {
     $customer = Customer::factory()->create([
         'business_id' => $this->business->id,
-        'name'        => 'Jane Smith',
+        'name' => 'Jane Smith',
     ]);
 
     $request = ReviewRequest::factory()->create([
         'business_id' => $this->business->id,
         'customer_id' => $customer->id,
-        'status'      => 'sent',
-        'sent_at'     => now()->subDays(3),
+        'status' => 'sent',
+        'sent_at' => now()->subDays(3),
     ]);
 
     $service = Mockery::mock(GoogleBusinessProfileService::class);
@@ -129,14 +128,14 @@ test('sync links new review to matching pending review request', function () {
 test('sync match is case-insensitive', function () {
     $customer = Customer::factory()->create([
         'business_id' => $this->business->id,
-        'name'        => 'jane smith',
+        'name' => 'jane smith',
     ]);
 
     $request = ReviewRequest::factory()->create([
         'business_id' => $this->business->id,
         'customer_id' => $customer->id,
-        'status'      => 'sent',
-        'sent_at'     => now()->subDays(2),
+        'status' => 'sent',
+        'sent_at' => now()->subDays(2),
     ]);
 
     $service = Mockery::mock(GoogleBusinessProfileService::class);
@@ -152,13 +151,13 @@ test('sync match is case-insensitive', function () {
 test('sync does not match already reviewed requests', function () {
     $customer = Customer::factory()->create([
         'business_id' => $this->business->id,
-        'name'        => 'Jane Smith',
+        'name' => 'Jane Smith',
     ]);
 
     $request = ReviewRequest::factory()->reviewed()->create([
         'business_id' => $this->business->id,
         'customer_id' => $customer->id,
-        'sent_at'     => now()->subDays(3),
+        'sent_at' => now()->subDays(3),
     ]);
 
     $service = Mockery::mock(GoogleBusinessProfileService::class);

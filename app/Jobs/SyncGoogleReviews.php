@@ -54,16 +54,16 @@ class SyncGoogleReviews implements ShouldQueue
                 Review::updateOrCreate(
                     ['google_review_id' => $reviewId],
                     [
-                        'business_id'            => $this->business->id,
-                        'rating'                 => $rating,
-                        'body'                   => $data['comment'] ?? null,
-                        'reviewer_name'          => $data['reviewer']['displayName'] ?? 'Anonymous',
-                        'source'                 => 'google',
-                        'reviewed_at'            => isset($data['createTime'])
+                        'business_id' => $this->business->id,
+                        'rating' => $rating,
+                        'body' => $data['comment'] ?? null,
+                        'reviewer_name' => $data['reviewer']['displayName'] ?? 'Anonymous',
+                        'source' => 'google',
+                        'reviewed_at' => isset($data['createTime'])
                             ? Carbon::parse($data['createTime'])
                             : now(),
-                        'google_review_name'     => $data['name'] ?? null,
-                        'google_reply'           => $data['reviewReply']['comment'] ?? null,
+                        'google_review_name' => $data['name'] ?? null,
+                        'google_reply' => $data['reviewReply']['comment'] ?? null,
                         'google_reply_posted_at' => isset($data['reviewReply']['updateTime'])
                             ? Carbon::parse($data['reviewReply']['updateTime'])
                             : null,
@@ -113,7 +113,7 @@ class SyncGoogleReviews implements ShouldQueue
 
         // Link the review to this customer and request
         $review->update([
-            'customer_id'       => $request->customer_id,
+            'customer_id' => $request->customer_id,
             'review_request_id' => $request->id,
         ]);
 

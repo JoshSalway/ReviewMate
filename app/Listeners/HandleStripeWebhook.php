@@ -18,7 +18,7 @@ class HandleStripeWebhook
         match ($type) {
             'customer.subscription.created' => $this->onSubscriptionCreated($event->payload),
             'customer.subscription.deleted' => $this->onSubscriptionDeleted($event->payload),
-            default                         => null,
+            default => null,
         };
     }
 
@@ -34,6 +34,7 @@ class HandleStripeWebhook
 
         if (! $user) {
             Log::warning("Stripe subscription.created: no user found for customer {$stripeCustomerId}");
+
             return;
         }
 
@@ -52,6 +53,7 @@ class HandleStripeWebhook
 
         if (! $user) {
             Log::warning("Stripe subscription.deleted: no user found for customer {$stripeCustomerId}");
+
             return;
         }
 

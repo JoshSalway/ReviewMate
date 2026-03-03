@@ -30,8 +30,8 @@ class GoogleBusinessController extends Controller
         $googleUser = Socialite::driver('google')->user();
 
         $business->update([
-            'google_access_token'     => $googleUser->token,
-            'google_refresh_token'    => $googleUser->refreshToken,
+            'google_access_token' => $googleUser->token,
+            'google_refresh_token' => $googleUser->refreshToken,
             'google_token_expires_at' => now()->addSeconds($googleUser->expiresIn - 60)->toDateTimeString(),
         ]);
 
@@ -52,11 +52,11 @@ class GoogleBusinessController extends Controller
 
         if ($business) {
             $business->update([
-                'google_access_token'     => null,
-                'google_refresh_token'    => null,
+                'google_access_token' => null,
+                'google_refresh_token' => null,
                 'google_token_expires_at' => null,
-                'google_account_id'       => null,
-                'google_location_id'      => null,
+                'google_account_id' => null,
+                'google_location_id' => null,
             ]);
         }
 

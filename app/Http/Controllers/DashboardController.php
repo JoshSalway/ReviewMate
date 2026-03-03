@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,9 +18,9 @@ class DashboardController extends Controller
         }
 
         $stats = [
-            'average_rating'  => $business->averageRating(),
-            'total_reviews'   => $business->reviews()->count(),
-            'requests_sent'   => $business->reviewRequests()->count(),
+            'average_rating' => $business->averageRating(),
+            'total_reviews' => $business->reviews()->count(),
+            'requests_sent' => $business->reviewRequests()->count(),
             'conversion_rate' => $business->conversionRate(),
             'pending_replies' => $business->reviews()
                 ->whereNotNull('google_review_name')

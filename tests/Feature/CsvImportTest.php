@@ -13,8 +13,9 @@ beforeEach(function () {
 
 function makeCsvFile(string $content): UploadedFile
 {
-    $path = tempnam(sys_get_temp_dir(), 'csv') . '.csv';
+    $path = tempnam(sys_get_temp_dir(), 'csv').'.csv';
     file_put_contents($path, $content);
+
     return new UploadedFile($path, 'customers.csv', 'text/csv', null, true);
 }
 

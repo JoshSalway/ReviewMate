@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Business;
 use App\Models\EmailTemplate;
 use App\Services\DefaultTemplateService;
 use Illuminate\Http\RedirectResponse;

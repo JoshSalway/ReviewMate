@@ -15,7 +15,7 @@ class NotificationSettingsController extends Controller
 
         return Inertia::render('settings/notifications', [
             'preferences' => [
-                'weekly_digest'    => $user->notificationPreference('weekly_digest'),
+                'weekly_digest' => $user->notificationPreference('weekly_digest'),
                 'new_review_alert' => $user->notificationPreference('new_review_alert'),
             ],
         ]);
@@ -24,7 +24,7 @@ class NotificationSettingsController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'weekly_digest'    => ['required', 'boolean'],
+            'weekly_digest' => ['required', 'boolean'],
             'new_review_alert' => ['required', 'boolean'],
         ]);
 

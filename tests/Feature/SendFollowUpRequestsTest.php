@@ -1,6 +1,5 @@
 <?php
 
-use App\Console\Commands\SendFollowUpRequests;
 use App\Mail\FollowUpMail;
 use App\Models\Business;
 use App\Models\Customer;
@@ -29,8 +28,7 @@ test('follow-up command sends mail to customers with old unanswered requests', f
 
     $this->artisan('reviewmate:send-followups')->assertSuccessful();
 
-    Mail::assertQueued(FollowUpMail::class, fn ($mail) =>
-        $mail->hasTo('customer@example.com')
+    Mail::assertQueued(FollowUpMail::class, fn ($mail) => $mail->hasTo('customer@example.com')
     );
 });
 

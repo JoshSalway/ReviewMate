@@ -23,16 +23,16 @@ class BillingController extends Controller
         }
 
         return Inertia::render('settings/billing', [
-            'plan'          => $plan,
-            'isAdmin'       => $user->isAdmin(),
-            'onFreePlan'    => $user->onFreePlan(),
-            'subscription'  => $subscription ? [
-                'status'        => $subscription->stripe_status,
-                'ends_at'       => $subscription->ends_at?->toDateString(),
+            'plan' => $plan,
+            'isAdmin' => $user->isAdmin(),
+            'onFreePlan' => $user->onFreePlan(),
+            'subscription' => $subscription ? [
+                'status' => $subscription->stripe_status,
+                'ends_at' => $subscription->ends_at?->toDateString(),
             ] : null,
             'prices' => [
                 'starter' => config('services.stripe.price_starter'),
-                'pro'     => config('services.stripe.price_pro'),
+                'pro' => config('services.stripe.price_pro'),
             ],
         ]);
     }
@@ -49,8 +49,8 @@ class BillingController extends Controller
 
         $checkoutUrl = $user->newSubscription('default', $request->input('price'))
             ->checkout([
-                'success_url' => route('settings.billing') . '?session_id={CHECKOUT_SESSION_ID}',
-                'cancel_url'  => route('settings.billing'),
+                'success_url' => route('settings.billing').'?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('settings.billing'),
             ])
             ->url;
 

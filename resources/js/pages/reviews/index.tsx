@@ -138,7 +138,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                 </div>
 
                 {/* Google not connected banner */}
-                {!isGoogleConnected && needsReply.length === 0 && (
+                {!isGoogleConnected && needsReply.total === 0 && (
                     <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
                         <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
                         <p className="text-sm text-amber-800">
@@ -182,11 +182,13 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                                 <div>
                                                     <div className="font-semibold text-gray-900">{review.reviewer_name}</div>
                                                     <div className="text-xs text-gray-500">
-                                                        {new Date(review.reviewed_at).toLocaleDateString('en-AU', {
-                                                            day: 'numeric',
-                                                            month: 'long',
-                                                            year: 'numeric',
-                                                        })}
+                                                        {review.reviewed_at
+                                                            ? new Date(review.reviewed_at).toLocaleDateString('en-AU', {
+                                                                day: 'numeric',
+                                                                month: 'long',
+                                                                year: 'numeric',
+                                                            })
+                                                            : 'Unknown date'}
                                                     </div>
                                                 </div>
                                                 {review.via_review_mate && (

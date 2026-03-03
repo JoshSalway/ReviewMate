@@ -88,9 +88,9 @@ class CustomerController extends Controller
     public function bulkSend(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'customer_ids'   => ['required', 'array', 'min:1'],
+            'customer_ids' => ['required', 'array', 'min:1'],
             'customer_ids.*' => ['required', 'integer'],
-            'channel'        => ['required', 'in:email,sms,both'],
+            'channel' => ['required', 'in:email,sms,both'],
         ]);
 
         $user = $request->user();
@@ -120,15 +120,16 @@ class CustomerController extends Controller
         foreach ($customers as $customer) {
             if ($customer->isUnsubscribed() || ReviewRequest::hasRecentRequest($business->id, $customer->id)) {
                 $skipped++;
+
                 continue;
             }
 
             $reviewRequest = ReviewRequest::create([
                 'business_id' => $business->id,
                 'customer_id' => $customer->id,
-                'status'      => 'sent',
-                'channel'     => $validated['channel'],
-                'sent_at'     => now(),
+                'status' => 'sent',
+                'channel' => $validated['channel'],
+                'sent_at' => now(),
             ]);
 
             if (in_array($validated['channel'], ['email', 'both']) && $customer->email) {
@@ -160,7 +161,7 @@ class CustomerController extends Controller
             ->latest()
             ->get();
 
-        $filename = 'customers-' . now()->format('Y-m-d') . '.csv';
+        $filename = 'customers-'.now()->format('Y-m-d').'.csv';
 
         return response()->streamDownload(function () use ($customers) {
             $handle = fopen('php://output', 'w');
@@ -199,6 +200,7 @@ class CustomerController extends Controller
         while (($row = fgetcsv($handle)) !== false) {
             if ($header === null) {
                 $header = array_map('strtolower', array_map('trim', $row));
+
                 continue;
             }
 
@@ -210,6 +212,7 @@ class CustomerController extends Controller
 
             if (empty($name)) {
                 $skipped++;
+
                 continue;
             }
 

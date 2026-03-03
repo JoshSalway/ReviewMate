@@ -23,14 +23,14 @@ class WeeklyDigestMail extends Mailable
         $weekAgo = now()->subWeek();
 
         $this->stats = [
-            'new_reviews'     => $business->reviews()->where('reviewed_at', '>=', $weekAgo)->count(),
-            'total_reviews'   => $business->reviews()->count(),
-            'average_rating'  => round($business->reviews()->avg('rating') ?? 0, 1),
+            'new_reviews' => $business->reviews()->where('reviewed_at', '>=', $weekAgo)->count(),
+            'total_reviews' => $business->reviews()->count(),
+            'average_rating' => round($business->reviews()->avg('rating') ?? 0, 1),
             'pending_replies' => $business->reviews()
                 ->whereNotNull('google_review_name')
                 ->whereNull('google_reply')
                 ->count(),
-            'requests_sent'   => $business->reviewRequests()
+            'requests_sent' => $business->reviewRequests()
                 ->where('created_at', '>=', $weekAgo)
                 ->count(),
         ];

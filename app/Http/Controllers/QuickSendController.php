@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ReviewRequestMail;
-use App\Models\Customer;
 use App\Models\ReviewRequest;
 use App\Services\TwilioSmsService;
 use Illuminate\Http\RedirectResponse;

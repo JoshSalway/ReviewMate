@@ -24,7 +24,8 @@ class NewReviewAlertMail extends Mailable
     public function envelope(): Envelope
     {
         $rating = $this->review->rating;
-        $stars = str_repeat('★', $rating) . str_repeat('☆', 5 - $rating);
+        $stars = str_repeat('★', $rating).str_repeat('☆', 5 - $rating);
+
         return new Envelope(
             subject: "New {$rating}-star review on {$this->business->name} {$stars}",
         );

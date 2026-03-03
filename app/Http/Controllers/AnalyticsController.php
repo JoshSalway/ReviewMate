@@ -26,14 +26,14 @@ class AnalyticsController extends Controller
             : collect([$business->load('reviews', 'reviewRequests')]);
 
         $rows = $businesses->map(function ($biz) {
-            $totalReviews     = $biz->reviews()->count();
-            $avgRating        = round($biz->reviews()->avg('rating') ?? 0, 1);
-            $requestsSent     = $biz->reviewRequests()->count();
-            $reviewedCount    = $biz->reviewRequests()->where('status', 'reviewed')->count();
-            $conversionRate   = $requestsSent > 0
+            $totalReviews = $biz->reviews()->count();
+            $avgRating = round($biz->reviews()->avg('rating') ?? 0, 1);
+            $requestsSent = $biz->reviewRequests()->count();
+            $reviewedCount = $biz->reviewRequests()->where('status', 'reviewed')->count();
+            $conversionRate = $requestsSent > 0
                 ? round(($reviewedCount / $requestsSent) * 100, 1)
                 : 0;
-            $pendingReplies   = $biz->reviews()
+            $pendingReplies = $biz->reviews()
                 ->whereNotNull('google_review_name')
                 ->whereNull('google_reply')
                 ->count();
@@ -43,30 +43,30 @@ class AnalyticsController extends Controller
                 ->count();
 
             return [
-                'id'               => $biz->id,
-                'name'             => $biz->name,
-                'type'             => $biz->type,
-                'total_reviews'    => $totalReviews,
-                'avg_rating'       => $avgRating,
-                'requests_sent'    => $requestsSent,
-                'conversion_rate'  => $conversionRate,
-                'pending_replies'  => $pendingReplies,
+                'id' => $biz->id,
+                'name' => $biz->name,
+                'type' => $biz->type,
+                'total_reviews' => $totalReviews,
+                'avg_rating' => $avgRating,
+                'requests_sent' => $requestsSent,
+                'conversion_rate' => $conversionRate,
+                'pending_replies' => $pendingReplies,
                 'reviews_this_month' => $thisMonthReviews,
             ];
         });
 
         $totals = [
-            'total_reviews'   => $rows->sum('total_reviews'),
-            'avg_rating'      => $rows->avg('avg_rating') ? round($rows->avg('avg_rating'), 1) : 0,
-            'requests_sent'   => $rows->sum('requests_sent'),
+            'total_reviews' => $rows->sum('total_reviews'),
+            'avg_rating' => $rows->avg('avg_rating') ? round($rows->avg('avg_rating'), 1) : 0,
+            'requests_sent' => $rows->sum('requests_sent'),
             'conversion_rate' => $rows->avg('conversion_rate') ? round($rows->avg('conversion_rate'), 1) : 0,
             'pending_replies' => $rows->sum('pending_replies'),
             'reviews_this_month' => $rows->sum('reviews_this_month'),
         ];
 
         return Inertia::render('analytics', [
-            'businesses'  => $rows,
-            'totals'      => $totals,
+            'businesses' => $rows,
+            'totals' => $totals,
             'can_see_all' => $canSeeAll,
         ]);
     }

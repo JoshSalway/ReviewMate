@@ -49,13 +49,13 @@ return [
 
     'stripe' => [
         'price_starter' => env('STRIPE_PRICE_STARTER'),
-        'price_pro'     => env('STRIPE_PRICE_PRO'),
+        'price_pro' => env('STRIPE_PRICE_PRO'),
     ],
 
     'twilio' => [
-        'sid'   => env('TWILIO_ACCOUNT_SID'),
+        'sid' => env('TWILIO_ACCOUNT_SID'),
         'token' => env('TWILIO_AUTH_TOKEN'),
-        'from'  => env('TWILIO_FROM_NUMBER'),
+        'from' => env('TWILIO_FROM_NUMBER'),
     ],
 
 ];

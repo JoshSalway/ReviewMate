@@ -21,7 +21,7 @@ class DefaultTemplateService
                 [
                     'type' => 'sms',
                     'subject' => null,
-                    'body' => "Hi {customer_name}, thanks for choosing {business_name}! Got a minute to leave a review? It really helps: {review_link}",
+                    'body' => 'Hi {customer_name}, thanks for choosing {business_name}! Got a minute to leave a review? It really helps: {review_link}',
                 ],
             ],
             'cafe' => [
@@ -38,7 +38,7 @@ class DefaultTemplateService
                 [
                     'type' => 'sms',
                     'subject' => null,
-                    'body' => "Hi {customer_name}! Thanks for visiting {business_name}. Would you leave us a quick review? {review_link} ☕",
+                    'body' => 'Hi {customer_name}! Thanks for visiting {business_name}. Would you leave us a quick review? {review_link} ☕',
                 ],
             ],
             'salon' => [
@@ -74,7 +74,7 @@ class DefaultTemplateService
             [
                 'type' => 'sms',
                 'subject' => null,
-                'body' => "Hi {customer_name}, thanks for choosing {business_name}! Could you spare 60 seconds to leave a review? {review_link}",
+                'body' => 'Hi {customer_name}, thanks for choosing {business_name}! Could you spare 60 seconds to leave a review? {review_link}',
             ],
         ];
 

@@ -21,8 +21,8 @@ class WaitlistController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name'          => ['required', 'string', 'max:100'],
-            'email'         => ['required', 'email', Rule::unique('waitlist_entries', 'email')],
+            'name' => ['required', 'string', 'max:100'],
+            'email' => ['required', 'email', Rule::unique('waitlist_entries', 'email')],
             'business_type' => ['nullable', 'string', 'max:100'],
         ]);
 

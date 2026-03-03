@@ -25,8 +25,7 @@ test('review request mail is queued when email channel is selected', function ()
         'channel' => 'email',
     ]);
 
-    Mail::assertQueued(ReviewRequestMail::class, fn ($mail) =>
-        $mail->hasTo('customer@example.com')
+    Mail::assertQueued(ReviewRequestMail::class, fn ($mail) => $mail->hasTo('customer@example.com')
     );
 });
 

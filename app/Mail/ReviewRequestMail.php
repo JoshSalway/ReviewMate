@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Models\Business;
 use App\Models\Customer;
-use App\Models\EmailTemplate;
 use App\Models\ReviewRequest;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,7 +26,7 @@ class ReviewRequestMail extends Mailable implements ShouldQueue
         public ?ReviewRequest $reviewRequest = null,
     ) {
         $trackingUrl = $reviewRequest?->tracking_token
-            ? url('/r/' . $reviewRequest->tracking_token)
+            ? url('/r/'.$reviewRequest->tracking_token)
             : $business->googleReviewUrl();
 
         $template = $business->emailTemplates()->where('type', 'request')->first();
@@ -56,7 +55,7 @@ class ReviewRequestMail extends Mailable implements ShouldQueue
 
         $this->reviewLink = $variables['review_link'];
         $this->unsubscribeUrl = $customer->unsubscribe_token
-            ? url('/unsubscribe/' . $customer->unsubscribe_token)
+            ? url('/unsubscribe/'.$customer->unsubscribe_token)
             : null;
     }
 

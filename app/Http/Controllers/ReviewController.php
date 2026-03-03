@@ -44,9 +44,9 @@ class ReviewController extends Controller
             ->through(fn ($review) => $this->formatReview($review));
 
         return Inertia::render('reviews/index', [
-            'needsReply'        => $needsReply,
-            'replied'           => $replied,
-            'allReviews'        => $allReviews,
+            'needsReply' => $needsReply,
+            'replied' => $replied,
+            'allReviews' => $allReviews,
             'isGoogleConnected' => $business->isGoogleConnected(),
         ]);
     }
@@ -88,7 +88,7 @@ class ReviewController extends Controller
         );
 
         $review->update([
-            'google_reply'           => $request->input('reply'),
+            'google_reply' => $request->input('reply'),
             'google_reply_posted_at' => now(),
         ]);
 
@@ -119,15 +119,15 @@ class ReviewController extends Controller
     private function formatReview(Review $review): array
     {
         return [
-            'id'                     => $review->id,
-            'rating'                 => $review->rating,
-            'body'                   => $review->body,
-            'reviewer_name'          => $review->reviewer_name ?? $review->customer?->name ?? 'Anonymous',
-            'reviewed_at'            => $review->reviewed_at?->toISOString(),
-            'via_review_mate'        => $review->wasViaReviewMate(),
-            'google_reply'           => $review->google_reply,
+            'id' => $review->id,
+            'rating' => $review->rating,
+            'body' => $review->body,
+            'reviewer_name' => $review->reviewer_name ?? $review->customer?->name ?? 'Anonymous',
+            'reviewed_at' => $review->reviewed_at?->toISOString(),
+            'via_review_mate' => $review->wasViaReviewMate(),
+            'google_reply' => $review->google_reply,
             'google_reply_posted_at' => $review->google_reply_posted_at?->toISOString(),
-            'has_google_link'        => $review->google_review_name !== null,
+            'has_google_link' => $review->google_review_name !== null,
         ];
     }
 }

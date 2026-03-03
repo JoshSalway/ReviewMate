@@ -28,7 +28,7 @@ export default function NotificationSettings({ preferences }: Props) {
 
     const handleSave = () => {
         setSaving(true);
-        router.put(notificationsUpdate().url, form, {
+        router.put(notificationsUpdate().url, form as unknown as Record<string, boolean>, {
             preserveScroll: true,
             onFinish: () => setSaving(false),
         });

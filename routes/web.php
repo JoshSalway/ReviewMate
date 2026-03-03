@@ -1,22 +1,22 @@
 <?php
 
 use App\Http\Controllers\AnalyticsController;
-use App\Http\Controllers\BusinessController;
-use App\Http\Controllers\WaitlistController;
-use App\Http\Controllers\ReplyTemplateController;
-use App\Http\Controllers\BusinessSettingsController;
 use App\Http\Controllers\BillingController;
-use App\Http\Controllers\NotificationSettingsController;
+use App\Http\Controllers\BusinessController;
+use App\Http\Controllers\BusinessSettingsController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailFlowController;
 use App\Http\Controllers\GoogleBusinessController;
-use App\Http\Controllers\QrCodeController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationSettingsController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\QuickSendController;
+use App\Http\Controllers\ReplyTemplateController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReviewRequestController;
 use App\Http\Controllers\TemplateController;
+use App\Http\Controllers\WaitlistController;
 use Illuminate\Support\Facades\Route;
 use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
