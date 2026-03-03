@@ -18,6 +18,10 @@ use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
 Route::inertia('/', 'welcome')->name('home');
 
+// Stripe webhook (must be outside auth middleware, CSRF excluded by Cashier)
+Route::post('stripe/webhook', '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook')
+    ->name('cashier.webhook');
+
 Route::middleware([
     'auth',
     ValidateSessionWithWorkOS::class,
