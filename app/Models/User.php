@@ -25,6 +25,7 @@ class User extends Authenticatable
         'workos_id',
         'avatar',
         'is_admin',
+        'notification_preferences',
     ];
 
     /**
@@ -45,9 +46,15 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'email_verified_at'        => 'datetime',
+            'password'                 => 'hashed',
+            'notification_preferences' => 'array',
         ];
+    }
+
+    public function notificationPreference(string $key, bool $default = true): bool
+    {
+        return (bool) ($this->notification_preferences[$key] ?? $default);
     }
 
     public function isAdmin(): bool

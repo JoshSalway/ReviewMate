@@ -3,6 +3,7 @@
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusinessSettingsController;
 use App\Http\Controllers\BillingController;
+use App\Http\Controllers\NotificationSettingsController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmailFlowController;
 use App\Http\Controllers\GoogleBusinessController;
@@ -43,6 +44,7 @@ Route::middleware([
     Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
     Route::post('customers', [CustomerController::class, 'store'])->name('customers.store');
     Route::post('customers/import', [CustomerController::class, 'importCsv'])->name('customers.import');
+    Route::post('customers/bulk-send', [CustomerController::class, 'bulkSend'])->name('customers.bulk-send');
     Route::put('customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
     Route::delete('customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
 
@@ -77,6 +79,10 @@ Route::middleware([
     // Business Settings
     Route::get('settings/business', [BusinessSettingsController::class, 'index'])->name('settings.business');
     Route::put('settings/business', [BusinessSettingsController::class, 'update'])->name('settings.business.update');
+
+    // Notification Settings
+    Route::get('settings/notifications', [NotificationSettingsController::class, 'index'])->name('settings.notifications');
+    Route::put('settings/notifications', [NotificationSettingsController::class, 'update'])->name('settings.notifications.update');
 
     // Billing
     Route::get('settings/billing', [BillingController::class, 'index'])->name('settings.billing');

@@ -64,6 +64,8 @@ class ReviewController extends Controller
                 'reviewed_at' => $review->reviewed_at?->diffForHumans(),
                 'via_review_mate' => $review->wasViaReviewMate(),
                 'stars' => $review->stars(),
+                'has_google_link' => $review->google_review_name !== null,
+                'google_reply' => $review->google_reply,
             ],
         ]);
     }

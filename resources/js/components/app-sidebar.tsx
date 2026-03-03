@@ -1,4 +1,4 @@
-import { LayoutGrid, Send, Users, FileText, Zap, Settings, QrCode, GitBranch, Star, CreditCard } from 'lucide-react';
+import { LayoutGrid, Send, Users, FileText, Zap, Settings, QrCode, GitBranch, Star, CreditCard, Bell } from 'lucide-react';
 import { BusinessSwitcher } from '@/components/business-switcher';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -70,6 +70,11 @@ const footerNavItems: NavItem[] = [
         title: 'Billing',
         href: settingsRoutes.billing(),
         icon: CreditCard,
+    },
+    {
+        title: 'Notifications',
+        href: settingsRoutes.notifications(),
+        icon: Bell,
     },
 ];
 

@@ -1,7 +1,7 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
-import { replySuggestions as replySuggestionsRoute } from '@/routes/reviews';
+import { replySuggestions as replySuggestionsRoute, reply as replyRoute } from '@/routes/reviews';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,8 @@ interface Review {
     reviewed_at: string;
     via_review_mate: boolean;
     stars: number;
+    has_google_link: boolean;
+    google_reply: string | null;
 }
 
 interface Props {
@@ -54,6 +56,8 @@ export default function ReviewShow({ review }: Props) {
     const [customReply, setCustomReply] = useState('');
     const [loadingSuggestions, setLoadingSuggestions] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [postingReply, setPostingReply] = useState(false);
+    const [replyPosted, setReplyPosted] = useState(!!review.google_reply);
 
     const handleGetSuggestions = () => {
         setLoadingSuggestions(true);
@@ -84,6 +88,20 @@ export default function ReviewShow({ review }: Props) {
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         }
+    };
+
+    const handlePostReply = () => {
+        if (!customReply) return;
+        setPostingReply(true);
+        router.post(
+            replyRoute(review.id).url,
+            { reply: customReply },
+            {
+                preserveScroll: true,
+                onSuccess: () => setReplyPosted(true),
+                onFinish: () => setPostingReply(false),
+            },
+        );
     };
 
     const ratingLabels: Record<number, string> = {
@@ -224,18 +242,40 @@ export default function ReviewShow({ review }: Props) {
                             </div>
 
                             {customReply && (
-                                <Button
-                                    variant="outline"
-                                    className="w-full border-teal-200 text-teal-700 hover:bg-teal-50"
-                                    onClick={handleCopyReply}
-                                >
-                                    {copied ? 'Copied!' : 'Copy Reply'}
-                                </Button>
+                                <div className="flex gap-2">
+                                    <Button
+                                        variant="outline"
+                                        className="flex-1 border-teal-200 text-teal-700 hover:bg-teal-50"
+                                        onClick={handleCopyReply}
+                                    >
+                                        {copied ? 'Copied!' : 'Copy Reply'}
+                                    </Button>
+                                    {review.has_google_link && !replyPosted && (
+                                        <Button
+                                            className="flex-1 bg-teal-600 hover:bg-teal-700 text-white"
+                                            onClick={handlePostReply}
+                                            disabled={postingReply}
+                                        >
+                                            {postingReply ? 'Posting...' : 'Post to Google'}
+                                        </Button>
+                                    )}
+                                </div>
                             )}
 
-                            <p className="text-xs text-gray-400">
-                                Tip: Reply to reviews on your Google Business Profile page to improve your ranking.
-                            </p>
+                            {replyPosted && (
+                                <div className="flex items-center gap-2 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
+                                    <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Reply posted to Google successfully.
+                                </div>
+                            )}
+
+                            {!review.has_google_link && (
+                                <p className="text-xs text-gray-400">
+                                    Tip: Connect Google Business Profile in Settings to post replies directly from ReviewMate.
+                                </p>
+                            )}
                         </CardContent>
                     </Card>
                 </div>

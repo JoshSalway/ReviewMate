@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Mail\NewReviewAlertMail;
 use App\Models\Business;
 use App\Models\Review;
 use App\Services\GoogleBusinessProfileService;
@@ -11,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 class SyncGoogleReviews implements ShouldQueue
 {
@@ -47,24 +49,36 @@ class SyncGoogleReviews implements ShouldQueue
                 continue;
             }
 
-            Review::updateOrCreate(
-                ['google_review_id' => $reviewId],
-                [
-                    'business_id'         => $this->business->id,
-                    'rating'              => $rating,
-                    'body'                => $data['comment'] ?? null,
-                    'reviewer_name'       => $data['reviewer']['displayName'] ?? 'Anonymous',
-                    'source'              => 'google',
-                    'reviewed_at'         => isset($data['createTime'])
-                        ? Carbon::parse($data['createTime'])
-                        : now(),
-                    'google_review_name'  => $data['name'] ?? null,
-                    'google_reply'        => $data['reviewReply']['comment'] ?? null,
-                    'google_reply_posted_at' => isset($data['reviewReply']['updateTime'])
-                        ? Carbon::parse($data['reviewReply']['updateTime'])
-                        : null,
-                ]
-            );
+            [$review, $created] = [
+                Review::updateOrCreate(
+                    ['google_review_id' => $reviewId],
+                    [
+                        'business_id'            => $this->business->id,
+                        'rating'                 => $rating,
+                        'body'                   => $data['comment'] ?? null,
+                        'reviewer_name'          => $data['reviewer']['displayName'] ?? 'Anonymous',
+                        'source'                 => 'google',
+                        'reviewed_at'            => isset($data['createTime'])
+                            ? Carbon::parse($data['createTime'])
+                            : now(),
+                        'google_review_name'     => $data['name'] ?? null,
+                        'google_reply'           => $data['reviewReply']['comment'] ?? null,
+                        'google_reply_posted_at' => isset($data['reviewReply']['updateTime'])
+                            ? Carbon::parse($data['reviewReply']['updateTime'])
+                            : null,
+                    ]
+                ),
+                false,
+            ];
+
+            // wasRecentlyCreated is set by updateOrCreate
+            if ($review->wasRecentlyCreated) {
+                $user = $this->business->user;
+                if ($user && $user->notificationPreference('new_review_alert')) {
+                    Mail::to($user->email, $user->name)
+                        ->queue(new NewReviewAlertMail($user, $this->business, $review));
+                }
+            }
         }
     }
 }
