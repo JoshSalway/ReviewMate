@@ -50,6 +50,7 @@ Route::middleware([
 
     // Customers
     Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
+    Route::get('customers/export', [CustomerController::class, 'export'])->name('customers.export');
     Route::post('customers', [CustomerController::class, 'store'])->name('customers.store');
     Route::post('customers/import', [CustomerController::class, 'importCsv'])->name('customers.import');
     Route::post('customers/bulk-send', [CustomerController::class, 'bulkSend'])->name('customers.bulk-send');

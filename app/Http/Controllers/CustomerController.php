@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class CustomerController extends Controller
 {
@@ -143,6 +144,37 @@ class CustomerController extends Controller
         }
 
         return back()->with('success', $message);
+    }
+
+    public function export(Request $request): StreamedResponse
+    {
+        $business = $request->user()->currentBusiness();
+
+        $customers = $business->customers()
+            ->with(['latestReviewRequest', 'reviewRequests' => fn ($q) => $q->where('status', 'reviewed')])
+            ->latest()
+            ->get();
+
+        $filename = 'customers-' . now()->format('Y-m-d') . '.csv';
+
+        return response()->streamDownload(function () use ($customers) {
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, ['Name', 'Email', 'Phone', 'Added', 'Last Request Sent', 'Reviews Left']);
+
+            foreach ($customers as $customer) {
+                fputcsv($handle, [
+                    $customer->name,
+                    $customer->email ?? '',
+                    $customer->phone ?? '',
+                    $customer->created_at->format('Y-m-d'),
+                    $customer->latestReviewRequest?->sent_at?->format('Y-m-d') ?? '',
+                    $customer->reviewRequests->count(),
+                ]);
+            }
+
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv']);
     }
 
     public function importCsv(Request $request): RedirectResponse

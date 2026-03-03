@@ -1,7 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
-import { index as customersIndex, store as customersStore, destroy as customersDestroy, bulkSend as customersBulkSend } from '@/routes/customers';
+import { index as customersIndex, store as customersStore, destroy as customersDestroy, bulkSend as customersBulkSend, exportMethod as customersExport } from '@/routes/customers';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -143,12 +143,19 @@ export default function CustomersIndex({ customers }: Props) {
                         <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
                         <p className="mt-1 text-sm text-gray-500">Manage your customer list and review requests</p>
                     </div>
-                    <Button
-                        className="bg-teal-600 hover:bg-teal-700 text-white"
-                        onClick={() => setShowDialog(true)}
-                    >
-                        + Add Customer
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <a href={customersExport().url} download>
+                            <Button variant="outline">
+                                Export CSV
+                            </Button>
+                        </a>
+                        <Button
+                            className="bg-teal-600 hover:bg-teal-700 text-white"
+                            onClick={() => setShowDialog(true)}
+                        >
+                            + Add Customer
+                        </Button>
+                    </div>
                 </div>
 
                 {/* Bulk action bar */}
