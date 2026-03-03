@@ -1,4 +1,4 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
 import { replySuggestions as replySuggestionsRoute, reply as replyRoute } from '@/routes/reviews';
@@ -7,6 +7,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import type { BreadcrumbItem } from '@/types';
 
 interface Review {
@@ -21,8 +27,15 @@ interface Review {
     google_reply: string | null;
 }
 
+interface ReplyTemplate {
+    id: number;
+    name: string;
+    body: string;
+}
+
 interface Props {
     review: Review;
+    replyTemplates: ReplyTemplate[];
 }
 
 function StarRating({ rating, size = 'md' }: { rating: number; size?: 'sm' | 'md' | 'lg' }) {
@@ -50,7 +63,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function ReviewShow({ review }: Props) {
+export default function ReviewShow({ review, replyTemplates }: Props) {
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [selectedSuggestion, setSelectedSuggestion] = useState<number | null>(null);
     const [customReply, setCustomReply] = useState('');
@@ -231,7 +244,28 @@ export default function ReviewShow({ review }: Props) {
 
                             {/* Custom Reply Textarea */}
                             <div className="space-y-2">
-                                <Label htmlFor="custom-reply">Your Reply</Label>
+                                <div className="flex items-center justify-between">
+                                    <Label htmlFor="custom-reply">Your Reply</Label>
+                                    {replyTemplates.length > 0 && (
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="sm" className="text-teal-600 hover:text-teal-700 h-7 text-xs">
+                                                    Use template ▾
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end" className="max-w-xs">
+                                                {replyTemplates.map((t) => (
+                                                    <DropdownMenuItem
+                                                        key={t.id}
+                                                        onClick={() => setCustomReply(t.body)}
+                                                    >
+                                                        {t.name}
+                                                    </DropdownMenuItem>
+                                                ))}
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    )}
+                                </div>
                                 <Textarea
                                     id="custom-reply"
                                     placeholder="Write or edit your reply here..."

@@ -62,6 +62,11 @@ class Business extends Model
         return $this->hasMany(EmailTemplate::class);
     }
 
+    public function replyTemplates(): HasMany
+    {
+        return $this->hasMany(ReplyTemplate::class);
+    }
+
     public function googleReviewUrl(): string
     {
         if ($this->google_place_id) {

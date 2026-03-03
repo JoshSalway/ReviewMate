@@ -55,6 +55,8 @@ class ReviewController extends Controller
         $business = $request->user()->currentBusiness();
         abort_unless($review->business_id === $business?->id, 403);
 
+        $templates = $business->replyTemplates()->latest()->get(['id', 'name', 'body']);
+
         return Inertia::render('reviews/show', [
             'review' => [
                 'id' => $review->id,
@@ -67,6 +69,7 @@ class ReviewController extends Controller
                 'has_google_link' => $review->google_review_name !== null,
                 'google_reply' => $review->google_reply,
             ],
+            'replyTemplates' => $templates,
         ]);
     }
 

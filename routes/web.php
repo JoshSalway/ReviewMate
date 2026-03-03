@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\BusinessController;
+use App\Http\Controllers\ReplyTemplateController;
 use App\Http\Controllers\BusinessSettingsController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\NotificationSettingsController;
@@ -83,6 +84,12 @@ Route::middleware([
     // Business Settings
     Route::get('settings/business', [BusinessSettingsController::class, 'index'])->name('settings.business');
     Route::put('settings/business', [BusinessSettingsController::class, 'update'])->name('settings.business.update');
+
+    // Reply Templates
+    Route::get('settings/reply-templates', [ReplyTemplateController::class, 'index'])->name('settings.reply-templates');
+    Route::post('settings/reply-templates', [ReplyTemplateController::class, 'store'])->name('settings.reply-templates.store');
+    Route::put('settings/reply-templates/{replyTemplate}', [ReplyTemplateController::class, 'update'])->name('settings.reply-templates.update');
+    Route::delete('settings/reply-templates/{replyTemplate}', [ReplyTemplateController::class, 'destroy'])->name('settings.reply-templates.destroy');
 
     // Notification Settings
     Route::get('settings/notifications', [NotificationSettingsController::class, 'index'])->name('settings.notifications');
