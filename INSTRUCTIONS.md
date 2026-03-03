@@ -3,9 +3,9 @@
 > Last updated: 2026-03-03
 > Completion: ~95%
 
-## ⚠️ NEARLY DONE — ONE FEATURE THEN DEPLOY
+## ✅ CODE COMPLETE — READY TO DEPLOY
 
-One small feature remaining. After that: no more code. The goal is production deploy and first paying customer.
+All features are built and tested (99 tests passing). The only remaining task is production deployment. See DEPLOYMENT.md for the full checklist.
 
 ---
 
@@ -17,27 +17,15 @@ Stack: Laravel 12, React 19, Inertia.js v2, Tailwind CSS v4, WorkOS auth, SQLite
 
 Read AGENTS.md for full conventions.
 
-One feature remaining, then production hardening:
+The app is code-complete. Your only task is production deployment:
 
-1. GOOGLE PLACE ID INPUT — let businesses enter their Google Place ID manually in settings
-   - The `google_place_id` column already exists on the `businesses` table
-   - Add a labelled text input to `resources/js/pages/settings/business.tsx`
-   - Update `BusinessSettingsController` to accept and save `google_place_id`
-   - Show a helper link: "Find your Place ID → developers.google.com/maps/documentation/places/web-service/place-id"
-   - This lets businesses link their Google listing without full OAuth if they prefer
-
-2. PRODUCTION AUDIT — security and correctness check
-   - Confirm all routes inside auth middleware scope to `$request->user()->currentBusiness()`
-   - No business can access another business's customers, reviews, or requests
-   - Check all FormRequests for authorization
-   - Run: ./vendor/bin/pest --parallel — fix any failing tests
-
-3. DEPLOY PREP
-   - Review DEPLOYMENT.md — confirm deploy script is correct
-   - Verify `.env.example` documents every variable the app uses
-   - Confirm queue workers are needed (follow-up jobs, weekly digest, Google sync) and documented
-
-Do not add new features. Write a Pest test for the Google Place ID update action.
+1. Follow the checklist in DEPLOYMENT.md
+2. Run: php artisan test — confirm 99 tests pass
+3. Deploy to Laravel Cloud or Forge
+4. Make yourself an admin user (see DEPLOYMENT.md)
+5. Create Stripe products and register webhook
+6. Update Google OAuth redirect URI to production URL
+7. Ship it
 ```
 
 ---
@@ -68,8 +56,11 @@ Do not add new features. Write a Pest test for the Google Place ID update action
 | Stripe billing + webhooks | ✅ Done |
 | Waitlist landing page | ✅ Done |
 | Reviews index pagination | ✅ Done |
-| Google Place ID input in settings | ❌ Not built |
-| **Deployed to production** | ❌ **Not yet — this is the #1 priority after Place ID** |
+| Google Place ID input in settings | ✅ Done |
+| Email unsubscribe (CAN-SPAM compliance) | ✅ Done |
+| 30-day resend guard | ✅ Done |
+| Security audit (all routes scoped) | ✅ Done |
+| **Deployed to production** | ❌ **This is the #1 priority — see DEPLOYMENT.md** |
 
 ---
 
