@@ -22,6 +22,8 @@ class FollowUpMail extends Mailable implements ShouldQueue
 
     public string $reviewLink;
 
+    public ?string $unsubscribeUrl;
+
     public function __construct(
         public Business $business,
         public Customer $customer,
@@ -48,6 +50,9 @@ class FollowUpMail extends Mailable implements ShouldQueue
         );
 
         $this->reviewLink = $variables['review_link'];
+        $this->unsubscribeUrl = $customer->unsubscribe_token
+            ? url('/unsubscribe/' . $customer->unsubscribe_token)
+            : null;
 
         $this->renderedBody = $template
             ? $template->renderBody($variables)
@@ -70,6 +75,7 @@ class FollowUpMail extends Mailable implements ShouldQueue
                 'businessName' => $this->business->name,
                 'ownerName' => $this->business->owner_name ?? $this->business->user->name,
                 'reviewLink' => $this->reviewLink,
+                'unsubscribeUrl' => $this->unsubscribeUrl ?? url('/'),
                 'body' => $this->renderedBody,
             ],
         );

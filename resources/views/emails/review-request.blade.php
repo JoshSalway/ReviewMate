@@ -8,4 +8,8 @@
 Thanks,<br>
 {{ $ownerName }}<br>
 {{ $businessName }}
+
+---
+
+<small>Don't want to receive emails from {{ $businessName }}? [Unsubscribe]({{ $unsubscribeUrl }})</small>
 </x-mail::message>

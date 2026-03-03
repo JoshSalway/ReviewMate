@@ -55,9 +55,14 @@ class ReviewRequestMail extends Mailable implements ShouldQueue
         );
 
         $this->reviewLink = $variables['review_link'];
+        $this->unsubscribeUrl = $customer->unsubscribe_token
+            ? url('/unsubscribe/' . $customer->unsubscribe_token)
+            : null;
     }
 
     public string $reviewLink;
+
+    public ?string $unsubscribeUrl;
 
     public function envelope(): Envelope
     {
@@ -75,6 +80,7 @@ class ReviewRequestMail extends Mailable implements ShouldQueue
                 'businessName' => $this->business->name,
                 'ownerName' => $this->business->owner_name ?? $this->business->user->name,
                 'reviewLink' => $this->reviewLink,
+                'unsubscribeUrl' => $this->unsubscribeUrl ?? url('/'),
                 'body' => $this->renderedBody,
             ],
         );

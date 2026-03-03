@@ -23,6 +23,7 @@ use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 Route::get('/', [WaitlistController::class, 'index'])->name('home');
 Route::post('/waitlist', [WaitlistController::class, 'store'])->name('waitlist.store');
 Route::get('/r/{token}', [ReviewRequestController::class, 'track'])->name('review-requests.track');
+Route::get('/unsubscribe/{token}', [CustomerController::class, 'unsubscribe'])->name('customers.unsubscribe');
 
 // Stripe webhook (must be outside auth middleware, CSRF excluded by Cashier)
 Route::post('stripe/webhook', '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook')

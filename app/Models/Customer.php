@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Str;
 
 class Customer extends Model
 {
@@ -18,7 +19,25 @@ class Customer extends Model
         'email',
         'phone',
         'notes',
+        'unsubscribed_at',
+        'unsubscribe_token',
     ];
+
+    protected $casts = [
+        'unsubscribed_at' => 'datetime',
+    ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Customer $model) {
+            $model->unsubscribe_token ??= (string) Str::uuid();
+        });
+    }
+
+    public function isUnsubscribed(): bool
+    {
+        return $this->unsubscribed_at !== null;
+    }
 
     public function business(): BelongsTo
     {

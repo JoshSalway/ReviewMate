@@ -38,6 +38,10 @@ class SendFollowUpRequests implements ShouldQueue
                 continue;
             }
 
+            if ($customer->isUnsubscribed()) {
+                continue;
+            }
+
             if (in_array($request->channel, ['email', 'both']) && $customer->email) {
                 Mail::to($customer->email, $customer->name)
                     ->queue(new FollowUpMail($business, $customer, $request));

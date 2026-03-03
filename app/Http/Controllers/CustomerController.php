@@ -118,7 +118,7 @@ class CustomerController extends Controller
         $sent = 0;
         $skipped = 0;
         foreach ($customers as $customer) {
-            if (ReviewRequest::hasRecentRequest($business->id, $customer->id)) {
+            if ($customer->isUnsubscribed() || ReviewRequest::hasRecentRequest($business->id, $customer->id)) {
                 $skipped++;
                 continue;
             }
@@ -224,6 +224,17 @@ class CustomerController extends Controller
         fclose($handle);
 
         return back()->with('success', "Imported {$imported} customer(s). Skipped {$skipped} row(s).");
+    }
+
+    public function unsubscribe(string $token): Response|RedirectResponse
+    {
+        $customer = Customer::where('unsubscribe_token', $token)->firstOrFail();
+
+        if (! $customer->isUnsubscribed()) {
+            $customer->update(['unsubscribed_at' => now()]);
+        }
+
+        return Inertia::render('unsubscribed');
     }
 
     private function authorizeCustomer(Request $request, Customer $customer): void
