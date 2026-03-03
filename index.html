@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ReviewMate — Get More Google Reviews on Autopilot</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,800;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#fff;}
+h1,h2,h3,h4{font-family:'Fraunces',serif;}
+a{text-decoration:none;color:inherit;}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 56px;border-bottom:1px solid var(--gray-100);position:sticky;top:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);z-index:100;}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:var(--black);}
+.logo em{color:var(--teal);font-style:normal;}
+.nav-r{display:flex;align-items:center;gap:10px;}
+.btn-ghost{padding:10px 20px;border:1.5px solid var(--gray-300);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;color:var(--gray-900);background:white;transition:all .2s;}
+.btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+.btn-p{padding:10px 20px;background:var(--teal);color:white;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-p:hover{background:#0f766e;transform:translateY(-1px);}
+
+/* HERO */
+.hero{max-width:1160px;margin:0 auto;padding:80px 56px 64px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;}
+.hero-pill{display:inline-flex;align-items:center;gap:8px;background:var(--teal-light);color:var(--teal-dark);padding:6px 16px;border-radius:100px;font-size:13px;font-weight:500;margin-bottom:22px;}
+.pill-dot{width:7px;height:7px;background:var(--teal);border-radius:50%;animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:54px;line-height:1.08;font-weight:800;color:var(--black);margin-bottom:20px;letter-spacing:-1px;}
+.hero h1 em{color:var(--teal);font-style:italic;}
+.hero p{font-size:17px;color:var(--gray-600);line-height:1.75;margin-bottom:36px;font-weight:300;}
+.hero-cta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.btn-lg{padding:16px 34px;font-size:16px;border-radius:11px;background:var(--teal);color:white;border:none;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-lg:hover{background:#0f766e;transform:translateY(-2px);box-shadow:0 6px 20px rgba(13,148,136,.3);}
+.hero-note{font-size:13px;color:var(--gray-400);}
+.hero-note strong{color:var(--teal);}
+
+/* HERO VISUAL */
+.hero-visual{background:var(--black);border-radius:20px;padding:24px;box-shadow:0 32px 80px rgba(0,0,0,.18);}
+.hv-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #1a2018;}
+.hv-logo{font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:white;}
+.hv-logo em{color:var(--teal-mid);font-style:normal;}
+.hv-badge{background:#0d2015;color:var(--teal-mid);padding:4px 12px;border-radius:100px;font-size:11px;font-weight:600;}
+.hv-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
+.hvs{background:#111810;border-radius:10px;padding:12px;text-align:center;}
+.hvs .v{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:white;}
+.hvs .l{font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+.hvs.hi{background:#0d2015;}
+.hvs.hi .v{color:var(--teal-mid);}
+.rv-list{display:flex;flex-direction:column;gap:10px;}
+.rv{display:flex;gap:10px;background:#111810;border-radius:10px;padding:12px;}
+.rv-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;}
+.rv-name{font-size:12px;font-weight:600;color:white;}
+.rv-stars{color:#f59e0b;font-size:11px;}
+.rv-text{font-size:11px;color:#6b7280;margin-top:2px;line-height:1.5;}
+.rv-tag{font-size:10px;color:var(--teal);margin-top:4px;}
+
+/* LOGOS */
+.logos-strip{text-align:center;padding:28px 56px;border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-100);}
+.logos-strip p{font-size:13px;color:var(--gray-400);margin-bottom:14px;}
+.logos-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
+.lbadge{background:var(--gray-100);padding:7px 18px;border-radius:100px;font-size:13px;font-weight:500;color:var(--gray-600);}
+
+/* FEATURES */
+.features{max-width:1160px;margin:0 auto;padding:88px 56px;}
+.sect-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);margin-bottom:10px;}
+.sect-title{font-size:42px;font-weight:800;color:var(--black);margin-bottom:14px;letter-spacing:-0.5px;}
+.sect-sub{font-size:17px;color:var(--gray-600);max-width:520px;line-height:1.7;margin-bottom:56px;font-weight:300;}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+.feat-card{border-radius:16px;padding:30px;border:1px solid var(--gray-100);transition:all .2s;background:white;}
+.feat-card:hover{box-shadow:0 8px 32px rgba(13,148,136,.1);border-color:#99f6e4;transform:translateY(-2px);}
+.feat-icon{width:46px;height:46px;background:var(--teal-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:18px;}
+.feat-card h3{font-size:17px;font-weight:700;margin-bottom:9px;color:var(--black);}
+.feat-card p{font-size:14px;color:var(--gray-600);line-height:1.7;}
+
+/* HOW */
+.how{background:var(--black);padding:88px 56px;}
+.how-inner{max-width:1160px;margin:0 auto;}
+.how .sect-label{color:#5eead4;}
+.how .sect-title{color:white;}
+.how .sect-sub{color:#6b7280;}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-top:52px;}
+.step{position:relative;}
+.step-n{width:38px;height:38px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:700;font-size:16px;color:white;margin-bottom:18px;}
+.step h3{font-size:16px;font-weight:700;color:white;margin-bottom:8px;}
+.step p{font-size:13px;color:#6b7280;line-height:1.7;}
+.step-arr{position:absolute;top:17px;right:-18px;color:#374151;font-size:18px;}
+.step-manual{display:inline-block;margin-top:8px;font-size:11px;background:#1a2018;color:#9ca3af;padding:3px 10px;border-radius:100px;}
+
+/* PRICING */
+.pricing{max-width:680px;margin:0 auto;padding:88px 56px;text-align:center;}
+.price-card{background:white;border-radius:20px;padding:48px;border:2px solid var(--teal);box-shadow:0 20px 60px rgba(13,148,136,.12);margin-top:44px;}
+.price-pill{background:var(--teal-light);color:var(--teal-dark);padding:5px 16px;border-radius:100px;font-size:12px;font-weight:600;display:inline-block;margin-bottom:20px;}
+.price{font-family:'Fraunces',serif;font-size:66px;font-weight:800;color:var(--black);}
+.price sup{font-size:28px;vertical-align:top;margin-top:18px;display:inline-block;}
+.price sub{font-size:18px;color:var(--gray-400);font-weight:400;}
+.pnote{font-size:14px;color:var(--gray-400);margin-bottom:30px;}
+.flist{text-align:left;margin-bottom:34px;display:flex;flex-direction:column;gap:13px;}
+.flist li{display:flex;align-items:center;gap:11px;font-size:15px;list-style:none;}
+.ck{width:21px;height:21px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;flex-shrink:0;}
+
+footer{background:var(--black);padding:36px 56px;text-align:center;}
+footer p{color:#4b5563;font-size:13px;}
+footer a{color:#6b7280;margin:0 10px;}
+.hamburger-btn{display:none;background:none;border:none;font-size:24px;cursor:pointer;color:var(--black);padding:4px;}
+.mobile-menu{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;}
+.mobile-menu.open{display:block;}
+.mobile-menu-inner{position:absolute;top:0;right:0;width:260px;height:100%;background:white;padding:24px;box-shadow:-8px 0 32px rgba(0,0,0,.15);}
+.mobile-menu-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--gray-600);position:absolute;top:16px;right:16px;}
+.mobile-menu-inner a{display:block;padding:14px 0;font-size:16px;font-weight:500;color:var(--gray-900);border-bottom:1px solid var(--gray-100);}
+.mobile-menu-inner a:last-child{border-bottom:none;}
+.mobile-menu-inner .btn-p{display:block;text-align:center;margin-top:16px;border-bottom:none;color:white;padding:14px;border-radius:10px;}
+@media(max-width:768px){
+  nav{padding:16px 20px;}
+  .nav-r{display:none;}
+  .hamburger-btn{display:block;}
+  .hero{grid-template-columns:1fr;padding:48px 20px 40px;gap:40px;}
+  .hero h1{font-size:36px;}
+  .hero-visual{display:none;}
+  .features{padding:48px 20px;}
+  .feat-grid{grid-template-columns:1fr;}
+  .how{padding:48px 20px;}
+  .steps{grid-template-columns:1fr 1fr;gap:20px;}
+  .step-arr{display:none;}
+  .pricing{padding:48px 20px;}
+  .price-card{padding:32px 24px;}
+  .logos-strip{padding:20px;}
+  footer{padding:24px 20px;}
+}
+@media(max-width:480px){
+  .steps{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">Review<em>Mate</em></div>
+  <div class="nav-r">
+    <a href="login.html" class="btn-ghost">Log in</a>
+    <a href="signup.html" class="btn-p">Start Free Trial</a>
+  </div>
+  <button class="hamburger-btn" onclick="document.getElementById('mobileMenu').classList.add('open')">☰</button>
+</nav>
+<div class="mobile-menu" id="mobileMenu" onclick="this.classList.remove('open')">
+  <div class="mobile-menu-inner" onclick="event.stopPropagation()">
+    <button class="mobile-menu-close" onclick="document.getElementById('mobileMenu').classList.remove('open')">✕</button>
+    <a href="login.html">Log in</a>
+    <a href="signup.html" class="btn-p">Start Free Trial</a>
+  </div>
+</div>
+
+<section style="background:white;">
+<div class="hero">
+  <div>
+    <div class="hero-pill"><span class="pill-dot"></span> Built for local Aussie businesses</div>
+    <h1>More 5-star reviews, <em>without</em> the awkward asking</h1>
+    <p>ReviewMate sends personalised review request emails to your customers, follows up automatically, and shows everything in one simple dashboard. Start manually, add automation later.</p>
+    <div class="hero-cta">
+      <a href="signup.html" class="btn-lg">Start 14-day free trial</a>
+      <span class="hero-note">No credit card needed · <strong>$9/mo</strong> after trial</span>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hv-top">
+      <div class="hv-logo">Review<em>Mate</em></div>
+      <div class="hv-badge">Pro Plan ✓</div>
+    </div>
+    <div class="hv-stats">
+      <div class="hvs hi"><div class="v">4.8⭐</div><div class="l">Rating</div></div>
+      <div class="hvs"><div class="v">156</div><div class="l">Reviews</div></div>
+      <div class="hvs"><div class="v">+11</div><div class="l">This month</div></div>
+    </div>
+    <div class="rv-list">
+      <div class="rv">
+        <div class="rv-av" style="background:#0d2015;color:#5eead4;">SJ</div>
+        <div><div class="rv-name">Sarah Johnson</div><div class="rv-stars">★★★★★</div><div class="rv-text">"Best tradie I've ever used. Fast, clean, professional."</div><div class="rv-tag">via ReviewMate request</div></div>
+      </div>
+      <div class="rv">
+        <div class="rv-av" style="background:#1e1b4b;color:#a5b4fc;">MT</div>
+        <div><div class="rv-name">Mike Tran</div><div class="rv-stars">★★★★★</div><div class="rv-text">"Couldn't be happier. On time and great value."</div><div class="rv-tag">organic</div></div>
+      </div>
+      <div class="rv">
+        <div class="rv-av" style="background:#451a03;color:#fdba74;">AL</div>
+        <div><div class="rv-name">Anna Liu</div><div class="rv-stars">★★★★☆</div><div class="rv-text">"Great work, will definitely use again!"</div><div class="rv-tag">via ReviewMate request</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<div class="logos-strip">
+  <p>Perfect for local businesses across Australia</p>
+  <div class="logos-row">
+    <span class="lbadge">🔧 Tradies</span>
+    <span class="lbadge">☕ Cafes</span>
+    <span class="lbadge">💇 Salons</span>
+    <span class="lbadge">🏥 Healthcare</span>
+    <span class="lbadge">🏠 Real Estate</span>
+    <span class="lbadge">🛒 Retail</span>
+    <span class="lbadge">🍕 Restaurants</span>
+  </div>
+</div>
+
+<section class="features">
+  <div class="sect-label">Features</div>
+  <h2 class="sect-title">Simple tools that actually work</h2>
+  <p class="sect-sub">No bloated dashboards. No complicated setup. Just the tools you need to get more reviews.</p>
+  <div class="feat-grid">
+    <div class="feat-card"><div class="feat-icon">📬</div><h3>Personalised Review Emails</h3><p>Send tailored emails to each customer with your business name, their name, and a direct Google review link.</p></div>
+    <div class="feat-card"><div class="feat-icon">🔔</div><h3>Automatic Follow-Ups</h3><p>If a customer doesn't review within 3 days, one polite reminder goes out. Once they review — we stop.</p></div>
+    <div class="feat-card"><div class="feat-icon">📋</div><h3>Business-Type Templates</h3><p>Choose from templates built for cafes, tradies, salons, healthcare, retail and more. Customise everything.</p></div>
+    <div class="feat-card"><div class="feat-icon">🔀</div><h3>Visual Email Flow</h3><p>See exactly which emails go out, when they land, and what they look like — before you send a single one.</p></div>
+    <div class="feat-card"><div class="feat-icon">📊</div><h3>Reviews Dashboard</h3><p>All your Google reviews in one place. Rating trend chart, new reviews this week, request conversion rate.</p></div>
+    <div class="feat-card"><div class="feat-icon">📧</div><h3>Weekly Digest</h3><p>Every Monday you get a summary of new reviews, rating changes, and how your requests are performing.</p></div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="how-inner">
+    <div class="sect-label">How it works</div>
+    <h2 class="sect-title">Start manually, automate later</h2>
+    <p class="sect-sub">ReviewMate is designed to grow with your business. Start with manual entry today — add integrations when you're ready.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-n">1</div>
+        <h3>Sign Up & Pick Your Type</h3>
+        <p>Tell us what kind of business you are and we'll pre-fill your email templates instantly.</p>
+        <div class="step-arr">→</div>
+      </div>
+      <div class="step">
+        <div class="step-n">2</div>
+        <h3>Add a Customer</h3>
+        <p>After finishing a job, manually enter the customer's name and email. Or bulk import a CSV.</p>
+        <span class="step-manual">Manual for now — integrations coming</span>
+        <div class="step-arr">→</div>
+      </div>
+      <div class="step">
+        <div class="step-n">3</div>
+        <h3>We Send the Emails</h3>
+        <p>ReviewMate sends your personalised email and one follow-up 3 days later if needed.</p>
+        <div class="step-arr">→</div>
+      </div>
+      <div class="step">
+        <div class="step-n">4</div>
+        <h3>Watch Reviews Roll In</h3>
+        <p>Track every request and review from your dashboard. Weekly digest every Monday morning.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="pricing">
+  <div class="sect-label">Pricing</div>
+  <h2 class="sect-title">One plan, everything included</h2>
+  <p class="sect-sub" style="margin:0 auto;">No tiers. No hidden fees. Cancel anytime.</p>
+  <div class="price-card">
+    <div class="price-pill">Most popular</div>
+    <div class="price"><sup>$</sup>9<sub>/month</sub></div>
+    <p class="pnote">14-day free trial · No credit card to start · Cancel anytime</p>
+    <ul class="flist">
+      <li><div class="ck">✓</div> Unlimited review request emails</li>
+      <li><div class="ck">✓</div> Auto follow-up after 3 days</li>
+      <li><div class="ck">✓</div> Business-type email templates</li>
+      <li><div class="ck">✓</div> Visual email flow editor</li>
+      <li><div class="ck">✓</div> Google Reviews dashboard & trend chart</li>
+      <li><div class="ck">✓</div> Shareable review request link</li>
+      <li><div class="ck">✓</div> CSV customer import</li>
+      <li><div class="ck">✓</div> Weekly email digest</li>
+    </ul>
+    <a href="signup.html" style="display:block;width:100%;padding:16px;background:var(--teal);color:white;border:none;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:500;cursor:pointer;text-align:center;transition:all .2s;" onmouseover="this.style.background='#0f766e'" onmouseout="this.style.background='#0d9488'">Start your free trial →</a>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 ReviewMate · <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Contact</a></p>
+</footer>
+</body>
+</html>

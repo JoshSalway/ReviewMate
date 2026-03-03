@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — ReviewMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-700:#374151;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--sidebar-w:248px;--red:#dc2626;--amber:#d97706;--blue:#2563eb;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#f0f4f3;}
+h1,h2,h3,h4,h5{font-family:'Fraunces',serif;}a{text-decoration:none;color:inherit;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .18s;}
+.btn-primary{background:var(--teal);color:white;border-radius:10px;}.btn-primary:hover{background:#0f766e;transform:translateY(-1px);box-shadow:0 4px 14px rgba(13,148,136,.3);}
+.btn-ghost{background:white;color:var(--gray-900);border:1.5px solid var(--gray-300);border-radius:10px;}.btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+.btn-dark{background:var(--black);color:white;border-radius:10px;}.btn-dark:hover{background:#1c2018;}
+.btn-sm{padding:8px 16px;font-size:13px;border-radius:8px;}.btn-md{padding:11px 22px;font-size:14px;}.btn-lg{padding:15px 32px;font-size:16px;}
+.sidebar{width:var(--sidebar-w);background:var(--black);min-height:100vh;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:50;}
+.sidebar-logo{padding:26px 24px 18px;border-bottom:1px solid #1a2018;}
+.sidebar-logo a{font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:white;letter-spacing:-.5px;}
+.sidebar-logo a em{color:var(--teal-mid);font-style:normal;}
+.sidebar-nav{padding:16px 0;flex:1;}
+.nav-section{padding:8px 20px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#4b5563;font-weight:600;margin-top:8px;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 20px;color:#6b7280;font-size:14px;font-weight:500;transition:all .15s;cursor:pointer;border-left:2px solid transparent;text-decoration:none;}
+.nav-item:hover{background:#111810;color:#d1fae5;}.nav-item.active{background:#0d2015;color:var(--teal-mid);border-left-color:var(--teal);}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sidebar-footer{padding:16px 20px;border-top:1px solid #1a2018;}
+.biz-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#111810;border-radius:10px;}
+.biz-av{width:30px;height:30px;background:var(--teal);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:white;flex-shrink:0;}
+.biz-info strong{display:block;font-size:13px;color:white;font-weight:600;}.biz-info span{font-size:11px;color:#6b7280;}
+.nav-logout{display:flex;align-items:center;gap:8px;padding:10px 4px 0;font-size:13px;color:#4b5563;text-decoration:none;}.nav-logout:hover{color:#6b7280;}
+.main{margin-left:var(--sidebar-w);flex:1;padding:36px 40px;min-height:100vh;}
+.card{background:white;border-radius:14px;border:1px solid #e5e7eb;}.card-pad{padding:28px;}
+.card-head{padding:22px 28px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--gray-900);}.card-sub{font-size:13px;color:var(--gray-400);margin-top:2px;}
+.form-group{margin-bottom:20px;}.form-group label{display:block;font-size:13px;font-weight:500;color:var(--gray-700);margin-bottom:6px;}
+.form-control{width:100%;padding:12px 15px;border:1.5px solid var(--gray-300);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--gray-900);outline:none;transition:border-color .2s;background:white;}
+.form-control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);}.form-control::placeholder{color:var(--gray-400);}
+.form-control[readonly]{background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;}
+textarea.form-control{resize:vertical;min-height:100px;line-height:1.6;}.form-hint{font-size:12px;color:var(--gray-400);margin-top:5px;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600;}
+.badge-green{background:var(--teal-light);color:var(--teal-dark);}.badge-amber{background:#fef3c7;color:#92400e;}
+.badge-red{background:#fee2e2;color:#991b1b;}.badge-blue{background:#dbeafe;color:#1e40af;}.badge-gray{background:var(--gray-100);color:var(--gray-600);}
+.page-hdr{margin-bottom:32px;display:flex;align-items:flex-start;justify-content:space-between;}
+.page-hdr h1{font-size:28px;font-weight:700;color:var(--black);}.page-hdr p{font-size:14px;color:var(--gray-600);margin-top:5px;}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--teal);color:white;padding:12px 20px;border-radius:10px;font-size:14px;display:none;box-shadow:0 4px 16px rgba(13,148,136,.35);z-index:999;}
+</style>
+<style>
+body{display:flex;}
+.settings-wrap{max-width:720px;}
+.s-section{background:white;border-radius:14px;border:1px solid #e5e7eb;margin-bottom:20px;overflow:hidden;}
+.s-head{padding:20px 26px;border-bottom:1px solid var(--gray-100);}
+.s-head h3{font-size:16px;font-weight:700;color:var(--black);}
+.s-head p{font-size:13px;color:var(--gray-400);margin-top:3px;}
+.s-body{padding:26px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.form-group{margin-bottom:18px;}
+.form-group:last-child{margin-bottom:0;}
+label{display:block;font-size:13px;font-weight:500;color:var(--gray-700);margin-bottom:6px;}
+.form-control{width:100%;padding:12px 15px;border:1.5px solid var(--gray-300);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--gray-900);outline:none;transition:border-color .2s;background:white;}
+.form-control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);}
+.form-control::placeholder{color:var(--gray-400);}
+.form-control[readonly]{background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;}
+.form-hint{font-size:12px;color:var(--gray-400);margin-top:5px;}
+.btn-save{padding:12px 26px;background:var(--teal);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-save:hover{background:#0f766e;}
+
+/* TOGGLE ROW */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--gray-100);}
+.toggle-row:last-child{border-bottom:none;padding-bottom:0;}
+.tr-info strong{display:block;font-size:14px;font-weight:600;color:var(--gray-900);}
+.tr-info span{font-size:13px;color:var(--gray-400);}
+.toggle{width:42px;height:24px;background:var(--teal);border-radius:100px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;}
+.toggle::after{content:'';position:absolute;top:3px;right:3px;width:18px;height:18px;background:white;border-radius:50%;transition:all .2s;}
+.toggle.off{background:var(--gray-300);}
+.toggle.off::after{right:21px;}
+
+/* SUBSCRIPTION */
+.sub-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--gray-100);}
+.sub-row:last-child{border-bottom:none;padding-bottom:0;}
+.sub-lbl{font-size:14px;color:var(--gray-600);}
+.sub-val{font-size:14px;font-weight:600;color:var(--gray-900);}
+.btn-manage{padding:9px 18px;background:var(--black);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-manage:hover{background:#1c2018;}
+
+/* DANGER */
+.danger-section{border:1.5px solid #fecaca;border-radius:14px;padding:22px 26px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;}
+.danger-info h4{font-size:15px;font-weight:700;color:#991b1b;margin-bottom:4px;}
+.danger-info p{font-size:13px;color:#b91c1c;}
+.btn-danger{padding:10px 18px;background:white;color:var(--red);border:1.5px solid #fca5a5;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-danger:hover{background:#fef2f2;}
+.biz-switcher{position:relative;cursor:pointer;}
+.biz-arrow{color:#6b7280;font-size:12px;margin-left:auto;}
+.biz-menu{display:none;position:absolute;bottom:100%;left:0;right:0;background:#1a1f1a;border-radius:10px;border:1px solid #2a302a;padding:6px;margin-bottom:8px;box-shadow:0 -8px 24px rgba(0,0,0,.4);}
+.biz-menu.open{display:block;}
+.biz-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:13px;color:#d1d5db;transition:background .15s;cursor:pointer;}
+.biz-option:hover{background:#111810;}
+.biz-option.active{color:white;}
+.biz-option.add{color:var(--teal-mid);text-decoration:none;}
+.biz-divider{height:1px;background:#2a302a;margin:4px 0;}
+.mobile-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:40;background:var(--black);padding:14px 20px;align-items:center;gap:14px;}
+.hamburger{background:none;border:none;color:white;font-size:22px;cursor:pointer;padding:0;}
+.mobile-logo{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:white;}
+.mobile-logo em{color:var(--teal-mid);font-style:normal;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:45;}
+.sidebar-overlay.open{display:block;}
+@media(max-width:768px){
+  .mobile-bar{display:flex;}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:80px 20px 36px;}
+  .form-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="mobile-bar">
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  <div class="mobile-logo">Review<em>Mate</em></div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar">
+  <div class="sidebar-logo"><a href="index.html">Review<em>Mate</em></a></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+    <a href="quick-send.html" style="display:flex;align-items:center;gap:11px;padding:10px 16px;margin:8px 12px;background:var(--teal);border-radius:10px;color:white;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='#0f766e'" onmouseout="this.style.background='var(--teal)'">
+  <span style="font-size:16px;">⚡</span> Quick Send
+</a>
+<div class="nav-section">Customers</div>
+    <a href="customers.html" class="nav-item"><span class="nav-icon">👥</span> Customers</a>
+    <a href="requests.html" class="nav-item"><span class="nav-icon">📬</span> Requests</a>
+    <div class="nav-section">Emails</div>
+    <a href="email-flow.html" class="nav-item"><span class="nav-icon">🔀</span> Email Flow</a>
+    <a href="templates.html" class="nav-item"><span class="nav-icon">📋</span> Templates</a>
+    <div class="nav-section">Marketing</div>
+    <a href="qr-code.html" class="nav-item"><span class="nav-icon">📱</span> QR Code</a>
+    <div class="nav-section">Account</div>
+    <a href="settings.html" class="nav-item active"><span class="nav-icon">⚙️</span> Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="biz-switcher" onclick="toggleBizMenu()">
+      <div class="biz-chip">
+        <div class="biz-av">MC</div>
+        <div class="biz-info"><strong>Mario's Cafe</strong><span>Pro Plan</span></div>
+        <span class="biz-arrow">▾</span>
+      </div>
+      <div class="biz-menu" id="bizMenu">
+        <div class="biz-option active">
+          <div class="biz-av" style="width:24px;height:24px;font-size:10px;">MC</div>
+          <span>Mario's Cafe</span>
+          <span style="margin-left:auto;color:var(--teal);">✓</span>
+        </div>
+        <div class="biz-option" onclick="window.location='dashboard-empty.html'">
+          <div class="biz-av" style="width:24px;height:24px;font-size:10px;background:#2563eb;">GC</div>
+          <span>Gold Coast Plumbing</span>
+        </div>
+        <div class="biz-divider"></div>
+        <a href="add-business.html" class="biz-option add">
+          <span style="font-size:16px;">+</span>
+          <span>Add new business</span>
+        </a>
+      </div>
+    </div>
+    <a href="login.html" class="nav-logout">← Log out</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-hdr">
+    <div><h1>Settings</h1><p>Manage your business details, notifications, and billing</p></div>
+  </div>
+
+  <div class="settings-wrap">
+
+    <!-- BUSINESS -->
+    <div class="s-section">
+      <div class="s-head"><h3>Business Details</h3><p>Your business name and Google listing</p></div>
+      <div class="s-body">
+        <div class="form-row">
+          <div class="form-group"><label>Business Name</label><input class="form-control" type="text" value="Mario's Cafe"/></div>
+          <div class="form-group"><label>Business Type</label><select class="form-control"><option>☕ Cafe / Restaurant</option><option>🔧 Tradie</option><option>💇 Salon / Beauty</option><option>🏥 Healthcare</option></select></div>
+        </div>
+        <div class="form-group"><label>Google Place ID</label><input class="form-control" type="text" value="ChIJN1t_tDeuEmsRUsoyG83frY4"/><div class="form-hint">Starts with "ChIJ" — update this if your Google listing changes</div></div>
+        <div class="form-row">
+          <div class="form-group"><label>Owner / Contact Name</label><input class="form-control" type="text" value="Mario Rossi"/></div>
+          <div class="form-group"><label>Phone (optional)</label><input class="form-control" type="text" placeholder="0400 000 000"/></div>
+        </div>
+        <button class="btn-save" onclick="showToast('Business details saved!')">Save Changes</button>
+      </div>
+    </div>
+
+    <!-- ACCOUNT -->
+    <div class="s-section">
+      <div class="s-head"><h3>Account</h3><p>Your login email and password</p></div>
+      <div class="s-body">
+        <div class="form-group"><label>Email Address</label><input class="form-control" type="email" value="mario@marioscafe.com.au" readonly/><div class="form-hint">To change your email, contact support</div></div>
+        <div class="form-row">
+          <div class="form-group"><label>New Password</label><input class="form-control" type="password" placeholder="Leave blank to keep current"/></div>
+          <div class="form-group"><label>Confirm Password</label><input class="form-control" type="password" placeholder="Repeat new password"/></div>
+        </div>
+        <button class="btn-save" onclick="showToast('Password updated!')">Update Password</button>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    <div class="s-section">
+      <div class="s-head"><h3>Notifications</h3><p>Choose when ReviewMate sends you emails</p></div>
+      <div class="s-body">
+        <div class="toggle-row"><div class="tr-info"><strong>Weekly digest email</strong><span>Every Monday 9am — new reviews, stats, rating changes</span></div><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+        <div class="toggle-row"><div class="tr-info"><strong>New review alert</strong><span>Instant email when a new Google review comes in</span></div><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+        <div class="toggle-row"><div class="tr-info"><strong>Review request sent</strong><span>Confirmation when a request is sent to a customer</span></div><div class="toggle off" onclick="this.classList.toggle('off')"></div></div>
+        <div class="toggle-row"><div class="tr-info"><strong>Monthly report</strong><span>End of month summary of all activity</span></div><div class="toggle off" onclick="this.classList.toggle('off')"></div></div>
+      </div>
+    </div>
+
+    <!-- SUBSCRIPTION -->
+    <div class="s-section">
+      <div class="s-head"><h3>Subscription</h3><p>Manage your plan and billing</p></div>
+      <div class="s-body">
+        <div class="sub-row"><span class="sub-lbl">Current Plan</span><span class="sub-val">ReviewMate Pro <span class="badge badge-green" style="margin-left:8px;">Active</span></span></div>
+        <div class="sub-row"><span class="sub-lbl">Monthly Price</span><span class="sub-val">$9.00 / month AUD</span></div>
+        <div class="sub-row"><span class="sub-lbl">Next Billing Date</span><span class="sub-val">1 April 2025</span></div>
+        <div class="sub-row"><span class="sub-lbl">Payment Method</span><div style="display:flex;align-items:center;gap:12px;"><span class="sub-val">Visa ending in 4242</span><button class="btn-manage">Manage Billing</button></div></div>
+        <div class="sub-row"><span class="sub-lbl">Member Since</span><span class="sub-val">1 February 2025</span></div>
+      </div>
+    </div>
+
+    <!-- DANGER -->
+    <div class="danger-section">
+      <div class="danger-info"><h4>Cancel Subscription</h4><p>Your account stays active until the end of the current billing period.</p></div>
+      <button class="btn-danger">Cancel Subscription</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Changes saved!</div>
+<script>
+function showToast(msg){const t=document.getElementById('toast');t.textContent='✓ '+msg;t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
+function toggleBizMenu(){document.getElementById('bizMenu').classList.toggle('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.biz-switcher'))document.getElementById('bizMenu')?.classList.remove('open');});
+function toggleSidebar(){document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');}
+</script>
+</body>
+</html>

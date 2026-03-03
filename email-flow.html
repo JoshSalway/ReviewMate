@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Flow — ReviewMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-700:#374151;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--sidebar-w:248px;--red:#dc2626;--amber:#d97706;--blue:#2563eb;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#f0f4f3;}
+h1,h2,h3,h4,h5{font-family:'Fraunces',serif;}a{text-decoration:none;color:inherit;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .18s;}
+.btn-primary{background:var(--teal);color:white;border-radius:10px;}.btn-primary:hover{background:#0f766e;transform:translateY(-1px);box-shadow:0 4px 14px rgba(13,148,136,.3);}
+.btn-ghost{background:white;color:var(--gray-900);border:1.5px solid var(--gray-300);border-radius:10px;}.btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+.btn-dark{background:var(--black);color:white;border-radius:10px;}.btn-dark:hover{background:#1c2018;}
+.btn-sm{padding:8px 16px;font-size:13px;border-radius:8px;}.btn-md{padding:11px 22px;font-size:14px;}.btn-lg{padding:15px 32px;font-size:16px;}
+.sidebar{width:var(--sidebar-w);background:var(--black);min-height:100vh;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:50;}
+.sidebar-logo{padding:26px 24px 18px;border-bottom:1px solid #1a2018;}
+.sidebar-logo a{font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:white;letter-spacing:-.5px;}
+.sidebar-logo a em{color:var(--teal-mid);font-style:normal;}
+.sidebar-nav{padding:16px 0;flex:1;}
+.nav-section{padding:8px 20px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#4b5563;font-weight:600;margin-top:8px;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 20px;color:#6b7280;font-size:14px;font-weight:500;transition:all .15s;cursor:pointer;border-left:2px solid transparent;text-decoration:none;}
+.nav-item:hover{background:#111810;color:#d1fae5;}.nav-item.active{background:#0d2015;color:var(--teal-mid);border-left-color:var(--teal);}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sidebar-footer{padding:16px 20px;border-top:1px solid #1a2018;}
+.biz-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#111810;border-radius:10px;}
+.biz-av{width:30px;height:30px;background:var(--teal);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:white;flex-shrink:0;}
+.biz-info strong{display:block;font-size:13px;color:white;font-weight:600;}.biz-info span{font-size:11px;color:#6b7280;}
+.nav-logout{display:flex;align-items:center;gap:8px;padding:10px 4px 0;font-size:13px;color:#4b5563;text-decoration:none;}.nav-logout:hover{color:#6b7280;}
+.main{margin-left:var(--sidebar-w);flex:1;padding:36px 40px;min-height:100vh;}
+.card{background:white;border-radius:14px;border:1px solid #e5e7eb;}.card-pad{padding:28px;}
+.card-head{padding:22px 28px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--gray-900);}.card-sub{font-size:13px;color:var(--gray-400);margin-top:2px;}
+.form-group{margin-bottom:20px;}.form-group label{display:block;font-size:13px;font-weight:500;color:var(--gray-700);margin-bottom:6px;}
+.form-control{width:100%;padding:12px 15px;border:1.5px solid var(--gray-300);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--gray-900);outline:none;transition:border-color .2s;background:white;}
+.form-control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);}.form-control::placeholder{color:var(--gray-400);}
+.form-control[readonly]{background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;}
+textarea.form-control{resize:vertical;min-height:100px;line-height:1.6;}.form-hint{font-size:12px;color:var(--gray-400);margin-top:5px;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600;}
+.badge-green{background:var(--teal-light);color:var(--teal-dark);}.badge-amber{background:#fef3c7;color:#92400e;}
+.badge-red{background:#fee2e2;color:#991b1b;}.badge-blue{background:#dbeafe;color:#1e40af;}.badge-gray{background:var(--gray-100);color:var(--gray-600);}
+.page-hdr{margin-bottom:32px;display:flex;align-items:flex-start;justify-content:space-between;}
+.page-hdr h1{font-size:28px;font-weight:700;color:var(--black);}.page-hdr p{font-size:14px;color:var(--gray-600);margin-top:5px;}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--teal);color:white;padding:12px 20px;border-radius:10px;font-size:14px;display:none;box-shadow:0 4px 16px rgba(13,148,136,.35);z-index:999;}
+</style>
+<style>
+body{display:flex;}
+
+/* FLOW CANVAS */
+.flow-wrap{display:grid;grid-template-columns:1fr 380px;gap:28px;align-items:start;}
+.flow-canvas{background:white;border-radius:16px;border:1px solid #e5e7eb;padding:36px;}
+.flow-title{font-size:16px;font-weight:700;color:var(--black);margin-bottom:6px;}
+.flow-sub{font-size:13px;color:var(--gray-400);margin-bottom:32px;}
+
+/* FLOW NODES */
+.flow-col{display:flex;flex-direction:column;align-items:center;gap:0;}
+
+.flow-node{width:280px;border-radius:14px;border:2px solid var(--gray-300);padding:18px 20px;background:white;cursor:pointer;transition:all .2s;position:relative;}
+.flow-node:hover,.flow-node.active{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);}
+.flow-node.active{border-color:var(--teal);background:var(--teal-light);}
+.flow-node.trigger{background:var(--black);border-color:var(--black);}
+.flow-node.trigger:hover{border-color:var(--teal-mid);}
+.flow-node.done-node{background:#f0fdf9;border-color:#99f6e4;}
+.fn-icon{font-size:22px;margin-bottom:8px;}
+.fn-title{font-size:14px;font-weight:700;color:var(--gray-900);}
+.flow-node.trigger .fn-title{color:white;}
+.fn-desc{font-size:12px;color:var(--gray-600);margin-top:4px;line-height:1.5;}
+.flow-node.trigger .fn-desc{color:#9ca3af;}
+.fn-timing{display:inline-block;margin-top:8px;font-size:11px;background:var(--gray-100);color:var(--gray-600);padding:3px 10px;border-radius:100px;}
+.flow-node.active .fn-timing{background:var(--teal);color:white;}
+.fn-edit{position:absolute;top:12px;right:12px;font-size:11px;color:var(--teal);font-weight:600;opacity:0;transition:opacity .15s;}
+.flow-node:hover .fn-edit{opacity:1;}
+
+/* CONNECTOR */
+.connector{display:flex;flex-direction:column;align-items:center;padding:4px 0;}
+.conn-line{width:2px;height:28px;background:var(--gray-300);}
+.conn-arrow{color:var(--gray-300);font-size:14px;margin-top:-2px;}
+.conn-label{font-size:11px;color:var(--gray-400);background:white;padding:3px 10px;border-radius:100px;border:1px solid var(--gray-200);margin:4px 0;}
+
+/* BRANCH */
+.branch-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;width:320px;}
+.branch-side{display:flex;flex-direction:column;align-items:center;gap:0;}
+.branch-label{font-size:11px;font-weight:600;padding:4px 12px;border-radius:100px;margin-bottom:4px;}
+.branch-yes{background:var(--teal-light);color:var(--teal-dark);}
+.branch-no{background:#fef3c7;color:#92400e;}
+.flow-node.small{width:140px;padding:14px 16px;}
+
+/* PREVIEW PANEL */
+.preview-panel{background:white;border-radius:16px;border:1px solid #e5e7eb;overflow:hidden;position:sticky;top:24px;}
+.pp-head{padding:18px 22px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;}
+.pp-head h3{font-size:15px;font-weight:700;color:var(--black);}
+.pp-tabs{display:flex;gap:0;background:var(--gray-100);border-radius:8px;padding:3px;}
+.ppt{padding:6px 13px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;color:var(--gray-600);transition:all .15s;}
+.ppt.active{background:white;color:var(--teal);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.pp-body{padding:22px;}
+.email-meta{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--gray-100);}
+.em-row{display:flex;gap:8px;font-size:13px;margin-bottom:4px;}
+.em-lbl{color:var(--gray-400);width:48px;flex-shrink:0;}
+.em-val{color:var(--gray-900);}
+.email-subj{font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--black);margin-bottom:14px;}
+.email-body{font-size:13px;color:var(--gray-600);line-height:1.8;}
+.email-body p{margin-bottom:10px;}
+.rev-btn{display:inline-block;padding:11px 24px;background:var(--teal);color:white;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;margin:6px 0;}
+.email-sig{margin-top:16px;padding-top:14px;border-top:1px solid var(--gray-100);font-size:13px;color:var(--gray-600);}
+.var{display:inline;background:#fef9c3;color:#854d0e;padding:1px 5px;border-radius:4px;font-size:11px;font-family:monospace;}
+.btn-edit-tpl{width:100%;margin-top:18px;padding:11px;background:var(--black);color:white;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;text-align:center;text-decoration:none;display:block;}
+.btn-edit-tpl:hover{background:#1c2018;}
+
+/* SETTINGS STRIP */
+.flow-settings{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:22px 26px;margin-bottom:22px;}
+.fs-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--gray-100);}
+.fs-row:last-child{border-bottom:none;padding-bottom:0;}
+.fs-label strong{display:block;font-size:14px;font-weight:600;color:var(--gray-900);}
+.fs-label span{font-size:13px;color:var(--gray-400);}
+.fs-val{font-size:14px;color:var(--gray-900);font-weight:500;}
+.toggle{width:42px;height:24px;background:var(--teal);border-radius:100px;position:relative;cursor:pointer;flex-shrink:0;}
+.toggle::after{content:'';position:absolute;top:3px;right:3px;width:18px;height:18px;background:white;border-radius:50%;transition:right .2s;}
+.toggle.off{background:var(--gray-300);}
+.toggle.off::after{right:21px;}
+select.fs-sel{padding:8px 12px;border:1.5px solid var(--gray-300);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--gray-900);background:white;cursor:pointer;outline:none;}
+.biz-switcher{position:relative;cursor:pointer;}
+.biz-arrow{color:#6b7280;font-size:12px;margin-left:auto;}
+.biz-menu{display:none;position:absolute;bottom:100%;left:0;right:0;background:#1a1f1a;border-radius:10px;border:1px solid #2a302a;padding:6px;margin-bottom:8px;box-shadow:0 -8px 24px rgba(0,0,0,.4);}
+.biz-menu.open{display:block;}
+.biz-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:13px;color:#d1d5db;transition:background .15s;cursor:pointer;}
+.biz-option:hover{background:#111810;}
+.biz-option.active{color:white;}
+.biz-option.add{color:var(--teal-mid);text-decoration:none;}
+.biz-divider{height:1px;background:#2a302a;margin:4px 0;}
+.mobile-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:40;background:var(--black);padding:14px 20px;align-items:center;gap:14px;}
+.hamburger{background:none;border:none;color:white;font-size:22px;cursor:pointer;padding:0;}
+.mobile-logo{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:white;}
+.mobile-logo em{color:var(--teal-mid);font-style:normal;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:45;}
+.sidebar-overlay.open{display:block;}
+@media(max-width:768px){
+  .mobile-bar{display:flex;}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:80px 20px 36px;}
+  .flow-wrap{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="mobile-bar">
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  <div class="mobile-logo">Review<em>Mate</em></div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar">
+  <div class="sidebar-logo"><a href="index.html">Review<em>Mate</em></a></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+    <a href="quick-send.html" style="display:flex;align-items:center;gap:11px;padding:10px 16px;margin:8px 12px;background:var(--teal);border-radius:10px;color:white;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='#0f766e'" onmouseout="this.style.background='var(--teal)'">
+  <span style="font-size:16px;">⚡</span> Quick Send
+</a>
+<div class="nav-section">Customers</div>
+    <a href="customers.html" class="nav-item"><span class="nav-icon">👥</span> Customers</a>
+    <a href="requests.html" class="nav-item"><span class="nav-icon">📬</span> Requests</a>
+    <div class="nav-section">Emails</div>
+    <a href="email-flow.html" class="nav-item active"><span class="nav-icon">🔀</span> Email Flow</a>
+    <a href="templates.html" class="nav-item"><span class="nav-icon">📋</span> Templates</a>
+    <div class="nav-section">Marketing</div>
+    <a href="qr-code.html" class="nav-item"><span class="nav-icon">📱</span> QR Code</a>
+    <div class="nav-section">Account</div>
+    <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="biz-switcher" onclick="toggleBizMenu()">
+      <div class="biz-chip">
+        <div class="biz-av">MC</div>
+        <div class="biz-info"><strong>Mario's Cafe</strong><span>Pro Plan</span></div>
+        <span class="biz-arrow">▾</span>
+      </div>
+      <div class="biz-menu" id="bizMenu">
+        <div class="biz-option active">
+          <div class="biz-av" style="width:24px;height:24px;font-size:10px;">MC</div>
+          <span>Mario's Cafe</span>
+          <span style="margin-left:auto;color:var(--teal);">✓</span>
+        </div>
+        <div class="biz-option" onclick="window.location='dashboard-empty.html'">
+          <div class="biz-av" style="width:24px;height:24px;font-size:10px;background:#2563eb;">GC</div>
+          <span>Gold Coast Plumbing</span>
+        </div>
+        <div class="biz-divider"></div>
+        <a href="add-business.html" class="biz-option add">
+          <span style="font-size:16px;">+</span>
+          <span>Add new business</span>
+        </a>
+      </div>
+    </div>
+    <a href="login.html" class="nav-logout">← Log out</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-hdr">
+    <div><h1>Email Flow</h1><p>See exactly what emails go out, when they land, and what they say. Click any step to preview or edit.</p></div>
+    <a href="templates.html" class="btn btn-primary btn-md">Edit Templates →</a>
+  </div>
+
+  <!-- FLOW SETTINGS -->
+  <div class="flow-settings">
+    <div style="font-size:14px;font-weight:700;color:var(--black);margin-bottom:14px;">⚙️ Flow Settings</div>
+    <div class="fs-row">
+      <div class="fs-label"><strong>Review requests</strong><span>Send email when customer is added</span></div>
+      <div class="toggle" onclick="this.classList.toggle('off')"></div>
+    </div>
+    <div class="fs-row">
+      <div class="fs-label"><strong>Follow-up reminder</strong><span>If no review after initial request</span></div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <select class="fs-sel"><option>After 3 days</option><option>After 2 days</option><option>After 5 days</option><option>After 1 week</option><option>Disabled</option></select>
+        <div class="toggle" onclick="this.classList.toggle('off')"></div>
+      </div>
+    </div>
+    <div class="fs-row">
+      <div class="fs-label"><strong>Send time</strong><span>What time emails are sent</span></div>
+      <select class="fs-sel"><option>9:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>2:00 PM</option><option>Immediately</option></select>
+    </div>
+    <div class="fs-row">
+      <div class="fs-label"><strong>Stop after review</strong><span>Stop all emails once customer leaves a review</span></div>
+      <div class="toggle" onclick="this.classList.toggle('off')"></div>
+    </div>
+    <div class="fs-row">
+      <div class="fs-label"><strong>SMS requests</strong><span>Also send an SMS alongside the email request</span></div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:13px;color:var(--gray-400);" id="smsStatus">Off</span>
+        <div class="toggle off" onclick="this.classList.toggle('off');document.getElementById('smsStatus').textContent=this.classList.contains('off')?'Off':'On';document.getElementById('smsNote').style.display=this.classList.contains('off')?'none':'block';"></div>
+      </div>
+    </div>
+    <div id="smsNote" style="display:none;background:var(--teal-light);border-radius:8px;padding:12px;margin-top:8px;font-size:13px;color:var(--teal-dark);">
+      💬 When enabled, customers will receive both an email and SMS review request. SMS are sent immediately when the customer is added.
+    </div>
+  </div>
+
+  <!-- FLOW + PREVIEW -->
+  <div class="flow-wrap">
+    <!-- FLOW DIAGRAM -->
+    <div class="flow-canvas">
+      <div class="flow-title">Your Current Email Flow</div>
+      <div class="flow-sub">Click any step to preview the email and make edits</div>
+      <div class="flow-col">
+
+        <!-- TRIGGER -->
+        <div class="flow-node trigger" onclick="showStep('add')">
+          <div class="fn-icon">👤</div>
+          <div class="fn-title">Customer Added</div>
+          <div class="fn-desc">Triggered manually when you add a customer to ReviewMate after a job</div>
+          <div style="display:flex;gap:6px;margin-top:8px;">
+            <span style="font-size:10px;background:#0d2015;color:#5eead4;padding:2px 8px;border-radius:100px;">📧 Email</span>
+            <span style="font-size:10px;background:#0d2015;color:#9ca3af;padding:2px 8px;border-radius:100px;">💬 SMS</span>
+          </div>
+        </div>
+
+        <div class="connector"><div class="conn-line"></div><div class="conn-label">Immediately</div><div class="conn-arrow">▼</div></div>
+
+        <!-- EMAIL 1 -->
+        <div class="flow-node active" onclick="showStep('email1')">
+          <span class="fn-edit">Click to edit ✏️</span>
+          <div class="fn-icon">📬</div>
+          <div class="fn-title">Review Request Email</div>
+          <div class="fn-desc">Personalised email asking for a Google review with direct link</div>
+          <div class="fn-timing">Sent at 9:00 AM same day</div>
+        </div>
+
+        <div class="connector"><div class="conn-line"></div><div class="conn-label">Wait 3 days</div><div class="conn-arrow">▼</div></div>
+
+        <!-- CHECK -->
+        <div class="flow-node" onclick="showStep('check')" style="border-style:dashed;text-align:center;">
+          <div class="fn-icon">🔍</div>
+          <div class="fn-title">Did they leave a review?</div>
+          <div class="fn-desc">ReviewMate checks Google automatically</div>
+        </div>
+
+        <div class="connector"><div class="conn-line" style="height:16px;"></div></div>
+
+        <!-- BRANCH -->
+        <div class="branch-row">
+          <div class="branch-side">
+            <div class="branch-label branch-yes">✓ Yes — reviewed</div>
+            <div class="connector"><div class="conn-line" style="height:20px;"></div><div class="conn-arrow">▼</div></div>
+            <div class="flow-node small done-node" onclick="showStep('done')">
+              <div class="fn-icon">🎉</div>
+              <div class="fn-title" style="font-size:13px;">Flow complete</div>
+              <div class="fn-desc" style="font-size:11px;">No more emails sent</div>
+            </div>
+          </div>
+          <div class="branch-side">
+            <div class="branch-label branch-no">✗ No — not yet</div>
+            <div class="connector"><div class="conn-line" style="height:20px;"></div><div class="conn-arrow">▼</div></div>
+            <div class="flow-node small" onclick="showStep('followup')">
+              <span class="fn-edit" style="top:8px;right:8px;font-size:10px;">edit ✏️</span>
+              <div class="fn-icon">🔔</div>
+              <div class="fn-title" style="font-size:13px;">Follow-up Email</div>
+              <div class="fn-desc" style="font-size:11px;">One gentle reminder, then stops</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="connector" style="margin-top:12px;"><div class="conn-line"></div><div class="conn-label">Always</div><div class="conn-arrow">▼</div></div>
+
+        <!-- END -->
+        <div class="flow-node done-node" onclick="showStep('done')">
+          <div class="fn-icon">✅</div>
+          <div class="fn-title">Flow Complete</div>
+          <div class="fn-desc">No more emails sent to this customer. They can be re-added next time.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PREVIEW PANEL -->
+    <div class="preview-panel">
+      <div class="pp-head">
+        <h3 id="ppTitle">Review Request Email</h3>
+        <div class="pp-tabs">
+          <div class="ppt active" onclick="showTab('preview',this)">Preview</div>
+          <div class="ppt" onclick="showTab('edit',this)">Edit</div>
+        </div>
+      </div>
+      <div class="pp-body" id="previewPane">
+        <div class="email-meta">
+          <div class="em-row"><span class="em-lbl">From:</span><span class="em-val">Mario's Cafe</span></div>
+          <div class="em-row"><span class="em-lbl">To:</span><span class="em-val"><span class="var">{customer_email}</span></span></div>
+          <div class="em-row"><span class="em-lbl">When:</span><span class="em-val" id="emailWhen">Same day, 9:00 AM</span></div>
+        </div>
+        <div class="email-subj" id="emailSubj">How did we go, {customer_name}?</div>
+        <div class="email-body" id="emailBodyContent">
+          <p>Hi <span class="var">{customer_name}</span>,</p>
+          <p>Thanks for visiting Mario's Cafe today — we loved having you in!</p>
+          <p>As a small local cafe, Google reviews really help other people in the area find us. If you enjoyed your visit, would you mind leaving us a quick one?</p>
+          <a class="rev-btn" href="#">⭐ Leave a Google Review</a>
+          <p>No worries at all if you're busy — we appreciate your support either way!</p>
+        </div>
+        <div class="email-sig">Cheers,<br><strong>Mario</strong><br>Mario's Cafe</div>
+        <a href="templates.html" class="btn-edit-tpl">✏️ Edit This Template</a>
+      </div>
+      <div class="pp-body" id="editPane" style="display:none;">
+        <div style="background:var(--gray-100);border-radius:10px;padding:16px;text-align:center;">
+          <div style="font-size:24px;margin-bottom:8px;">✏️</div>
+          <div style="font-size:14px;font-weight:600;color:var(--black);margin-bottom:6px;">Edit this email</div>
+          <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px;">Full template editing is on the Templates page — you can customise every word, subject line, and timing.</div>
+          <a href="templates.html" class="btn-edit-tpl">Go to Templates →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const steps = {
+  email1: {
+    title: 'Review Request Email',
+    when: 'Same day, 9:00 AM',
+    subj: 'How did we go, {customer_name}?',
+    body: `<p>Hi <span class="var">{customer_name}</span>,</p>
+<p>Thanks for visiting Mario's Cafe today — we loved having you in!</p>
+<p>As a small local cafe, Google reviews really help other people in the area find us. If you enjoyed your visit, would you mind leaving us a quick one?</p>
+<a class="rev-btn" href="#">⭐ Leave a Google Review</a>
+<p>No worries at all if you're busy — we appreciate your support either way!</p>`
+  },
+  followup: {
+    title: 'Follow-up Reminder',
+    when: '3 days after request (if no review)',
+    subj: 'Just a quick follow-up 👋',
+    body: `<p>Hey <span class="var">{customer_name}</span>,</p>
+<p>Just following up on my earlier message — if you had a good experience at Mario's Cafe, it would really mean a lot to us if you left a quick Google review.</p>
+<a class="rev-btn" href="#">⭐ Leave a Google Review</a>
+<p>This is the only follow-up I'll send — promise! No worries at all if it's not for you.</p>`
+  },
+  check: {
+    title: 'Review Check',
+    when: '3 days after request',
+    subj: '🔍 Automatic Review Check',
+    body: `<p style="text-align:center;padding:20px 0;color:var(--gray-600);">ReviewMate automatically checks your Google listing to see if the customer has left a review.</p>
+<p style="text-align:center;font-size:13px;color:var(--gray-400);">No email is sent at this step — it's a behind-the-scenes check that decides which path the customer goes down.</p>`
+  },
+  done: {
+    title: 'Flow Complete',
+    when: 'After review OR after follow-up',
+    subj: '✅ No more emails sent',
+    body: `<p style="text-align:center;padding:20px 0;color:var(--gray-600);">The customer has completed the flow. ReviewMate will not send them any more emails.</p>
+<p style="text-align:center;font-size:13px;color:var(--gray-400);">If they come back as a customer in future, you can add them again to start a new flow.</p>`
+  },
+  add: {
+    title: 'Customer Added (Trigger)',
+    when: 'When you manually add a customer',
+    subj: '👤 Flow starts here',
+    body: `<p style="color:var(--gray-600);">The flow begins when you add a customer on the <a href="customers.html" style="color:var(--teal);">Customers page</a>.</p>
+<p style="color:var(--gray-600);margin-top:10px;">Right now this is a manual step — you add the customer after finishing a job. Integrations with Jobber, ServiceM8, and other booking systems are planned for the future.</p>
+<div style="background:var(--teal-light);border-radius:8px;padding:12px;margin-top:14px;font-size:13px;color:var(--teal-dark);">💡 <strong>Tip:</strong> Add customers while you're still at the job site — it only takes 20 seconds!</div>`
+  }
+};
+
+function showStep(key) {
+  const s = steps[key];
+  if(!s) return;
+  document.getElementById('ppTitle').textContent = s.title;
+  document.getElementById('emailWhen').textContent = s.when;
+  document.getElementById('emailSubj').textContent = s.subj;
+  document.getElementById('emailBodyContent').innerHTML = s.body;
+  document.querySelectorAll('.flow-node').forEach(n=>n.classList.remove('active'));
+}
+
+function showTab(tab, el) {
+  document.querySelectorAll('.ppt').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('previewPane').style.display = tab==='preview'?'block':'none';
+  document.getElementById('editPane').style.display = tab==='edit'?'block':'none';
+}
+function toggleBizMenu(){document.getElementById('bizMenu').classList.toggle('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.biz-switcher'))document.getElementById('bizMenu')?.classList.remove('open');});
+function toggleSidebar(){document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');}
+</script>
+</body>
+</html>

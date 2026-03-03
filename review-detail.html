@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review Detail — ReviewMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-700:#374151;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--sidebar-w:248px;--red:#dc2626;--amber:#d97706;--blue:#2563eb;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#f0f4f3;}
+h1,h2,h3,h4,h5{font-family:'Fraunces',serif;}a{text-decoration:none;color:inherit;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .18s;}
+.btn-primary{background:var(--teal);color:white;border-radius:10px;}.btn-primary:hover{background:#0f766e;transform:translateY(-1px);box-shadow:0 4px 14px rgba(13,148,136,.3);}
+.btn-ghost{background:white;color:var(--gray-900);border:1.5px solid var(--gray-300);border-radius:10px;}.btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+.btn-dark{background:var(--black);color:white;border-radius:10px;}.btn-dark:hover{background:#1c2018;}
+.btn-sm{padding:8px 16px;font-size:13px;border-radius:8px;}.btn-md{padding:11px 22px;font-size:14px;}.btn-lg{padding:15px 32px;font-size:16px;}
+.sidebar{width:var(--sidebar-w);background:var(--black);min-height:100vh;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:50;}
+.sidebar-logo{padding:26px 24px 18px;border-bottom:1px solid #1a2018;}
+.sidebar-logo a{font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:white;letter-spacing:-.5px;}
+.sidebar-logo a em{color:var(--teal-mid);font-style:normal;}
+.sidebar-nav{padding:16px 0;flex:1;}
+.nav-section{padding:8px 20px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#4b5563;font-weight:600;margin-top:8px;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 20px;color:#6b7280;font-size:14px;font-weight:500;transition:all .15s;cursor:pointer;border-left:2px solid transparent;text-decoration:none;}
+.nav-item:hover{background:#111810;color:#d1fae5;}.nav-item.active{background:#0d2015;color:var(--teal-mid);border-left-color:var(--teal);}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sidebar-footer{padding:16px 20px;border-top:1px solid #1a2018;}
+.biz-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#111810;border-radius:10px;}
+.biz-av{width:30px;height:30px;background:var(--teal);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:white;flex-shrink:0;}
+.biz-info strong{display:block;font-size:13px;color:white;font-weight:600;}.biz-info span{font-size:11px;color:#6b7280;}
+.nav-logout{display:flex;align-items:center;gap:8px;padding:10px 4px 0;font-size:13px;color:#4b5563;text-decoration:none;}.nav-logout:hover{color:#6b7280;}
+.main{margin-left:var(--sidebar-w);flex:1;padding:36px 40px;min-height:100vh;}
+.card{background:white;border-radius:14px;border:1px solid #e5e7eb;}.card-pad{padding:28px;}
+.card-head{padding:22px 28px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--gray-900);}.card-sub{font-size:13px;color:var(--gray-400);margin-top:2px;}
+.form-group{margin-bottom:20px;}.form-group label{display:block;font-size:13px;font-weight:500;color:var(--gray-700);margin-bottom:6px;}
+.form-control{width:100%;padding:12px 15px;border:1.5px solid var(--gray-300);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--gray-900);outline:none;transition:border-color .2s;background:white;}
+.form-control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);}.form-control::placeholder{color:var(--gray-400);}
+.form-control[readonly]{background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;}
+textarea.form-control{resize:vertical;min-height:100px;line-height:1.6;}.form-hint{font-size:12px;color:var(--gray-400);margin-top:5px;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600;}
+.badge-green{background:var(--teal-light);color:var(--teal-dark);}.badge-amber{background:#fef3c7;color:#92400e;}
+.badge-red{background:#fee2e2;color:#991b1b;}.badge-blue{background:#dbeafe;color:#1e40af;}.badge-gray{background:var(--gray-100);color:var(--gray-600);}
+.page-hdr{margin-bottom:32px;display:flex;align-items:flex-start;justify-content:space-between;}
+.page-hdr h1{font-size:28px;font-weight:700;color:var(--black);}.page-hdr p{font-size:14px;color:var(--gray-600);margin-top:5px;}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--teal);color:white;padding:12px 20px;border-radius:10px;font-size:14px;display:none;box-shadow:0 4px 16px rgba(13,148,136,.35);z-index:999;}
+</style>
+<style>
+body{display:flex;}
+
+/* Back link */
+.back-link{display:inline-flex;align-items:center;gap:4px;font-size:14px;color:var(--teal);font-weight:500;margin-bottom:20px;transition:opacity .15s;}
+.back-link:hover{opacity:.75;}
+
+/* Review card */
+.review-card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:28px;}
+.review-header{display:flex;align-items:center;gap:16px;margin-bottom:18px;}
+.review-avatar{width:48px;height:48px;border-radius:50%;background:#ccfbf1;color:#134e4a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;}
+.review-name{font-size:18px;font-weight:700;color:var(--gray-900);}
+.review-stars{color:#f59e0b;font-size:16px;margin:3px 0;}
+.review-date{font-size:13px;color:var(--gray-400);}
+.review-text{font-size:15px;line-height:1.8;color:var(--gray-600);margin-bottom:18px;}
+.source-badge{display:inline-flex;align-items:center;gap:6px;background:white;border:1px solid var(--gray-300);border-radius:100px;padding:5px 12px;font-size:12px;font-weight:600;color:var(--gray-700);}
+.source-badge svg{width:14px;height:14px;}
+
+/* Reply section */
+.reply-card{background:white;border-radius:14px;border:1px solid #e5e7eb;padding:28px;margin-top:20px;}
+.reply-heading{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--gray-900);margin-bottom:4px;}
+.reply-sub{font-size:14px;color:var(--gray-600);margin-bottom:20px;}
+
+/* Suggestion cards */
+.sug-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.sug-card{display:flex;align-items:flex-start;gap:12px;border:1.5px solid var(--gray-300);border-radius:10px;padding:14px;cursor:pointer;transition:all .15s;background:white;}
+.sug-card:hover{border-color:var(--gray-400);}
+.sug-card.active{border-color:var(--teal);background:var(--teal-light);}
+.sug-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--gray-300);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s;}
+.sug-card.active .sug-radio{border-color:var(--teal);}
+.sug-radio-dot{width:10px;height:10px;border-radius:50%;background:var(--teal);transform:scale(0);transition:transform .15s;}
+.sug-card.active .sug-radio-dot{transform:scale(1);}
+.sug-text{font-size:14px;color:var(--gray-700);line-height:1.6;}
+.sug-card.active .sug-text{color:var(--teal-dark);}
+
+/* Copy button */
+.btn-copy-reply{width:100%;padding:13px;background:var(--teal);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;}
+.btn-copy-reply:hover{background:#0f766e;transform:translateY(-1px);box-shadow:0 4px 14px rgba(13,148,136,.3);}
+.copy-note{font-size:12px;color:var(--gray-400);margin-top:10px;text-align:center;}
+
+/* Other reviews */
+.other-section{margin-top:28px;}
+.other-heading{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--gray-900);margin-bottom:16px;}
+.other-grid{display:flex;flex-direction:column;gap:12px;}
+.other-card{display:flex;gap:13px;background:white;border-radius:14px;border:1px solid #e5e7eb;padding:18px 22px;transition:all .15s;cursor:pointer;text-decoration:none;}
+.other-card:hover{border-color:var(--teal);box-shadow:0 2px 12px rgba(13,148,136,.08);transform:translateY(-1px);}
+.other-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;}
+.other-name{font-size:14px;font-weight:600;color:var(--gray-900);}
+.other-stars{color:#f59e0b;font-size:12px;margin:2px 0;}
+.other-text{font-size:13px;color:var(--gray-600);line-height:1.5;}
+
+/* Business switcher */
+.biz-switcher{position:relative;cursor:pointer;}
+.biz-arrow{color:#6b7280;font-size:12px;margin-left:auto;}
+.biz-menu{display:none;position:absolute;bottom:100%;left:0;right:0;background:#1a1f1a;border-radius:10px;border:1px solid #2a302a;padding:6px;margin-bottom:8px;box-shadow:0 -8px 24px rgba(0,0,0,.4);}
+.biz-menu.open{display:block;}
+.biz-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:13px;color:#d1d5db;transition:background .15s;cursor:pointer;}
+.biz-option:hover{background:#111810;}
+.biz-option.active{color:white;}
+.biz-option.add{color:var(--teal-mid);text-decoration:none;}
+.biz-divider{height:1px;background:#2a302a;margin:4px 0;}
+
+/* Mobile bar */
+.mobile-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:40;background:var(--black);padding:14px 20px;align-items:center;gap:14px;}
+.hamburger{background:none;border:none;color:white;font-size:22px;cursor:pointer;padding:0;}
+.mobile-logo{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:white;}
+.mobile-logo em{color:var(--teal-mid);font-style:normal;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:45;}
+.sidebar-overlay.open{display:block;}
+@media(max-width:768px){
+  .mobile-bar{display:flex;}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:80px 20px 36px;}
+  .review-header{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile bar -->
+<div class="mobile-bar">
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  <div class="mobile-logo">Review<em>Mate</em></div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo"><a href="index.html">Review<em>Mate</em></a></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a href="dashboard.html" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
+    <a href="quick-send.html" style="display:flex;align-items:center;gap:11px;padding:10px 16px;margin:8px 12px;background:var(--teal);border-radius:10px;color:white;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='#0f766e'" onmouseout="this.style.background='var(--teal)'">
+  <span style="font-size:16px;">⚡</span> Quick Send
+</a>
+<div class="nav-section">Customers</div>
+    <a href="customers.html" class="nav-item"><span class="nav-icon">👥</span> Customers</a>
+    <a href="requests.html" class="nav-item"><span class="nav-icon">📬</span> Requests</a>
+    <div class="nav-section">Emails</div>
+    <a href="email-flow.html" class="nav-item"><span class="nav-icon">🔀</span> Email Flow</a>
+    <a href="templates.html" class="nav-item"><span class="nav-icon">📋</span> Templates</a>
+    <div class="nav-section">Marketing</div>
+    <a href="qr-code.html" class="nav-item"><span class="nav-icon">📱</span> QR Code</a>
+    <div class="nav-section">Account</div>
+    <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="biz-switcher" onclick="toggleBizMenu()">
+      <div class="biz-chip">
+        <div class="biz-av">MC</div>
+        <div class="biz-info"><strong>Mario's Cafe</strong><span>Pro Plan</span></div>
+        <span class="biz-arrow">▼</span>
+      </div>
+      <div class="biz-menu" id="bizMenu">
+        <div class="biz-option active">
+          <div class="biz-av" style="width:26px;height:26px;font-size:10px;">MC</div>
+          Mario's Cafe
+        </div>
+        <div class="biz-divider"></div>
+        <a href="dashboard-empty.html" class="biz-option" style="text-decoration:none;">
+          <div class="biz-av" style="width:26px;height:26px;font-size:10px;background:var(--blue);">GC</div>
+          Gold Coast Plumbing
+        </a>
+        <div class="biz-divider"></div>
+        <a href="#" class="biz-option add">+ Add Business</a>
+      </div>
+    </div>
+    <a href="login.html" class="nav-logout">← Log out</a>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Back link -->
+  <a href="dashboard.html" class="back-link">← Back to Dashboard</a>
+
+  <!-- Review card -->
+  <div class="review-card">
+    <div class="review-header">
+      <div class="review-avatar">SJ</div>
+      <div>
+        <div class="review-name">Sarah Johnson</div>
+        <div class="review-stars">★★★★★</div>
+        <div class="review-date">2 days ago · via ReviewMate request</div>
+      </div>
+    </div>
+    <div class="review-text">Best coffee in Burleigh — staff remember my order every time. Cold brew is incredible. The vibe is so relaxed and the team always has a smile. Highly recommend for anyone in the area.</div>
+    <div class="source-badge">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Google
+    </div>
+  </div>
+
+  <!-- Reply section -->
+  <div class="reply-card">
+    <div class="reply-heading">Reply to this review</div>
+    <div class="reply-sub">Compose a reply and copy it to paste into Google Business Profile</div>
+
+    <!-- AI suggestion cards -->
+    <div class="sug-list">
+      <div class="sug-card active" onclick="selectSuggestion(this)">
+        <div class="sug-radio"><div class="sug-radio-dot"></div></div>
+        <div class="sug-text">Thanks so much Sarah! We love seeing you in — your cold brew is always ready 😊</div>
+      </div>
+      <div class="sug-card" onclick="selectSuggestion(this)">
+        <div class="sug-radio"><div class="sug-radio-dot"></div></div>
+        <div class="sug-text">Really appreciate the kind words Sarah! The team will be stoked to hear this. See you soon!</div>
+      </div>
+      <div class="sug-card" onclick="selectSuggestion(this)">
+        <div class="sug-radio"><div class="sug-radio-dot"></div></div>
+        <div class="sug-text">Thank you Sarah! So glad you enjoy the vibe and the cold brew. We'll keep it coming!</div>
+      </div>
+    </div>
+
+    <!-- Custom reply textarea -->
+    <textarea class="form-control" id="replyText" placeholder="Write your reply...">Thanks so much Sarah! We love seeing you in — your cold brew is always ready 😊</textarea>
+
+    <!-- Copy button -->
+    <button class="btn-copy-reply" onclick="copyReply()">📋 Copy Reply</button>
+    <div class="copy-note">Paste this reply into your Google Business Profile to respond publicly</div>
+  </div>
+
+  <!-- Other recent reviews -->
+  <div class="other-section">
+    <div class="other-heading">Other Recent Reviews</div>
+    <div class="other-grid">
+      <a href="review-detail.html" class="other-card">
+        <div class="other-av" style="background:#dbeafe;color:#1e40af;">MT</div>
+        <div>
+          <div class="other-name">Mike Tran</div>
+          <div class="other-stars">★★★★★</div>
+          <div class="other-text">Been coming every morning for 3 months. Quality never drops...</div>
+        </div>
+      </a>
+      <a href="review-detail.html" class="other-card">
+        <div class="other-av" style="background:#fef3c7;color:#92400e;">AL</div>
+        <div>
+          <div class="other-name">Anna Liu</div>
+          <div class="other-stars">★★★★☆</div>
+          <div class="other-text">Great vibe, friendly staff. Busy on weekends but worth it...</div>
+        </div>
+      </a>
+      <a href="review-detail.html" class="other-card">
+        <div class="other-av" style="background:#ede9fe;color:#6d28d9;">RK</div>
+        <div>
+          <div class="other-name">Rachel K.</div>
+          <div class="other-stars">★★★★★</div>
+          <div class="other-text">Hidden gem. Everything from decor to coffee is on point...</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">✓ Copied to clipboard!</div>
+
+<script>
+function selectSuggestion(el){
+  document.querySelectorAll('.sug-card').forEach(c=>{c.classList.remove('active');});
+  el.classList.add('active');
+  document.getElementById('replyText').value = el.querySelector('.sug-text').textContent;
+}
+function copyReply(){
+  const text = document.getElementById('replyText').value;
+  navigator.clipboard.writeText(text).catch(()=>{});
+  showToast();
+}
+function showToast(){
+  const t=document.getElementById('toast');
+  t.style.display='block';
+  setTimeout(()=>t.style.display='none',2500);
+}
+function toggleBizMenu(){
+  const menu=document.getElementById('bizMenu');
+  menu.classList.toggle('open');
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+document.addEventListener('click',function(e){
+  const switcher=document.querySelector('.biz-switcher');
+  if(switcher && !switcher.contains(e.target)){
+    document.getElementById('bizMenu').classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up — ReviewMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#f0f4f3;min-height:100vh;display:flex;flex-direction:column;}
+h1,h2,h3{font-family:'Fraunces',serif;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 40px;background:var(--black);}
+.logo{font-family:'Fraunces',serif;font-weight:700;font-size:20px;color:white;text-decoration:none;}
+.logo em{color:var(--teal-mid);font-style:normal;}
+.nav-link{font-size:14px;color:#9ca3af;}
+.nav-link a{color:var(--teal-mid);font-weight:500;}
+
+.wrap{flex:1;display:flex;padding:48px 24px;gap:64px;max-width:1000px;margin:0 auto;width:100%;align-items:flex-start;}
+.left-panel{width:320px;flex-shrink:0;padding-top:8px;}
+.left-panel h2{font-size:32px;font-weight:800;color:var(--black);line-height:1.2;margin-bottom:16px;}
+.left-panel h2 em{color:var(--teal);font-style:italic;}
+.left-panel p{font-size:15px;color:var(--gray-600);line-height:1.7;margin-bottom:28px;font-weight:300;}
+.perk{display:flex;align-items:flex-start;gap:11px;margin-bottom:16px;}
+.perk-icon{width:32px;height:32px;background:var(--teal-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.perk-text strong{display:block;font-size:14px;font-weight:600;color:var(--black);}
+.perk-text span{font-size:13px;color:var(--gray-600);}
+
+.card{background:white;border-radius:18px;padding:40px;flex:1;border:1px solid #e5e7eb;box-shadow:0 4px 20px rgba(0,0,0,.06);}
+.card h3{font-size:24px;font-weight:700;color:var(--black);margin-bottom:6px;}
+.card .sub{font-size:14px;color:var(--gray-600);margin-bottom:28px;}
+.trial-box{background:var(--teal-light);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:26px;}
+.trial-box span{font-size:22px;}
+.trial-box div{font-size:13px;color:var(--teal-dark);line-height:1.5;}
+.trial-box strong{font-weight:600;}
+.form-group{margin-bottom:18px;}
+label{display:block;font-size:13px;font-weight:500;color:var(--gray-900);margin-bottom:6px;}
+input{width:100%;padding:12px 15px;border:1.5px solid var(--gray-300);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--gray-900);outline:none;transition:border-color .2s;}
+input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);}
+input::placeholder{color:var(--gray-400);}
+.btn-full{width:100%;padding:15px;background:var(--teal);color:white;border:none;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:500;cursor:pointer;transition:all .2s;display:block;text-align:center;text-decoration:none;}
+.btn-full:hover{background:#0f766e;transform:translateY(-1px);}
+.foot-note{text-align:center;margin-top:20px;font-size:14px;color:var(--gray-600);}
+.foot-note a{color:var(--teal);font-weight:500;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">Review<em>Mate</em></div>
+  <div class="nav-link">Already have an account? <a href="login.html">Log in</a></div>
+</nav>
+<div class="wrap">
+  <div class="left-panel">
+    <h2>Get more reviews, <em>effortlessly</em></h2>
+    <p>Join hundreds of local businesses using ReviewMate to grow their Google ratings without the awkward asking.</p>
+    <div class="perk"><div class="perk-icon">📬</div><div class="perk-text"><strong>Personalised emails</strong><span>Tailored to your business type</span></div></div>
+    <div class="perk"><div class="perk-icon">🔔</div><div class="perk-text"><strong>Smart follow-ups</strong><span>Automatic 3-day reminder</span></div></div>
+    <div class="perk"><div class="perk-icon">📊</div><div class="perk-text"><strong>Review dashboard</strong><span>See all your Google reviews in one place</span></div></div>
+    <div class="perk"><div class="perk-icon">💬</div><div class="perk-text"><strong>Email templates</strong><span>Pre-built for your industry</span></div></div>
+  </div>
+  <div class="card">
+    <h3>Create your account</h3>
+    <div class="sub">Start getting more reviews in minutes</div>
+    <div class="trial-box"><span>🎉</span><div><strong>14-day free trial included</strong><br>No credit card required to start</div></div>
+    <div class="form-group"><label>Business Name</label><input type="text" placeholder="e.g. Mario's Cafe, Gold Coast Plumbing..."/></div>
+    <div class="form-group"><label>Your Name</label><input type="text" placeholder="First and last name"/></div>
+    <div class="form-group"><label>Email Address</label><input type="email" placeholder="you@yourbusiness.com"/></div>
+    <div class="form-group"><label>Password</label><input type="password" placeholder="Minimum 8 characters"/></div>
+    <a href="onboarding-1.html" class="btn-full">Create Account →</a>
+    <div class="foot-note">Already have an account? <a href="login.html">Log in</a></div>
+  </div>
+</div>
+</body>
+</html>

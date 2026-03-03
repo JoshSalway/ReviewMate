@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — ReviewMate</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#0d9488;--teal-light:#ccfbf1;--teal-dark:#134e4a;--teal-mid:#14b8a6;--black:#0c0f0a;--gray-900:#111827;--gray-700:#374151;--gray-600:#4b5563;--gray-400:#9ca3af;--gray-300:#d1d5db;--gray-100:#f3f4f6;--gray-50:#f9fafb;--white:#fff;--sidebar-w:248px;--red:#dc2626;--amber:#d97706;--blue:#2563eb;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;color:var(--gray-900);background:#f0f4f3;}
+h1,h2,h3,h4,h5{font-family:'Fraunces',serif;}a{text-decoration:none;color:inherit;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .18s;}
+.btn-primary{background:var(--teal);color:white;border-radius:10px;}.btn-primary:hover{background:#0f766e;transform:translateY(-1px);box-shadow:0 4px 14px rgba(13,148,136,.3);}
+.btn-ghost{background:white;color:var(--gray-900);border:1.5px solid var(--gray-300);border-radius:10px;}.btn-ghost:hover{border-color:var(--teal);color:var(--teal);}
+.btn-dark{background:var(--black);color:white;border-radius:10px;}.btn-dark:hover{background:#1c2018;}
+.btn-sm{padding:8px 16px;font-size:13px;border-radius:8px;}.btn-md{padding:11px 22px;font-size:14px;}.btn-lg{padding:15px 32px;font-size:16px;}
+.sidebar{width:var(--sidebar-w);background:var(--black);min-height:100vh;display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:50;}
+.sidebar-logo{padding:26px 24px 18px;border-bottom:1px solid #1a2018;}
+.sidebar-logo a{font-family:'Fraunces',serif;font-weight:700;font-size:22px;color:white;letter-spacing:-.5px;}
+.sidebar-logo a em{color:var(--teal-mid);font-style:normal;}
+.sidebar-nav{padding:16px 0;flex:1;}
+.nav-section{padding:8px 20px 4px;font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#4b5563;font-weight:600;margin-top:8px;}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 20px;color:#6b7280;font-size:14px;font-weight:500;transition:all .15s;cursor:pointer;border-left:2px solid transparent;text-decoration:none;}
+.nav-item:hover{background:#111810;color:#d1fae5;}.nav-item.active{background:#0d2015;color:var(--teal-mid);border-left-color:var(--teal);}
+.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sidebar-footer{padding:16px 20px;border-top:1px solid #1a2018;}
+.biz-chip{display:flex;align-items:center;gap:10px;padding:10px 12px;background:#111810;border-radius:10px;}
+.biz-av{width:30px;height:30px;background:var(--teal);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:white;flex-shrink:0;}
+.biz-info strong{display:block;font-size:13px;color:white;font-weight:600;}.biz-info span{font-size:11px;color:#6b7280;}
+.nav-logout{display:flex;align-items:center;gap:8px;padding:10px 4px 0;font-size:13px;color:#4b5563;text-decoration:none;}.nav-logout:hover{color:#6b7280;}
+.main{margin-left:var(--sidebar-w);flex:1;padding:36px 40px;min-height:100vh;}
+.card{background:white;border-radius:14px;border:1px solid #e5e7eb;}.card-pad{padding:28px;}
+.card-head{padding:22px 28px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--gray-900);}.card-sub{font-size:13px;color:var(--gray-400);margin-top:2px;}
+.form-group{margin-bottom:20px;}.form-group label{display:block;font-size:13px;font-weight:500;color:var(--gray-700);margin-bottom:6px;}
+.form-control{width:100%;padding:12px 15px;border:1.5px solid var(--gray-300);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--gray-900);outline:none;transition:border-color .2s;background:white;}
+.form-control:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);}.form-control::placeholder{color:var(--gray-400);}
+.form-control[readonly]{background:var(--gray-50);color:var(--gray-600);cursor:not-allowed;}
+textarea.form-control{resize:vertical;min-height:100px;line-height:1.6;}.form-hint{font-size:12px;color:var(--gray-400);margin-top:5px;}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;font-size:12px;font-weight:600;}
+.badge-green{background:var(--teal-light);color:var(--teal-dark);}.badge-amber{background:#fef3c7;color:#92400e;}
+.badge-red{background:#fee2e2;color:#991b1b;}.badge-blue{background:#dbeafe;color:#1e40af;}.badge-gray{background:var(--gray-100);color:var(--gray-600);}
+.page-hdr{margin-bottom:32px;display:flex;align-items:flex-start;justify-content:space-between;}
+.page-hdr h1{font-size:28px;font-weight:700;color:var(--black);}.page-hdr p{font-size:14px;color:var(--gray-600);margin-top:5px;}
+.toast{position:fixed;bottom:28px;right:28px;background:var(--teal);color:white;padding:12px 20px;border-radius:10px;font-size:14px;display:none;box-shadow:0 4px 16px rgba(13,148,136,.35);z-index:999;}
+</style>
+<style>
+body{display:flex;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:28px;}
+.stat{background:white;border-radius:14px;padding:22px;border:1px solid #e5e7eb;}
+.stat.hi{background:var(--teal);border-color:var(--teal);}
+.stat-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--gray-400);font-weight:600;margin-bottom:10px;}
+.stat.hi .stat-lbl{color:#99f6e4;}
+.stat-val{font-family:'Fraunces',serif;font-size:34px;font-weight:800;color:var(--black);line-height:1;}
+.stat.hi .stat-val{color:white;}
+.stat-sub{font-size:13px;color:var(--gray-400);margin-top:8px;}
+.stat.hi .stat-sub{color:#99f6e4;}
+.stat-up{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--teal);background:var(--teal-light);padding:3px 8px;border-radius:100px;margin-top:8px;}
+
+.grid2{display:grid;grid-template-columns:1fr 340px;gap:22px;}
+.chart-card,.reviews-card,.link-card,.add-card,.digest-card{background:white;border-radius:14px;border:1px solid #e5e7eb;}
+.ch{padding:24px 28px;}
+.chart-wrap{height:150px;position:relative;margin-top:16px;}
+svg.line{width:100%;height:100%;}
+
+/* Reviews */
+.rv-item{display:flex;gap:13px;padding:16px 0;border-bottom:1px solid var(--gray-100);}
+.rv-item:first-child{padding-top:0;}
+.rv-item:last-child{border-bottom:none;padding-bottom:0;}
+.rv-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;}
+.rv-name{font-size:13px;font-weight:600;color:var(--gray-900);}
+.rv-stars{color:#f59e0b;font-size:12px;margin:2px 0;}
+.rv-text{font-size:13px;color:var(--gray-600);line-height:1.6;}
+.rv-meta{font-size:11px;color:var(--gray-400);margin-top:4px;}
+.rv-meta .via{color:var(--teal);}
+
+/* Right panel */
+.rp{display:flex;flex-direction:column;gap:18px;}
+.link-box{background:var(--gray-100);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--gray-600);font-family:monospace;word-break:break-all;margin:12px 0;}
+.btn-copy{width:100%;padding:10px;background:var(--teal);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;}
+.btn-copy:hover{background:#0f766e;}
+.copied{display:none;text-align:center;font-size:13px;color:var(--teal);margin-top:6px;font-weight:500;}
+.mini-in{width:100%;padding:10px 12px;border:1.5px solid var(--gray-300);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;margin-bottom:10px;outline:none;transition:border-color .2s;}
+.mini-in:focus{border-color:var(--teal);}
+.mini-in::placeholder{color:var(--gray-400);}
+.btn-send{width:100%;padding:10px;background:var(--black);color:white;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:background .2s;}
+.btn-send:hover{background:#1c2018;}
+.req-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px;}
+.req-s{background:var(--gray-100);border-radius:8px;padding:11px;text-align:center;}
+.req-s.good{background:var(--teal-light);}
+.req-n{font-family:'Fraunces',serif;font-size:19px;font-weight:700;color:var(--black);}
+.req-s.good .req-n{color:var(--teal-dark);}
+.req-l{font-size:10px;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px;margin-top:2px;}
+.digest-box{background:var(--gray-100);border-radius:8px;padding:13px;font-size:13px;color:var(--gray-600);line-height:1.8;}
+
+/* Business switcher */
+.biz-switcher{position:relative;cursor:pointer;}
+.biz-arrow{color:#6b7280;font-size:12px;margin-left:auto;}
+.biz-menu{display:none;position:absolute;bottom:100%;left:0;right:0;background:#1a1f1a;border-radius:10px;border:1px solid #2a302a;padding:6px;margin-bottom:8px;box-shadow:0 -8px 24px rgba(0,0,0,.4);}
+.biz-menu.open{display:block;}
+.biz-option{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;font-size:13px;color:#d1d5db;transition:background .15s;cursor:pointer;}
+.biz-option:hover{background:#111810;}
+.biz-option.active{color:white;}
+.biz-option.add{color:var(--teal-mid);text-decoration:none;}
+.biz-divider{height:1px;background:#2a302a;margin:4px 0;}
+
+/* Mobile responsive */
+.mobile-bar{display:none;position:fixed;top:0;left:0;right:0;z-index:40;background:var(--black);padding:14px 20px;align-items:center;gap:14px;}
+.hamburger{background:none;border:none;color:white;font-size:22px;cursor:pointer;padding:0;}
+.mobile-logo{font-family:'Fraunces',serif;font-weight:700;font-size:18px;color:white;}
+.mobile-logo em{color:var(--teal-mid);font-style:normal;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:45;}
+.sidebar-overlay.open{display:block;}
+@media(max-width:768px){
+  .mobile-bar{display:flex;}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:80px 20px 36px;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+}
+
+/* Empty state styles */
+.checklist{list-style:none;padding:0;margin:0;}
+.checklist li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--gray-100);font-size:14px;color:var(--gray-700);}
+.checklist li:last-child{border-bottom:none;}
+.checklist li .check{font-size:18px;flex-shrink:0;width:24px;text-align:center;}
+.checklist li.done{color:var(--gray-400);}
+.checklist li.done .step-text{text-decoration:line-through;}
+.stat-val.muted{color:var(--gray-300);}
+.empty-chart{display:flex;align-items:center;justify-content:center;height:150px;background:var(--gray-50);border-radius:10px;margin-top:16px;border:2px dashed var(--gray-300);}
+.empty-chart p{font-size:13px;color:var(--gray-400);text-align:center;max-width:280px;line-height:1.6;}
+.empty-reviews{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 28px;text-align:center;}
+.empty-reviews .empty-icon{font-size:40px;margin-bottom:14px;opacity:.5;}
+.empty-reviews p{font-size:14px;color:var(--gray-400);line-height:1.6;max-width:260px;}
+.cta-banner{background:linear-gradient(135deg,var(--teal),#0f766e);border-radius:14px;padding:32px;text-align:center;margin-top:28px;}
+.cta-banner h2{color:white;font-size:22px;margin-bottom:8px;}
+.cta-banner p{color:#99f6e4;font-size:14px;margin-bottom:20px;}
+.cta-banner .btn-cta{display:inline-flex;align-items:center;gap:8px;background:white;color:var(--teal-dark);padding:14px 28px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;border:none;cursor:pointer;transition:all .18s;}
+.cta-banner .btn-cta:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.2);}
+</style>
+</head>
+<body>
+
+<div class="mobile-bar">
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  <div class="mobile-logo">Review<em>Mate</em></div>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<div class="sidebar">
+  <div class="sidebar-logo"><a href="index.html">Review<em>Mate</em></a></div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <a href="dashboard-empty.html" class="nav-item active"><span class="nav-icon">📊</span> Dashboard</a>
+    <a href="quick-send.html" style="display:flex;align-items:center;gap:11px;padding:10px 16px;margin:8px 12px;background:var(--teal);border-radius:10px;color:white;font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;" onmouseover="this.style.background='#0f766e'" onmouseout="this.style.background='var(--teal)'">
+  <span style="font-size:16px;">⚡</span> Quick Send
+</a>
+<div class="nav-section">Customers</div>
+    <a href="customers.html" class="nav-item"><span class="nav-icon">👥</span> Customers</a>
+    <a href="requests.html" class="nav-item"><span class="nav-icon">📬</span> Requests</a>
+    <div class="nav-section">Emails</div>
+    <a href="email-flow.html" class="nav-item"><span class="nav-icon">🔀</span> Email Flow</a>
+    <a href="templates.html" class="nav-item"><span class="nav-icon">📋</span> Templates</a>
+    <div class="nav-section">Marketing</div>
+    <a href="qr-code.html" class="nav-item"><span class="nav-icon">📱</span> QR Code</a>
+    <div class="nav-section">Account</div>
+    <a href="settings.html" class="nav-item"><span class="nav-icon">⚙️</span> Settings</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="biz-switcher" onclick="toggleBizMenu()">
+      <div class="biz-chip">
+        <div class="biz-av" style="background:#2563eb;">GC</div>
+        <div class="biz-info"><strong>Gold Coast Plumbing</strong><span>Pro Plan</span></div>
+        <span class="biz-arrow">▾</span>
+      </div>
+      <div class="biz-menu" id="bizMenu">
+        <div class="biz-option" onclick="window.location='dashboard.html'">
+          <div class="biz-av" style="width:24px;height:24px;font-size:10px;">MC</div>
+          <span>Mario's Cafe</span>
+        </div>
+        <div class="biz-option active">
+          <div class="biz-av" style="width:24px;height:24px;font-size:10px;background:#2563eb;">GC</div>
+          <span>Gold Coast Plumbing</span>
+          <span style="margin-left:auto;color:var(--teal);">✓</span>
+        </div>
+        <div class="biz-divider"></div>
+        <a href="add-business.html" class="biz-option add">
+          <span style="font-size:16px;">+</span>
+          <span>Add new business</span>
+        </a>
+      </div>
+    </div>
+    <a href="login.html" class="nav-logout">← Log out</a>
+  </div>
+</div>
+
+<div class="main">
+  <div class="page-hdr">
+    <div><h1>Welcome to ReviewMate!</h1><p>Gold Coast Plumbing</p></div>
+    <span class="badge badge-green" style="font-size:13px;padding:6px 14px;">⭐ Pro Plan Active</span>
+  </div>
+
+  <!-- Progress Checklist -->
+  <div class="card" style="margin-bottom:28px;">
+    <div class="card-head">
+      <div><div class="card-title">Getting Started</div><div class="card-sub">Complete these steps to start collecting reviews</div></div>
+      <span class="badge badge-amber">4 of 6 done</span>
+    </div>
+    <div class="card-pad">
+      <ul class="checklist">
+        <li class="done"><span class="check">✅</span><span class="step-text">Create your account</span><span class="badge badge-green" style="margin-left:auto;">Done</span></li>
+        <li class="done"><span class="check">✅</span><span class="step-text">Choose your business type</span><span class="badge badge-green" style="margin-left:auto;">Done</span></li>
+        <li class="done"><span class="check">✅</span><span class="step-text">Connect Google listing</span><span class="badge badge-green" style="margin-left:auto;">Done</span></li>
+        <li class="done"><span class="check">✅</span><span class="step-text">Pick email template</span><span class="badge badge-green" style="margin-left:auto;">Done</span></li>
+        <li><span class="check">⬜</span><span class="step-text">Send your first review request</span><a href="quick-send.html" class="btn btn-primary btn-sm" style="margin-left:auto;">Send First Request →</a></li>
+        <li><span class="check">⬜</span><span class="step-text">Get your first Google review</span><span class="badge badge-gray" style="margin-left:auto;">Waiting</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Empty Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-lbl">Overall Rating</div><div class="stat-val muted">—</div><div class="stat-sub">No reviews yet</div></div>
+    <div class="stat"><div class="stat-lbl">Total Reviews</div><div class="stat-val muted">—</div><div class="stat-sub">No reviews yet</div></div>
+    <div class="stat"><div class="stat-lbl">Requests Sent</div><div class="stat-val muted">—</div><div class="stat-sub">None sent yet</div></div>
+    <div class="stat"><div class="stat-lbl">Conversion Rate</div><div class="stat-val muted">—</div><div class="stat-sub">No data yet</div></div>
+  </div>
+
+  <!-- Empty Chart -->
+  <div class="chart-card" style="margin-bottom:22px;">
+    <div class="ch">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div><div class="card-title">Rating Trend</div><div class="card-sub">Last 6 months</div></div>
+      </div>
+      <div class="empty-chart">
+        <p>Your rating trend will appear here once you start collecting reviews</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty Reviews -->
+  <div class="reviews-card" style="margin-bottom:22px;">
+    <div class="card-head"><div><div class="card-title">Recent Reviews</div><div class="card-sub">From your Google listing</div></div></div>
+    <div class="empty-reviews">
+      <div class="empty-icon">⭐</div>
+      <p>No reviews yet. Send your first request to get started!</p>
+    </div>
+  </div>
+
+  <!-- CTA Banner -->
+  <div class="cta-banner">
+    <h2>Ready to grow your reputation?</h2>
+    <p>Send a review request to your most recent customer and watch the reviews roll in.</p>
+    <a href="quick-send.html" class="btn-cta">Send Your First Review Request →</a>
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Review request sent to customer!</div>
+<script>
+function toggleBizMenu(){document.getElementById('bizMenu').classList.toggle('open');}
+document.addEventListener('click',function(e){if(!e.target.closest('.biz-switcher'))document.getElementById('bizMenu')?.classList.remove('open');});
+function toggleSidebar(){document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');}
+function showToast(){const t=document.getElementById('toast');t.style.display='block';setTimeout(()=>t.style.display='none',2500);}
+</script>
+</body>
+</html>
