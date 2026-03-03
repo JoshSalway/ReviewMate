@@ -20,9 +20,8 @@ interface Review {
     rating: number;
     body: string | null;
     reviewer_name: string;
-    reviewed_at: string;
+    reviewed_at: string | null;
     via_review_mate: boolean;
-    stars: number;
     has_google_link: boolean;
     google_reply: string | null;
 }
@@ -146,11 +145,13 @@ export default function ReviewShow({ review, replyTemplates }: Props) {
                                         <div>
                                             <div className="font-semibold text-gray-900">{review.reviewer_name}</div>
                                             <div className="text-xs text-gray-500">
-                                                {new Date(review.reviewed_at).toLocaleDateString('en-AU', {
-                                                    day: 'numeric',
-                                                    month: 'long',
-                                                    year: 'numeric',
-                                                })}
+                                                {review.reviewed_at
+                                                    ? new Date(review.reviewed_at).toLocaleDateString('en-AU', {
+                                                        day: 'numeric',
+                                                        month: 'long',
+                                                        year: 'numeric',
+                                                    })
+                                                    : 'Unknown date'}
                                             </div>
                                         </div>
                                     </div>
@@ -164,9 +165,9 @@ export default function ReviewShow({ review, replyTemplates }: Props) {
                         </CardHeader>
                         <CardContent className="pt-5">
                             <div className="mb-4 flex items-center gap-3">
-                                <StarRating rating={review.stars} size="lg" />
+                                <StarRating rating={review.rating} size="lg" />
                                 <span className="text-sm font-medium text-gray-600">
-                                    {ratingLabels[review.stars] ?? `${review.stars} stars`}
+                                    {ratingLabels[review.rating] ?? `${review.rating} stars`}
                                 </span>
                             </div>
                             {review.body ? (

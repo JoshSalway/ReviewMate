@@ -64,9 +64,8 @@ class ReviewController extends Controller
                 'rating' => $review->rating,
                 'body' => $review->body,
                 'reviewer_name' => $review->reviewer_name ?? $review->customer?->name ?? 'Anonymous',
-                'reviewed_at' => $review->reviewed_at?->diffForHumans(),
+                'reviewed_at' => $review->reviewed_at?->toISOString(),
                 'via_review_mate' => $review->wasViaReviewMate(),
-                'stars' => $review->stars(),
                 'has_google_link' => $review->google_review_name !== null,
                 'google_reply' => $review->google_reply,
             ],
@@ -124,10 +123,10 @@ class ReviewController extends Controller
             'rating'                 => $review->rating,
             'body'                   => $review->body,
             'reviewer_name'          => $review->reviewer_name ?? $review->customer?->name ?? 'Anonymous',
-            'reviewed_at'            => $review->reviewed_at?->diffForHumans(),
+            'reviewed_at'            => $review->reviewed_at?->toISOString(),
             'via_review_mate'        => $review->wasViaReviewMate(),
             'google_reply'           => $review->google_reply,
-            'google_reply_posted_at' => $review->google_reply_posted_at?->diffForHumans(),
+            'google_reply_posted_at' => $review->google_reply_posted_at?->toISOString(),
             'has_google_link'        => $review->google_review_name !== null,
         ];
     }

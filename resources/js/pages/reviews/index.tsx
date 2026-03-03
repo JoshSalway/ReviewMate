@@ -14,7 +14,7 @@ interface Review {
     rating: number;
     body: string | null;
     reviewer_name: string;
-    reviewed_at: string;
+    reviewed_at: string | null;
     via_review_mate: boolean;
     google_reply: string | null;
     google_reply_posted_at: string | null;
@@ -324,11 +324,13 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                             <div>
                                                 <div className="font-semibold text-gray-900">{review.reviewer_name}</div>
                                                 <div className="text-xs text-gray-500">
-                                                    {new Date(review.reviewed_at).toLocaleDateString('en-AU', {
-                                                        day: 'numeric',
-                                                        month: 'long',
-                                                        year: 'numeric',
-                                                    })}
+                                                    {review.reviewed_at
+                                                        ? new Date(review.reviewed_at).toLocaleDateString('en-AU', {
+                                                            day: 'numeric',
+                                                            month: 'long',
+                                                            year: 'numeric',
+                                                        })
+                                                        : 'Unknown date'}
                                                 </div>
                                             </div>
                                             {review.via_review_mate && (
@@ -372,7 +374,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                                         {review.google_reply_posted_at && (
                                                             <p className="mt-2 text-xs text-teal-600">
                                                                 Posted{' '}
-                                                                {new Date(review.google_reply_posted_at).toLocaleDateString('en-AU', {
+                                                                {new Date(review.google_reply_posted_at!).toLocaleDateString('en-AU', {
                                                                     day: 'numeric',
                                                                     month: 'long',
                                                                     year: 'numeric',
@@ -426,11 +428,13 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                             <div>
                                                 <div className="font-semibold text-gray-900">{review.reviewer_name}</div>
                                                 <div className="text-xs text-gray-500">
-                                                    {new Date(review.reviewed_at).toLocaleDateString('en-AU', {
-                                                        day: 'numeric',
-                                                        month: 'long',
-                                                        year: 'numeric',
-                                                    })}
+                                                    {review.reviewed_at
+                                                        ? new Date(review.reviewed_at).toLocaleDateString('en-AU', {
+                                                            day: 'numeric',
+                                                            month: 'long',
+                                                            year: 'numeric',
+                                                        })
+                                                        : 'Unknown date'}
                                                 </div>
                                             </div>
                                             {review.via_review_mate && (
