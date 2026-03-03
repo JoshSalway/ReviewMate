@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\BusinessController;
+use App\Http\Controllers\WaitlistController;
 use App\Http\Controllers\ReplyTemplateController;
 use App\Http\Controllers\BusinessSettingsController;
 use App\Http\Controllers\BillingController;
@@ -19,7 +20,8 @@ use App\Http\Controllers\TemplateController;
 use Illuminate\Support\Facades\Route;
 use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', [WaitlistController::class, 'index'])->name('home');
+Route::post('/waitlist', [WaitlistController::class, 'store'])->name('waitlist.store');
 
 // Stripe webhook (must be outside auth middleware, CSRF excluded by Cashier)
 Route::post('stripe/webhook', '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook')
