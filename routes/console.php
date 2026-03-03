@@ -1,6 +1,7 @@
 <?php
 
 use App\Jobs\SendFollowUpRequests;
+use App\Jobs\SendWeeklyDigests;
 use App\Jobs\SyncGoogleReviews;
 use App\Models\Business;
 use Illuminate\Foundation\Inspiring;
@@ -16,6 +17,9 @@ Schedule::job(new SendFollowUpRequests)->dailyAt('09:00');
 
 // Also run legacy artisan command for backward compatibility
 Schedule::command('reviewmate:send-followups')->dailyAt('09:05');
+
+// Send weekly digest every Monday at 08:00
+Schedule::job(new SendWeeklyDigests)->weeklyOn(1, '08:00');
 
 // Sync Google reviews every 2 hours for all connected businesses
 Schedule::call(function () {
