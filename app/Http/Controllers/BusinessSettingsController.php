@@ -1,0 +1,46 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
+
+class BusinessSettingsController extends Controller
+{
+    public function index(Request $request): Response
+    {
+        $business = $request->user()->currentBusiness();
+
+        return Inertia::render('settings/business', [
+            'business' => [
+                'id' => $business?->id,
+                'name' => $business?->name,
+                'type' => $business?->type,
+                'google_place_id' => $business?->google_place_id,
+                'owner_name' => $business?->owner_name,
+                'phone' => $business?->phone,
+            ],
+        ]);
+    }
+
+    public function update(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'in:tradie,cafe,salon,healthcare,real_estate,retail,pet_services,fitness,other'],
+            'google_place_id' => ['nullable', 'string', 'max:255'],
+            'owner_name' => ['nullable', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:50'],
+        ]);
+
+        $business = $request->user()->currentBusiness();
+
+        if ($business) {
+            $business->update($validated);
+        }
+
+        return back()->with('success', 'Business settings updated.');
+    }
+}
