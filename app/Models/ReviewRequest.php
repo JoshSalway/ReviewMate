@@ -47,6 +47,15 @@ class ReviewRequest extends Model
         return $this->belongsTo(Customer::class);
     }
 
+    public static function hasRecentRequest(int $businessId, int $customerId, int $days = 30): bool
+    {
+        return static::where('business_id', $businessId)
+            ->where('customer_id', $customerId)
+            ->where('created_at', '>=', now()->subDays($days))
+            ->whereNotIn('status', ['no_response'])
+            ->exists();
+    }
+
     public function markAsOpened(): void
     {
         $this->update([

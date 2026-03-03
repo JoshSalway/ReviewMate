@@ -71,6 +71,10 @@ class QuickSendController extends Controller
             ['name' => $validated['name']]
         );
 
+        if (ReviewRequest::hasRecentRequest($business->id, $customer->id)) {
+            return back()->with('error', "A review request was already sent to {$customer->name} in the last 30 days.");
+        }
+
         $reviewRequest = ReviewRequest::create([
             'business_id' => $business->id,
             'customer_id' => $customer->id,

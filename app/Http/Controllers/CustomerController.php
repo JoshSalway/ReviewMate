@@ -116,7 +116,13 @@ class CustomerController extends Controller
         $customers = $business->customers()->whereIn('id', $validated['customer_ids'])->get();
 
         $sent = 0;
+        $skipped = 0;
         foreach ($customers as $customer) {
+            if (ReviewRequest::hasRecentRequest($business->id, $customer->id)) {
+                $skipped++;
+                continue;
+            }
+
             $reviewRequest = ReviewRequest::create([
                 'business_id' => $business->id,
                 'customer_id' => $customer->id,
@@ -137,10 +143,9 @@ class CustomerController extends Controller
             $sent++;
         }
 
-        $skipped = count($validated['customer_ids']) - $sent;
         $message = "Sent {$sent} review request(s).";
         if ($skipped > 0) {
-            $message .= " {$skipped} skipped (monthly limit reached).";
+            $message .= " {$skipped} skipped (already sent recently or monthly limit reached).";
         }
 
         return back()->with('success', $message);
