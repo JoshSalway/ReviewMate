@@ -1,11 +1,12 @@
 # ReviewMate — Agent Instructions
 
-> Last updated: 2026-03-03
-> Completion: ~100% code — deploy only remaining
+> Last updated: 2026-03-04
+> Completion: ~100% code — deploy + first customers remaining
 
 ## ✅ CODE COMPLETE — READY TO DEPLOY
 
-All features are built and tested (99 tests passing). The only remaining task is production deployment. See DEPLOYMENT.md for the full checklist.
+All features are built and tested (99 tests passing, CI passing). The only remaining work is
+production deployment and acquiring first paying customers.
 
 ---
 
@@ -17,7 +18,7 @@ Stack: Laravel 12, React 19, Inertia.js v2, Tailwind CSS v4, WorkOS auth, SQLite
 
 Read AGENTS.md for full conventions.
 
-The app is code-complete. Your only task is production deployment:
+The app is code-complete (99 tests passing, CI passing). Your only task is production deployment:
 
 1. Follow the checklist in DEPLOYMENT.md
 2. Run: php artisan test — confirm 99 tests pass
@@ -60,7 +61,8 @@ The app is code-complete. Your only task is production deployment:
 | Email unsubscribe (CAN-SPAM compliance) | ✅ Done |
 | 30-day resend guard | ✅ Done |
 | Security audit (all routes scoped) | ✅ Done |
-| **Deployed to production** | ❌ **This is the #1 priority — see DEPLOYMENT.md** |
+| CI passing (PHP lint + TypeScript) | ✅ Done |
+| **Deployed to production** | ❌ **#1 priority — see DEPLOYMENT.md** |
 
 ---
 
@@ -75,7 +77,18 @@ The app is code-complete. Your only task is production deployment:
 - [ ] Twilio credentials configured (for SMS)
 - [ ] Mailgun/Resend configured for email
 - [ ] Queue workers configured (needed for Google sync + follow-ups + weekly digest)
-- [ ] First deploy run
+- [ ] First deploy run → 99 tests pass
+
+---
+
+## After Deploy — First Customers (Owner)
+
+The app charges money — but only if people use it. After deploying:
+
+1. **Use Outpost** to find local businesses (cafes, tradies, salons, gyms) → cold email them
+2. **Pricing:** Offer first 5 customers a discounted rate ($29/mo instead of $49) for feedback
+3. **Onboard manually** — jump on a call, connect their Google Business Profile for them
+4. **Target:** 10 paying customers = ~$490/month. Enough to validate before scaling.
 
 ---
 
