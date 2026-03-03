@@ -58,6 +58,46 @@
 
 ---
 
+## Session 4 (Current)
+
+### ✅ Completed
+
+#### E — Post Reply wired up on reviews/show.tsx
+- `ReviewController::show` now passes `has_google_link` and `google_reply` to frontend
+- "Post to Google" button appears alongside "Copy Reply" when review has a Google link
+- Calls `POST /reviews/{review}/reply` with the reply text
+- Shows green success banner when reply is posted; hides button if reply already exists
+
+#### C — Stripe Webhook event listeners
+- `HandleStripeWebhook` listener registered in `AppServiceProvider` via `Event::listen(WebhookHandled::class, ...)`
+- Handles `customer.subscription.created` → sends `SubscriptionConfirmedMail` ("Welcome to ReviewMate!")
+- Handles `customer.subscription.deleted` → sends `SubscriptionCancelledMail` (with resubscribe link)
+- Both mails are queued, use Laravel Markdown mail template
+
+#### F — Bulk send review requests from customers page
+- Added checkboxes to every row in customers table (+ select all in header)
+- Bulk action bar appears when ≥1 customer selected: shows count, channel selector (email/sms/both), Send button, Clear button
+- `CustomerController::bulkSend()` — validates customer_ids + channel, enforces free plan limits (sends what's remaining), creates `ReviewRequest` records, queues emails
+- Route: `POST /customers/bulk-send`
+
+#### G — Weekly digest email
+- `WeeklyDigestMail` — computes weekly stats: new reviews, total reviews, avg rating, pending replies, requests sent
+- `resources/views/emails/weekly-digest.blade.php` — markdown email with stats panel + orange warning if pending replies > 0
+- `SendWeeklyDigests` job — chunks all businesses, mails the owner for each
+- Scheduled every Monday at 08:00
+
+#### D — SMS via Twilio
+- Installed `twilio/sdk`
+- `TwilioSmsService` — `send()`, `sendReviewRequest()`, `sendFollowUp()`, `isConfigured()` static check
+- Wired into: `ReviewRequestController::store`, `QuickSendController::send`, `CustomerController::bulkSend`, `SendFollowUpRequests` job
+- All SMS sends wrapped in `rescue()` — Twilio errors don't break the flow
+- Added `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` to `.env.example` and `config/services.php`
+
+#### Tests
+- **67 tests, all passing**
+
+---
+
 ## Session 2 (Previous)
 
 ### ✅ Completed
@@ -92,8 +132,11 @@
 ## 🔜 Remaining / Post-MVP
 
 ### High Priority
-- [ ] **SMS sending** — Integrate Twilio for SMS channel (routes exist, just need provider)
-- [ ] **Stripe Webhook handler** — Handle `customer.subscription.updated/deleted` events to update subscription status in DB
+- [x] ~~**SMS sending** — Twilio integrated~~ ✅
+- [x] ~~**Stripe Webhook handler** — `customer.subscription.created/deleted` listeners registered~~ ✅
+- [x] ~~**Review reply on show page** — Post to Google button wired up~~ ✅
+- [x] ~~**Bulk review request send** — Select multiple customers → send at once~~ ✅
+- [x] ~~**Weekly digest email** — Monday 08:00, stats summary per business~~ ✅
 - [ ] **Review sync webhook** — Real-time Google review sync via GBP webhooks (currently polling every 2h)
 
 ### Medium Priority
@@ -102,9 +145,8 @@
 - [ ] **Multi-location analytics** — Aggregate stats across all businesses for Pro users
 
 ### Lower Priority
-- [ ] **Review reply on show page** — Wire up the "Post Reply" button on `reviews/show.tsx` (currently only copies to clipboard)
-- [ ] **Bulk review request send** — Select multiple customers → send at once
 - [ ] **Review response templates** — Save favourite reply templates
+- [ ] **Unsubscribe from weekly digest** — `/settings/notifications` endpoint referenced in email footer
 
 ---
 
@@ -118,6 +160,7 @@
    - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` — Google Cloud Console (enable Business Profile API)
    - `STRIPE_KEY`, `STRIPE_SECRET` — Stripe dashboard
    - `STRIPE_PRICE_STARTER`, `STRIPE_PRICE_PRO` — Stripe product price IDs
+   - `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` — Twilio console (optional, SMS disabled if not set)
 4. `php artisan migrate`
 5. `npm run build`
 6. `php artisan serve`
