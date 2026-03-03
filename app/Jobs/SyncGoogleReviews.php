@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Mail\NewReviewAlertMail;
 use App\Models\Business;
 use App\Models\Review;
+use App\Models\ReviewRequest;
 use App\Services\GoogleBusinessProfileService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -73,6 +74,8 @@ class SyncGoogleReviews implements ShouldQueue
 
             // wasRecentlyCreated is set by updateOrCreate
             if ($review->wasRecentlyCreated) {
+                $this->linkToReviewRequest($review);
+
                 $user = $this->business->user;
                 if ($user && $user->notificationPreference('new_review_alert')) {
                     Mail::to($user->email, $user->name)
@@ -80,5 +83,40 @@ class SyncGoogleReviews implements ShouldQueue
                 }
             }
         }
+    }
+
+    /**
+     * Try to match a newly synced Google review to a pending ReviewRequest
+     * by comparing the reviewer's display name to customer names (case-insensitive).
+     * When matched, link the review and close the request as reviewed.
+     */
+    protected function linkToReviewRequest(Review $review): void
+    {
+        if (! $review->reviewer_name || $review->reviewer_name === 'Anonymous') {
+            return;
+        }
+
+        $request = ReviewRequest::query()
+            ->where('business_id', $this->business->id)
+            ->whereIn('status', ['sent', 'opened'])
+            ->whereNull('reviewed_at')
+            ->whereHas('customer', function ($q) use ($review) {
+                $q->whereRaw('LOWER(name) = ?', [strtolower($review->reviewer_name)]);
+            })
+            ->with('customer')
+            ->latest('sent_at')
+            ->first();
+
+        if (! $request) {
+            return;
+        }
+
+        // Link the review to this customer and request
+        $review->update([
+            'customer_id'       => $request->customer_id,
+            'review_request_id' => $request->id,
+        ]);
+
+        $request->markAsReviewed();
     }
 }

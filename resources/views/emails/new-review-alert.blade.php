@@ -6,7 +6,7 @@ Hi {{ $user->name }},
 **{{ $review->reviewer_name ?? 'Someone' }}** just left a review on Google.
 
 <x-mail::panel>
-@for($i = 1; $i <= 5; $i++){{ $i <= $review->stars() ? '★' : '☆' }}@endfor &nbsp; **{{ $review->stars() }} / 5**
+@for($i = 1; $i <= 5; $i++){{ $i <= $review->rating ? '★' : '☆' }}@endfor &nbsp; **{{ $review->rating }} / 5**
 
 @if($review->body)
 *"{{ $review->body }}"*
