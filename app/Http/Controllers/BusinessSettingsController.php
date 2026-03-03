@@ -21,6 +21,9 @@ class BusinessSettingsController extends Controller
                 'google_place_id' => $business?->google_place_id,
                 'owner_name' => $business?->owner_name,
                 'phone' => $business?->phone,
+                'is_google_connected' => $business?->isGoogleConnected() ?? false,
+                'google_account_id' => $business?->google_account_id,
+                'google_location_id' => $business?->google_location_id,
             ],
         ]);
     }

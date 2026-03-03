@@ -38,7 +38,7 @@ interface ReviewState {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Reviews',
-        href: reviewsIndex().url,
+        href: reviewsIndex(),
     },
 ];
 

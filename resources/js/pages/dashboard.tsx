@@ -36,6 +36,9 @@ interface Props {
         total_reviews: number;
         requests_sent: number;
         conversion_rate: number;
+        pending_replies: number;
+        reviews_this_month: number;
+        requests_this_month: number;
     };
     requestStats: {
         sent: number;
@@ -149,7 +152,7 @@ export default function Dashboard({ business, stats, requestStats, recentReviews
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-3xl font-bold text-gray-900">{stats.total_reviews}</div>
-                                    <p className="mt-1 text-sm text-gray-500">Google reviews</p>
+                                    <p className="mt-1 text-sm text-gray-500">{stats.reviews_this_month} this month</p>
                                 </CardContent>
                             </Card>
 
@@ -159,17 +162,21 @@ export default function Dashboard({ business, stats, requestStats, recentReviews
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-3xl font-bold text-gray-900">{stats.requests_sent}</div>
-                                    <p className="mt-1 text-sm text-gray-500">review requests</p>
+                                    <p className="mt-1 text-sm text-gray-500">{stats.requests_this_month} this month</p>
                                 </CardContent>
                             </Card>
 
-                            <Card>
+                            <Card className={stats.pending_replies > 0 ? 'border-orange-200' : ''}>
                                 <CardHeader className="pb-2">
-                                    <CardTitle className="text-sm font-medium text-gray-500">Conversion Rate</CardTitle>
+                                    <CardTitle className="text-sm font-medium text-gray-500">Pending Replies</CardTitle>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-3xl font-bold text-teal-600">{stats.conversion_rate.toFixed(1)}%</div>
-                                    <p className="mt-1 text-sm text-gray-500">requests to reviews</p>
+                                    <div className={`text-3xl font-bold ${stats.pending_replies > 0 ? 'text-orange-500' : 'text-gray-900'}`}>
+                                        {stats.pending_replies}
+                                    </div>
+                                    <p className="mt-1 text-sm text-gray-500">
+                                        {stats.pending_replies > 0 ? 'reviews need a reply' : 'all replied'}
+                                    </p>
                                 </CardContent>
                             </Card>
                         </div>

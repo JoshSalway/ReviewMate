@@ -1,4 +1,4 @@
-import { LayoutGrid, Send, Users, FileText, Zap, Settings, QrCode, GitBranch } from 'lucide-react';
+import { LayoutGrid, Send, Users, FileText, Zap, Settings, QrCode, GitBranch, Star, CreditCard } from 'lucide-react';
 import { BusinessSwitcher } from '@/components/business-switcher';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -9,6 +9,7 @@ import {
     SidebarHeader,
 } from '@/components/ui/sidebar';
 import { dashboard, qrCode, emailFlow } from '@/routes';
+import * as reviews from '@/routes/reviews';
 import * as customers from '@/routes/customers';
 import * as requests from '@/routes/requests';
 import * as templates from '@/routes/templates';
@@ -38,6 +39,11 @@ const mainNavItems: NavItem[] = [
         icon: Send,
     },
     {
+        title: 'Reviews',
+        href: reviews.index(),
+        icon: Star,
+    },
+    {
         title: 'Templates',
         href: templates.index(),
         icon: FileText,
@@ -59,6 +65,11 @@ const footerNavItems: NavItem[] = [
         title: 'Business Settings',
         href: settingsRoutes.business(),
         icon: Settings,
+    },
+    {
+        title: 'Billing',
+        href: settingsRoutes.billing(),
+        icon: CreditCard,
     },
 ];
 

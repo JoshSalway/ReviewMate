@@ -41,7 +41,8 @@ test('current business uses session when set', function () {
     expect($this->user->currentBusiness()->id)->toBe($business2->id);
 });
 
-test('user can add a second business', function () {
+test('user can add a second business as admin', function () {
+    $this->user->update(['is_admin' => true]);
     Business::factory()->onboarded()->create(['user_id' => $this->user->id]);
 
     $this->post('/businesses', [
@@ -50,4 +51,15 @@ test('user can add a second business', function () {
     ])->assertRedirect('/onboarding/connect-google');
 
     expect($this->user->businesses()->count())->toBe(2);
+});
+
+test('free plan user cannot add a second business', function () {
+    Business::factory()->onboarded()->create(['user_id' => $this->user->id]);
+
+    $this->post('/businesses', [
+        'name' => 'Second Business',
+        'type' => 'cafe',
+    ])->assertRedirect();
+
+    expect($this->user->businesses()->count())->toBe(1);
 });
