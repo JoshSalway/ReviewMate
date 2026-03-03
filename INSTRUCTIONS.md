@@ -1,16 +1,49 @@
 # ReviewMate — Agent Instructions
 
 > Last updated: 2026-03-04
-> Completion: ~100% code — deploy + first customers remaining
+> Completion: ~95% code — 2 fixes needed, then deploy
 
-## ✅ CODE COMPLETE — READY TO DEPLOY
+## ⚠️ TWO FIXES BEFORE DEPLOY
 
-All features are built and tested (99 tests passing, CI passing). The only remaining work is
-production deployment and acquiring first paying customers.
+A code audit found 2 UX/polish issues. Fix these before deploying.
 
 ---
 
-## Copy and paste this prompt to start a session:
+## Copy and paste this prompt to fix the pre-deploy issues:
+
+```
+You are working on ReviewMate — a Google review management SaaS for local businesses.
+Stack: Laravel 12, React 19, Inertia.js v2, Tailwind CSS v4, WorkOS auth, SQLite (dev).
+
+Read AGENTS.md for full conventions.
+
+Two issues were found in a code audit. Fix both:
+
+1. GOOGLE PLACE ID UX
+   - During onboarding step 2, users connect their Google Business Profile via OAuth, but then
+     are still required to manually find and enter their Place ID — this feels broken and confusing.
+   - After a successful OAuth connection, attempt to auto-discover the Place ID from the Google
+     Business Profile API using the authenticated token. If exactly one location is found,
+     pre-fill the Place ID field automatically. If multiple locations are found, show a dropdown
+     of their locations to choose from rather than a blank text field.
+   - If the API call fails or returns no locations, fall back gracefully to the existing manual
+     text input with a help link explaining how to find a Place ID.
+   - The Google Business Profile API endpoint for listing locations is:
+     GET https://mybusinessbusinessinformation.googleapis.com/v1/accounts/{accountId}/locations
+     The accountId is already stored after OAuth — use it here.
+
+2. MISSING BRANDED ERROR PAGES
+   - No custom error pages exist — users see raw Laravel error screens.
+   - Create resources/views/errors/403.blade.php, 404.blade.php, and 500.blade.php.
+   - Match the app's existing design (use Tailwind classes consistent with the app's style).
+   - Each page: app name/logo at top, friendly error title, short message, link back to dashboard.
+
+Write tests for any new controller logic. Run ./vendor/bin/pest --parallel before finishing.
+```
+
+---
+
+## Copy and paste this prompt to start a general session:
 
 ```
 You are working on ReviewMate — a Google review management SaaS for local businesses.
