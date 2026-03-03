@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Mail\FollowUpMail;
 use App\Models\ReviewRequest;
+use App\Services\TwilioSmsService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -33,12 +34,18 @@ class SendFollowUpRequests implements ShouldQueue
             $customer = $request->customer;
             $business = $request->business;
 
-            if (! $customer?->email || ! $business) {
+            if (! $customer || ! $business) {
                 continue;
             }
 
-            Mail::to($customer->email, $customer->name)
-                ->queue(new FollowUpMail($business, $customer));
+            if (in_array($request->channel, ['email', 'both']) && $customer->email) {
+                Mail::to($customer->email, $customer->name)
+                    ->queue(new FollowUpMail($business, $customer));
+            }
+
+            if (in_array($request->channel, ['sms', 'both']) && $customer->phone && TwilioSmsService::isConfigured()) {
+                rescue(fn () => app(TwilioSmsService::class)->sendFollowUp($business, $customer));
+            }
 
             $request->update(['followed_up_at' => now()]);
         }

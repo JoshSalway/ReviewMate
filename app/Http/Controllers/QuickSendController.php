@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\ReviewRequestMail;
 use App\Models\Customer;
 use App\Models\ReviewRequest;
+use App\Services\TwilioSmsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -81,6 +82,10 @@ class QuickSendController extends Controller
         if (in_array($validated['channel'], ['email', 'both']) && $customer->email) {
             Mail::to($customer->email, $customer->name)
                 ->queue(new ReviewRequestMail($business, $customer));
+        }
+
+        if (in_array($validated['channel'], ['sms', 'both']) && $customer->phone && TwilioSmsService::isConfigured()) {
+            rescue(fn () => app(TwilioSmsService::class)->sendReviewRequest($business, $customer));
         }
 
         return back()->with('success', "Request sent to {$customer->name}!");
