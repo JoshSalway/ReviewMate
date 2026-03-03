@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ReviewRequestMail;
 use App\Models\Customer;
+use App\Models\ReviewRequest;
+use App\Services\TwilioSmsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -78,6 +82,67 @@ class CustomerController extends Controller
         $customer->delete();
 
         return back()->with('success', 'Customer removed.');
+    }
+
+    public function bulkSend(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'customer_ids'   => ['required', 'array', 'min:1'],
+            'customer_ids.*' => ['required', 'integer'],
+            'channel'        => ['required', 'in:email,sms,both'],
+        ]);
+
+        $user = $request->user();
+        $business = $user->currentBusiness();
+
+        // Enforce free plan monthly limit
+        if ($user->onFreePlan()) {
+            $monthlyCount = $business->reviewRequests()
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->count();
+
+            $remaining = max(0, 10 - $monthlyCount);
+            $toSend = min(count($validated['customer_ids']), $remaining);
+
+            if ($remaining === 0) {
+                return back()->with('error', 'Free plan allows 10 review requests per month. Upgrade for unlimited.');
+            }
+
+            $validated['customer_ids'] = array_slice($validated['customer_ids'], 0, $toSend);
+        }
+
+        $customers = $business->customers()->whereIn('id', $validated['customer_ids'])->get();
+
+        $sent = 0;
+        foreach ($customers as $customer) {
+            ReviewRequest::create([
+                'business_id' => $business->id,
+                'customer_id' => $customer->id,
+                'status'      => 'sent',
+                'channel'     => $validated['channel'],
+                'sent_at'     => now(),
+            ]);
+
+            if (in_array($validated['channel'], ['email', 'both']) && $customer->email) {
+                Mail::to($customer->email, $customer->name)
+                    ->queue(new ReviewRequestMail($business, $customer));
+            }
+
+            if (in_array($validated['channel'], ['sms', 'both']) && $customer->phone && TwilioSmsService::isConfigured()) {
+                rescue(fn () => app(TwilioSmsService::class)->sendReviewRequest($business, $customer));
+            }
+
+            $sent++;
+        }
+
+        $skipped = count($validated['customer_ids']) - $sent;
+        $message = "Sent {$sent} review request(s).";
+        if ($skipped > 0) {
+            $message .= " {$skipped} skipped (monthly limit reached).";
+        }
+
+        return back()->with('success', $message);
     }
 
     public function importCsv(Request $request): RedirectResponse

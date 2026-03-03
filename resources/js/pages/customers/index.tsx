@@ -1,12 +1,13 @@
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
 import AppLayout from '@/layouts/app-layout';
-import { index as customersIndex, store as customersStore, destroy as customersDestroy } from '@/routes/customers';
+import { index as customersIndex, store as customersStore, destroy as customersDestroy, bulkSend as customersBulkSend } from '@/routes/customers';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     Dialog,
     DialogContent,
@@ -22,6 +23,13 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -71,6 +79,23 @@ export default function CustomersIndex({ customers }: Props) {
     const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
     const [form, setForm] = useState({ name: '', email: '' });
     const [processing, setProcessing] = useState(false);
+    const [selected, setSelected] = useState<number[]>([]);
+    const [bulkChannel, setBulkChannel] = useState<'email' | 'sms' | 'both'>('email');
+    const [bulkSending, setBulkSending] = useState(false);
+
+    const allIds = customers.data.map((c) => c.id);
+    const allSelected = allIds.length > 0 && allIds.every((id) => selected.includes(id));
+    const someSelected = selected.length > 0;
+
+    const toggleAll = () => {
+        setSelected(allSelected ? [] : allIds);
+    };
+
+    const toggleOne = (id: number) => {
+        setSelected((prev) =>
+            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+        );
+    };
 
     const handleAddCustomer = () => {
         setProcessing(true);
@@ -95,6 +120,20 @@ export default function CustomersIndex({ customers }: Props) {
         });
     };
 
+    const handleBulkSend = () => {
+        if (selected.length === 0) return;
+        setBulkSending(true);
+        router.post(
+            customersBulkSend().url,
+            { customer_ids: selected, channel: bulkChannel },
+            {
+                preserveScroll: true,
+                onSuccess: () => setSelected([]),
+                onFinish: () => setBulkSending(false),
+            },
+        );
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Customers" />
@@ -111,6 +150,43 @@ export default function CustomersIndex({ customers }: Props) {
                         + Add Customer
                     </Button>
                 </div>
+
+                {/* Bulk action bar */}
+                {someSelected && (
+                    <div className="flex items-center gap-3 rounded-lg border border-teal-200 bg-teal-50 px-4 py-3">
+                        <span className="text-sm font-medium text-teal-800">
+                            {selected.length} customer{selected.length !== 1 ? 's' : ''} selected
+                        </span>
+                        <div className="ml-auto flex items-center gap-2">
+                            <Select value={bulkChannel} onValueChange={(v: any) => setBulkChannel(v)}>
+                                <SelectTrigger className="h-8 w-28 text-xs">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="email">Email</SelectItem>
+                                    <SelectItem value="sms">SMS</SelectItem>
+                                    <SelectItem value="both">Both</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Button
+                                size="sm"
+                                className="bg-teal-600 hover:bg-teal-700 text-white"
+                                onClick={handleBulkSend}
+                                disabled={bulkSending}
+                            >
+                                {bulkSending ? 'Sending...' : 'Send Review Request'}
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                className="text-gray-500"
+                                onClick={() => setSelected([])}
+                            >
+                                Clear
+                            </Button>
+                        </div>
+                    </div>
+                )}
 
                 <Card>
                     <CardContent className="p-0">
@@ -134,6 +210,13 @@ export default function CustomersIndex({ customers }: Props) {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
+                                        <TableHead className="w-10">
+                                            <Checkbox
+                                                checked={allSelected}
+                                                onCheckedChange={toggleAll}
+                                                aria-label="Select all"
+                                            />
+                                        </TableHead>
                                         <TableHead>Name</TableHead>
                                         <TableHead>Email</TableHead>
                                         <TableHead>Status</TableHead>
@@ -143,7 +226,17 @@ export default function CustomersIndex({ customers }: Props) {
                                 </TableHeader>
                                 <TableBody>
                                     {customers.data.map((customer) => (
-                                        <TableRow key={customer.id}>
+                                        <TableRow
+                                            key={customer.id}
+                                            className={selected.includes(customer.id) ? 'bg-teal-50/50' : ''}
+                                        >
+                                            <TableCell>
+                                                <Checkbox
+                                                    checked={selected.includes(customer.id)}
+                                                    onCheckedChange={() => toggleOne(customer.id)}
+                                                    aria-label={`Select ${customer.name}`}
+                                                />
+                                            </TableCell>
                                             <TableCell className="font-medium">{customer.name}</TableCell>
                                             <TableCell className="text-gray-500">{customer.email}</TableCell>
                                             <TableCell>
