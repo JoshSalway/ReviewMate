@@ -1,4 +1,4 @@
-import { LayoutGrid, Send, Users, FileText, Zap, Settings, QrCode, GitBranch, Star, CreditCard, Bell } from 'lucide-react';
+import { LayoutGrid, Send, Users, FileText, Zap, Settings, QrCode, GitBranch, Star, CreditCard, Bell, BarChart2 } from 'lucide-react';
 import { BusinessSwitcher } from '@/components/business-switcher';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -8,7 +8,7 @@ import {
     SidebarFooter,
     SidebarHeader,
 } from '@/components/ui/sidebar';
-import { dashboard, qrCode, emailFlow } from '@/routes';
+import { dashboard, qrCode, emailFlow, analytics } from '@/routes';
 import * as reviews from '@/routes/reviews';
 import * as customers from '@/routes/customers';
 import * as requests from '@/routes/requests';
@@ -57,6 +57,11 @@ const mainNavItems: NavItem[] = [
         title: 'Email Flow',
         href: emailFlow(),
         icon: GitBranch,
+    },
+    {
+        title: 'Analytics',
+        href: analytics(),
+        icon: BarChart2,
     },
 ];
 

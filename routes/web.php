@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusinessSettingsController;
 use App\Http\Controllers\BillingController;
@@ -29,6 +30,9 @@ Route::middleware([
 ])->group(function () {
     // Dashboard
     Route::get('dashboard', DashboardController::class)->name('dashboard');
+
+    // Analytics
+    Route::get('analytics', AnalyticsController::class)->name('analytics');
 
     // Onboarding
     Route::prefix('onboarding')->name('onboarding.')->group(function () {
