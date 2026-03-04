@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\ReviewRequestMail;
 use App\Models\ReviewRequest;
-use App\Services\TwilioSmsService;
+use App\Services\SmsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -93,8 +93,8 @@ class ReviewRequestController extends Controller
                 ->queue(new ReviewRequestMail($business, $customer, $reviewRequest));
         }
 
-        if (in_array($validated['channel'], ['sms', 'both']) && $customer->phone && TwilioSmsService::isConfigured()) {
-            rescue(fn () => app(TwilioSmsService::class)->sendReviewRequest($business, $customer));
+        if (in_array($validated['channel'], ['sms', 'both']) && $customer->phone && SmsService::isConfigured()) {
+            rescue(fn () => SmsService::make()->sendReviewRequest($business, $customer));
         }
 
         return back()->with('success', "Review request sent to {$customer->name}.");

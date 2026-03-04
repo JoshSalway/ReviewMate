@@ -52,6 +52,16 @@ return [
         'price_pro' => env('STRIPE_PRICE_PRO'),
     ],
 
+    'sms' => [
+        'driver' => env('SMS_DRIVER', 'clicksend'),
+    ],
+
+    'clicksend' => [
+        'username' => env('CLICKSEND_USERNAME'),
+        'api_key'  => env('CLICKSEND_API_KEY'),
+        'from'     => env('CLICKSEND_FROM', 'ReviewMate'),
+    ],
+
     'twilio' => [
         'sid' => env('TWILIO_ACCOUNT_SID'),
         'token' => env('TWILIO_AUTH_TOKEN'),

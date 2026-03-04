@@ -2,11 +2,12 @@
 
 namespace App\Services;
 
+use App\Contracts\SmsProvider;
 use App\Models\Business;
 use App\Models\Customer;
 use Twilio\Rest\Client;
 
-class TwilioSmsService
+class TwilioSmsService implements SmsProvider
 {
     protected Client $client;
 
