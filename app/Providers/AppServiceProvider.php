@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Listeners\HandleStripeWebhook;
+use App\Listeners\SendOnboardingSequence;
 use Carbon\CarbonImmutable;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
 
         Event::listen(WebhookHandled::class, HandleStripeWebhook::class);
+        Event::listen(Registered::class, SendOnboardingSequence::class);
     }
 
     /**
