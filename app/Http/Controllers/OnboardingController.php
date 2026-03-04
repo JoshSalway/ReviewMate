@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\EmailTemplate;
 use App\Services\DefaultTemplateService;
+use App\Services\GoogleBusinessProfileService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -46,11 +47,24 @@ class OnboardingController extends Controller
             return redirect()->route('onboarding.business-type');
         }
 
+        $locations = [];
+
+        if ($business->isGoogleConnected()) {
+            try {
+                $locations = app(GoogleBusinessProfileService::class)->listLocationsWithPlaceIds($business);
+            } catch (\Throwable) {
+                // Fall back to manual input
+            }
+        }
+
         return Inertia::render('onboarding/connect-google', [
             'business' => [
                 'id' => $business->id,
                 'name' => $business->name,
+                'google_place_id' => $business->google_place_id,
             ],
+            'isGoogleConnected' => $business->isGoogleConnected(),
+            'locations' => $locations,
         ]);
     }
 

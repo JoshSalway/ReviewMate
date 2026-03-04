@@ -42,7 +42,11 @@ class GoogleBusinessController extends Controller
             // Non-fatal — user can still use the connection
         }
 
-        return redirect()->route('settings.business')
+        $redirectRoute = $business->isOnboardingComplete()
+            ? 'settings.business'
+            : 'onboarding.connect-google';
+
+        return redirect()->route($redirectRoute)
             ->with('success', 'Google Business Profile connected successfully!');
     }
 

@@ -290,3 +290,14 @@ Wayfinder generates TypeScript functions for Laravel routes. Import from `@/acti
 - IMPORTANT: Activate `tailwindcss-development` every time you're working with a Tailwind CSS or styling-related task.
 
 </laravel-boost-guidelines>
+
+
+## Git — Always Push When Done
+
+- After completing any task or set of tasks, **always commit and push your changes to GitHub**.
+- Use atomic commits: one commit per logical feature or fix.
+- Commit message format: `type: short description` (feat, fix, docs, chore, test, refactor).
+- Always run tests before committing if tests exist.
+- If working on a feature branch, push to that branch (not main).
+- Do not leave work uncommitted locally — always push before ending a session.
+

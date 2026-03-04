@@ -2,6 +2,7 @@
 
 use App\Models\Business;
 use App\Models\User;
+use App\Services\GoogleBusinessProfileService;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
@@ -72,6 +73,102 @@ test('select-template step completes onboarding', function () {
         ->assertRedirect('/dashboard');
 
     expect($business->fresh()->isOnboardingComplete())->toBeTrue();
+});
+
+test('connect-google passes isGoogleConnected false when not connected', function () {
+    Business::factory()->create(['user_id' => $this->user->id]);
+
+    $this->get('/onboarding/connect-google')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('onboarding/connect-google')
+            ->where('isGoogleConnected', false)
+            ->where('locations', [])
+        );
+});
+
+test('connect-google passes discovered locations when google is connected', function () {
+    Business::factory()->create([
+        'user_id' => $this->user->id,
+        'google_access_token' => 'fake-token',
+        'google_refresh_token' => 'fake-refresh',
+        'google_token_expires_at' => now()->addHour(),
+        'google_account_id' => 'accounts/123',
+        'google_location_id' => 'accounts/123/locations/456',
+    ]);
+
+    $service = Mockery::mock(GoogleBusinessProfileService::class);
+    $service->shouldReceive('listLocationsWithPlaceIds')->once()->andReturn([
+        ['name' => 'accounts/123/locations/456', 'title' => 'My Cafe', 'place_id' => 'ChIJtesting123'],
+    ]);
+    app()->instance(GoogleBusinessProfileService::class, $service);
+
+    $this->get('/onboarding/connect-google')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('onboarding/connect-google')
+            ->where('isGoogleConnected', true)
+            ->where('locations.0.place_id', 'ChIJtesting123')
+        );
+});
+
+test('connect-google falls back to empty locations when google api fails', function () {
+    Business::factory()->create([
+        'user_id' => $this->user->id,
+        'google_access_token' => 'fake-token',
+        'google_refresh_token' => 'fake-refresh',
+        'google_token_expires_at' => now()->addHour(),
+        'google_account_id' => 'accounts/123',
+        'google_location_id' => 'accounts/123/locations/456',
+    ]);
+
+    $service = Mockery::mock(GoogleBusinessProfileService::class);
+    $service->shouldReceive('listLocationsWithPlaceIds')->once()->andThrow(new \Exception('API error'));
+    app()->instance(GoogleBusinessProfileService::class, $service);
+
+    $this->get('/onboarding/connect-google')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('isGoogleConnected', true)
+            ->where('locations', [])
+        );
+});
+
+test('google oauth callback redirects to onboarding when not complete', function () {
+    $business = Business::factory()->create(['user_id' => $this->user->id]);
+    session(['current_business_id' => $business->id]);
+
+    // Mock Socialite
+    $googleUser = Mockery::mock(\Laravel\Socialite\Two\User::class);
+    $googleUser->token = 'access-token';
+    $googleUser->refreshToken = 'refresh-token';
+    $googleUser->expiresIn = 3600;
+
+    \Laravel\Socialite\Facades\Socialite::shouldReceive('driver->user')->andReturn($googleUser);
+
+    $service = Mockery::mock(GoogleBusinessProfileService::class);
+    $service->shouldReceive('discoverAccountAndLocation')->once();
+    app()->instance(GoogleBusinessProfileService::class, $service);
+
+    $this->get('/google/callback')->assertRedirect('/onboarding/connect-google');
+});
+
+test('google oauth callback redirects to settings when onboarding is complete', function () {
+    $business = Business::factory()->onboarded()->create(['user_id' => $this->user->id]);
+    session(['current_business_id' => $business->id]);
+
+    $googleUser = Mockery::mock(\Laravel\Socialite\Two\User::class);
+    $googleUser->token = 'access-token';
+    $googleUser->refreshToken = 'refresh-token';
+    $googleUser->expiresIn = 3600;
+
+    \Laravel\Socialite\Facades\Socialite::shouldReceive('driver->user')->andReturn($googleUser);
+
+    $service = Mockery::mock(GoogleBusinessProfileService::class);
+    $service->shouldReceive('discoverAccountAndLocation')->once();
+    app()->instance(GoogleBusinessProfileService::class, $service);
+
+    $this->get('/google/callback')->assertRedirect('/settings/business');
 });
 
 test('onboarding creates default email templates', function () {

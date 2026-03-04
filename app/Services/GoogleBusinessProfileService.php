@@ -46,6 +46,40 @@ class GoogleBusinessProfileService
             ->throw();
     }
 
+    /**
+     * List all locations for the connected account, including their Google Maps Place IDs.
+     *
+     * @return array<int, array{name: string, title: string, place_id: string}>
+     */
+    public function listLocationsWithPlaceIds(Business $business): array
+    {
+        $token = $this->getAccessToken($business);
+        $accountName = $business->google_account_id;
+
+        if (! $accountName) {
+            return [];
+        }
+
+        $response = Http::withToken($token)
+            ->get("https://mybusinessbusinessinformation.googleapis.com/v1/{$accountName}/locations", [
+                'readMask' => 'name,title,metadata',
+            ]);
+
+        if ($response->failed()) {
+            return [];
+        }
+
+        return collect($response->json('locations', []))
+            ->map(fn ($location) => [
+                'name' => $location['name'] ?? '',
+                'title' => $location['title'] ?? '',
+                'place_id' => $location['metadata']['placeId'] ?? '',
+            ])
+            ->filter(fn ($location) => $location['place_id'] !== '')
+            ->values()
+            ->all();
+    }
+
     public function discoverAccountAndLocation(Business $business): void
     {
         $token = $this->getAccessToken($business);

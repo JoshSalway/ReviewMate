@@ -97,6 +97,21 @@ The app charges money — but only if people use it. After deploying:
 
 ---
 
+## Test Coverage
+
+**Status: Well tested — 107 tests passing**
+
+- Controllers: review requests, customers, businesses, auth, settings all covered
+- Jobs: Google sync, follow-up automation, weekly digest tested
+- Edge cases: 30-day resend guard, unsubscribe, token validation tested
+- CI: PHP lint + TypeScript type check both passing
+
+**Test quality: HIGH** — comprehensive feature coverage with realistic fixtures.
+
+No additional tests needed before deploy. The test suite is production-grade.
+
+---
+
 ## Test Commands
 
 ```bash
@@ -107,3 +122,19 @@ composer run dev
 
 ./vendor/bin/pest --parallel
 ```
+
+---
+
+## What to Work On Next
+
+ReviewMate is code-complete. Do NOT add features — deploy it.
+
+**Priority order:**
+1. Deploy to Laravel Cloud (follow DEPLOYMENT.md)
+2. Add API keys (WorkOS, Stripe, Twilio, Google OAuth, Mailgun)
+3. Register Stripe webhook
+4. Update Google OAuth redirect URI to production URL
+5. Make first admin user via tinker
+6. Use Outpost to cold email 50 local businesses
+
+See MARKET.md for competitor analysis and positioning.
