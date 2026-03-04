@@ -9,7 +9,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailFlowController;
 use App\Http\Controllers\GoogleBusinessController;
 use App\Http\Controllers\Integrations\ClinikoController;
+use App\Http\Controllers\Integrations\HalaxyController;
+use App\Http\Controllers\Integrations\IncomingWebhookController;
 use App\Http\Controllers\Integrations\ServiceM8Controller;
+use App\Http\Controllers\Integrations\SimproController;
 use App\Http\Controllers\Integrations\TimelyController;
 use App\Http\Controllers\Integrations\XeroController;
 use App\Http\Controllers\LegalController;
@@ -141,6 +144,18 @@ Route::middleware([
             'timelyWebhookUrl'   => $business?->uuid
                 ? route('webhooks.timely', ['business' => $business->uuid])
                 : null,
+            'simproConnected'    => $business?->simpro_access_token !== null,
+            'simproAutoSend'     => $business?->simpro_auto_send_reviews ?? true,
+            'simproWebhookUrl'   => $business?->uuid
+                ? route('webhooks.simpro', ['business' => $business->uuid])
+                : null,
+            'halaxyConnected'    => $business?->halaxy_api_key !== null,
+            'halaxyAutoSend'     => $business?->halaxy_auto_send_reviews ?? true,
+            // Generic incoming webhook
+            'incomingWebhookToken' => $business?->webhook_token,
+            'incomingWebhookUrl'   => $business?->webhook_token
+                ? route('webhooks.incoming', ['token' => $business->webhook_token])
+                : null,
         ]);
     })->name('settings.integrations');
 
@@ -174,6 +189,25 @@ Route::middleware([
         Route::post('disconnect', [TimelyController::class, 'disconnect'])->name('disconnect');
         Route::post('toggle-auto-send', [TimelyController::class, 'toggleAutoSend'])->name('toggle-auto-send');
     });
+
+    // Simpro OAuth flow
+    Route::prefix('integrations/simpro')->name('integrations.simpro.')->group(function () {
+        Route::post('connect', [SimproController::class, 'connect'])->name('connect');
+        Route::get('callback', [SimproController::class, 'callback'])->name('callback');
+        Route::post('disconnect', [SimproController::class, 'disconnect'])->name('disconnect');
+        Route::post('toggle-auto-send', [SimproController::class, 'toggleAutoSend'])->name('toggle-auto-send');
+    });
+
+    // Halaxy integration (API key, no OAuth)
+    Route::prefix('integrations/halaxy')->name('integrations.halaxy.')->group(function () {
+        Route::post('connect', [HalaxyController::class, 'store'])->name('store');
+        Route::post('disconnect', [HalaxyController::class, 'disconnect'])->name('disconnect');
+        Route::post('toggle-auto-send', [HalaxyController::class, 'toggleAutoSend'])->name('toggle-auto-send');
+    });
+
+    // Generic incoming webhook — token regeneration (auth required)
+    Route::post('settings/integrations/webhook/regenerate', [IncomingWebhookController::class, 'regenerate'])
+        ->name('integrations.webhook.regenerate');
 });
 
 // ServiceM8 webhook — public, no auth, each business identified by UUID in URL
@@ -190,6 +224,15 @@ Route::post('webhooks/xero/{business:uuid}', [XeroController::class, 'webhook'])
 Route::post('webhooks/timely/{business:uuid}', [TimelyController::class, 'webhook'])
     ->name('webhooks.timely')
     ;
+
+// Simpro webhook — public, no auth, each business identified by UUID in URL
+Route::post('webhooks/simpro/{business:uuid}', [SimproController::class, 'webhook'])
+    ->name('webhooks.simpro')
+    ;
+
+// Generic incoming webhook — authenticated by secret token in URL, no session required
+Route::post('webhooks/incoming/{token}', [IncomingWebhookController::class, 'handle'])
+    ->name('webhooks.incoming');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

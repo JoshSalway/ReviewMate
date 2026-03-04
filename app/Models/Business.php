@@ -47,6 +47,24 @@ class Business extends Model
         'timely_token_expires_at',
         'timely_account_id',
         'timely_auto_send_reviews',
+        // Simpro integration
+        'simpro_access_token',
+        'simpro_refresh_token',
+        'simpro_token_expires_at',
+        'simpro_company_url',
+        'simpro_auto_send_reviews',
+        // Halaxy integration
+        'halaxy_api_key',
+        'halaxy_auto_send_reviews',
+        'halaxy_last_polled_at',
+        // Generic incoming webhook
+        'webhook_token',
+        // Review platforms
+        'facebook_page_url',
+        // Google Places stats cache
+        'google_rating',
+        'google_review_count',
+        'google_stats_updated_at',
     ];
 
     protected $casts = [
@@ -68,12 +86,22 @@ class Business extends Model
         'timely_refresh_token' => 'encrypted',
         'timely_token_expires_at' => 'datetime',
         'timely_auto_send_reviews' => 'boolean',
+        'simpro_access_token' => 'encrypted',
+        'simpro_refresh_token' => 'encrypted',
+        'simpro_token_expires_at' => 'datetime',
+        'simpro_auto_send_reviews' => 'boolean',
+        'halaxy_api_key' => 'encrypted',
+        'halaxy_auto_send_reviews' => 'boolean',
+        'halaxy_last_polled_at' => 'datetime',
+        'google_rating' => 'decimal:2',
+        'google_stats_updated_at' => 'datetime',
     ];
 
     protected static function booted(): void
     {
         static::creating(function (Business $model) {
             $model->uuid ??= (string) Str::uuid();
+            $model->webhook_token ??= Str::random(40);
         });
     }
 
@@ -124,6 +152,20 @@ class Business extends Model
         }
 
         return '#';
+    }
+
+    public function facebookReviewUrl(): ?string
+    {
+        if (! $this->facebook_page_url) {
+            return null;
+        }
+
+        return rtrim($this->facebook_page_url, '/') . '/reviews';
+    }
+
+    public function hasFacebookReviews(): bool
+    {
+        return filled($this->facebook_page_url);
     }
 
     public function isOnboardingComplete(): bool

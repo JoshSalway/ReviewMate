@@ -1,6 +1,8 @@
 <?php
 
 use App\Jobs\PollClinikoAppointments;
+use App\Jobs\PollHalaxyAppointments;
+use App\Jobs\RefreshGoogleStats;
 use App\Jobs\SendFollowUpRequests;
 use App\Jobs\SendWeeklyDigests;
 use App\Jobs\SyncGoogleReviews;
@@ -35,3 +37,16 @@ Schedule::call(function () {
         ->where('cliniko_auto_send_reviews', true)
         ->each(fn ($business) => PollClinikoAppointments::dispatch($business));
 })->dailyAt('08:00')->name('poll-cliniko-appointments');
+
+// Poll Halaxy for completed appointments daily at 08:00
+Schedule::call(function () {
+    Business::whereNotNull('halaxy_api_key')
+        ->where('halaxy_auto_send_reviews', true)
+        ->each(fn ($business) => PollHalaxyAppointments::dispatch($business));
+})->dailyAt('08:00')->name('poll-halaxy-appointments');
+
+// Refresh Google Places stats (rating + review count) daily at 06:00
+Schedule::call(function () {
+    Business::whereNotNull('google_place_id')
+        ->each(fn ($b) => RefreshGoogleStats::dispatch($b));
+})->dailyAt('06:00')->name('refresh-google-stats');

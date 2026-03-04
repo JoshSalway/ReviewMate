@@ -45,6 +45,7 @@ return [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI'),
+        'places_api_key' => env('GOOGLE_PLACES_API_KEY'),
     ],
 
     'stripe' => [
@@ -82,6 +83,11 @@ return [
     'timely' => [
         'client_id'     => env('TIMELY_CLIENT_ID'),
         'client_secret' => env('TIMELY_CLIENT_SECRET'),
+    ],
+
+    'simpro' => [
+        'client_id'     => env('SIMPRO_CLIENT_ID'),
+        'client_secret' => env('SIMPRO_CLIENT_SECRET'),
     ],
 
 ];

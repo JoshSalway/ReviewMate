@@ -25,6 +25,13 @@ interface Props {
     timelyConnected: boolean;
     timelyAutoSend: boolean;
     timelyWebhookUrl: string | null;
+    simproConnected: boolean;
+    simproAutoSend: boolean;
+    simproWebhookUrl: string | null;
+    halaxyConnected: boolean;
+    halaxyAutoSend: boolean;
+    incomingWebhookToken: string | null;
+    incomingWebhookUrl: string | null;
 }
 
 function ConnectedBadge({ connected }: { connected: boolean }) {
@@ -94,10 +101,23 @@ export default function Integrations({
     timelyConnected,
     timelyAutoSend,
     timelyWebhookUrl,
+    simproConnected,
+    simproAutoSend,
+    simproWebhookUrl,
+    halaxyConnected,
+    halaxyAutoSend,
+    incomingWebhookUrl,
 }: Props) {
     const [clinikoApiKey, setClinikoApiKey] = useState('');
     const [clinikoError, setClinikoError] = useState<string | null>(null);
     const [clinikoSubmitting, setClinikoSubmitting] = useState(false);
+
+    const [simproCompanyUrl, setSimproCompanyUrl] = useState('');
+    const [simproSubmitting, setSimproSubmitting] = useState(false);
+
+    const [halaxyApiKey, setHalaxyApiKey] = useState('');
+    const [halaxyError, setHalaxyError] = useState<string | null>(null);
+    const [halaxySubmitting, setHalaxySubmitting] = useState(false);
 
     // ServiceM8
     const handleServiceM8Connect = () => {
@@ -159,6 +179,54 @@ export default function Integrations({
     };
     const handleTimelyToggleAutoSend = () => {
         router.post('/integrations/timely/toggle-auto-send', {}, { preserveScroll: true });
+    };
+
+    // Simpro
+    const handleSimproConnect = (e: React.FormEvent) => {
+        e.preventDefault();
+        setSimproSubmitting(true);
+        router.post(
+            '/integrations/simpro/connect',
+            { company_url: simproCompanyUrl },
+            {
+                onFinish: () => setSimproSubmitting(false),
+            },
+        );
+    };
+    const handleSimproDisconnect = () => {
+        router.post('/integrations/simpro/disconnect');
+    };
+    const handleSimproToggleAutoSend = () => {
+        router.post('/integrations/simpro/toggle-auto-send', {}, { preserveScroll: true });
+    };
+
+    // Halaxy
+    const handleHalaxyConnect = (e: React.FormEvent) => {
+        e.preventDefault();
+        setHalaxyError(null);
+        setHalaxySubmitting(true);
+        router.post(
+            '/integrations/halaxy/connect',
+            { api_key: halaxyApiKey },
+            {
+                preserveScroll: true,
+                onError: (errors) => {
+                    setHalaxyError(errors.api_key ?? 'Connection failed. Please check your API key.');
+                    setHalaxySubmitting(false);
+                },
+                onSuccess: () => {
+                    setHalaxyApiKey('');
+                    setHalaxySubmitting(false);
+                },
+                onFinish: () => setHalaxySubmitting(false),
+            },
+        );
+    };
+    const handleHalaxyDisconnect = () => {
+        router.post('/integrations/halaxy/disconnect');
+    };
+    const handleHalaxyToggleAutoSend = () => {
+        router.post('/integrations/halaxy/toggle-auto-send', {}, { preserveScroll: true });
     };
 
     return (
@@ -440,6 +508,166 @@ export default function Integrations({
                             >
                                 Connect Timely
                             </Button>
+                        )}
+                    </CardContent>
+                </Card>
+                {/* Simpro Card */}
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-900 bg-opacity-10">
+                                    <span className="text-sm font-bold text-blue-900">SP</span>
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base">Simpro</CardTitle>
+                                    <CardDescription className="text-xs">
+                                        For larger trade businesses. Sends review requests when a job is marked complete.
+                                    </CardDescription>
+                                </div>
+                            </div>
+                            <ConnectedBadge connected={simproConnected} />
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <p className="text-sm text-gray-600">
+                            Automatically send Google review requests to customers when a job is marked complete in Simpro.
+                            Ideal for larger trade businesses with 5–50 staff. Uses OAuth for a secure connection.
+                        </p>
+
+                        {simproConnected ? (
+                            <div className="space-y-4">
+                                <AutoSendToggle
+                                    id="simpro-auto-send"
+                                    label="Auto-send review requests"
+                                    description="Send a review request automatically when a Simpro job is completed."
+                                    checked={simproAutoSend}
+                                    onToggle={handleSimproToggleAutoSend}
+                                />
+
+                                {simproWebhookUrl && (
+                                    <WebhookUrlBox
+                                        url={simproWebhookUrl}
+                                        instructions={
+                                            <>
+                                                Configure this URL in your Simpro account under{' '}
+                                                <strong>Setup &rarr; Webhooks</strong> for the{' '}
+                                                <strong>Job Status Changed</strong> event.
+                                            </>
+                                        }
+                                    />
+                                )}
+
+                                <Button
+                                    variant="outline"
+                                    className="border-red-200 text-red-600 hover:bg-red-50"
+                                    onClick={handleSimproDisconnect}
+                                >
+                                    Disconnect Simpro
+                                </Button>
+                            </div>
+                        ) : (
+                            <form onSubmit={handleSimproConnect} className="space-y-3">
+                                <div className="space-y-1">
+                                    <Label htmlFor="simpro-company-url" className="text-sm font-medium">
+                                        Simpro company URL
+                                    </Label>
+                                    <p className="text-xs text-gray-500">
+                                        Enter your Simpro subdomain, e.g. <strong>mycompany.simprocloud.com</strong>
+                                    </p>
+                                    <Input
+                                        id="simpro-company-url"
+                                        type="text"
+                                        placeholder="mycompany.simprocloud.com"
+                                        value={simproCompanyUrl}
+                                        onChange={(e) => setSimproCompanyUrl(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <Button
+                                    type="submit"
+                                    className="bg-teal-600 hover:bg-teal-700 text-white"
+                                    disabled={simproSubmitting || !simproCompanyUrl.trim()}
+                                >
+                                    {simproSubmitting ? 'Connecting...' : 'Connect Simpro'}
+                                </Button>
+                            </form>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Halaxy Card */}
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
+                                    <span className="text-sm font-bold text-green-700">HL</span>
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base">Halaxy</CardTitle>
+                                    <CardDescription className="text-xs">
+                                        For GPs and allied health. Australian-built practice management.
+                                    </CardDescription>
+                                </div>
+                            </div>
+                            <ConnectedBadge connected={halaxyConnected} />
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <p className="text-sm text-gray-600">
+                            ReviewMate polls Halaxy daily for completed appointments (GPs, psychiatrists, psychologists,
+                            physiotherapists, and more) and automatically sends review requests to patients.
+                            Uses your personal Halaxy API key.
+                        </p>
+
+                        {halaxyConnected ? (
+                            <div className="space-y-4">
+                                <AutoSendToggle
+                                    id="halaxy-auto-send"
+                                    label="Auto-send review requests"
+                                    description="Send a review request automatically when a Halaxy appointment is completed."
+                                    checked={halaxyAutoSend}
+                                    onToggle={handleHalaxyToggleAutoSend}
+                                />
+
+                                <Button
+                                    variant="outline"
+                                    className="border-red-200 text-red-600 hover:bg-red-50"
+                                    onClick={handleHalaxyDisconnect}
+                                >
+                                    Disconnect Halaxy
+                                </Button>
+                            </div>
+                        ) : (
+                            <form onSubmit={handleHalaxyConnect} className="space-y-3">
+                                <div className="space-y-1">
+                                    <Label htmlFor="halaxy-api-key" className="text-sm font-medium">
+                                        Halaxy API key
+                                    </Label>
+                                    <p className="text-xs text-gray-500">
+                                        Find your API key in Halaxy under <strong>Settings &rarr; Integrations &rarr; API</strong>.
+                                    </p>
+                                    <Input
+                                        id="halaxy-api-key"
+                                        type="password"
+                                        placeholder="Paste your Halaxy API key"
+                                        value={halaxyApiKey}
+                                        onChange={(e) => setHalaxyApiKey(e.target.value)}
+                                        required
+                                    />
+                                    {halaxyError && (
+                                        <p className="text-xs text-red-600">{halaxyError}</p>
+                                    )}
+                                </div>
+                                <Button
+                                    type="submit"
+                                    className="bg-teal-600 hover:bg-teal-700 text-white"
+                                    disabled={halaxySubmitting || !halaxyApiKey.trim()}
+                                >
+                                    {halaxySubmitting ? 'Connecting...' : 'Connect Halaxy'}
+                                </Button>
+                            </form>
                         )}
                     </CardContent>
                 </Card>
