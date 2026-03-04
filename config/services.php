@@ -68,4 +68,20 @@ return [
         'from' => env('TWILIO_FROM_NUMBER'),
     ],
 
+    'servicem8' => [
+        'client_id'     => env('SERVICEM8_CLIENT_ID'),
+        'client_secret' => env('SERVICEM8_CLIENT_SECRET'),
+    ],
+
+    'xero' => [
+        'client_id'     => env('XERO_CLIENT_ID'),
+        'client_secret' => env('XERO_CLIENT_SECRET'),
+        'webhook_key'   => env('XERO_WEBHOOK_KEY'),
+    ],
+
+    'timely' => [
+        'client_id'     => env('TIMELY_CLIENT_ID'),
+        'client_secret' => env('TIMELY_CLIENT_SECRET'),
+    ],
+
 ];

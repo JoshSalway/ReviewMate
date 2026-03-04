@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class Business extends Model
 {
@@ -13,6 +14,7 @@ class Business extends Model
 
     protected $fillable = [
         'user_id',
+        'uuid',
         'name',
         'type',
         'google_place_id',
@@ -24,13 +26,61 @@ class Business extends Model
         'google_token_expires_at',
         'google_account_id',
         'google_location_id',
+        'servicem8_access_token',
+        'servicem8_refresh_token',
+        'servicem8_token_expires_at',
+        'servicem8_auto_send_reviews',
+        // Xero integration
+        'xero_access_token',
+        'xero_refresh_token',
+        'xero_token_expires_at',
+        'xero_tenant_id',
+        'xero_auto_send_reviews',
+        // Cliniko integration
+        'cliniko_api_key',
+        'cliniko_shard',
+        'cliniko_auto_send_reviews',
+        'cliniko_last_polled_at',
+        // Timely integration
+        'timely_access_token',
+        'timely_refresh_token',
+        'timely_token_expires_at',
+        'timely_account_id',
+        'timely_auto_send_reviews',
     ];
 
     protected $casts = [
         'onboarding_completed_at' => 'datetime',
         'google_access_token' => 'encrypted',
         'google_refresh_token' => 'encrypted',
+        'servicem8_access_token' => 'encrypted',
+        'servicem8_refresh_token' => 'encrypted',
+        'servicem8_token_expires_at' => 'datetime',
+        'servicem8_auto_send_reviews' => 'boolean',
+        'xero_access_token' => 'encrypted',
+        'xero_refresh_token' => 'encrypted',
+        'xero_token_expires_at' => 'datetime',
+        'xero_auto_send_reviews' => 'boolean',
+        'cliniko_api_key' => 'encrypted',
+        'cliniko_auto_send_reviews' => 'boolean',
+        'cliniko_last_polled_at' => 'datetime',
+        'timely_access_token' => 'encrypted',
+        'timely_refresh_token' => 'encrypted',
+        'timely_token_expires_at' => 'datetime',
+        'timely_auto_send_reviews' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Business $model) {
+            $model->uuid ??= (string) Str::uuid();
+        });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
 
     public function isGoogleConnected(): bool
     {

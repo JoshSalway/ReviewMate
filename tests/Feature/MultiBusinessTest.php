@@ -12,7 +12,7 @@ test('user can switch to another of their businesses', function () {
     $business1 = Business::factory()->onboarded()->create(['user_id' => $this->user->id]);
     $business2 = Business::factory()->onboarded()->create(['user_id' => $this->user->id]);
 
-    $this->post("/businesses/{$business2->id}/switch")
+    $this->post("/businesses/{$business2->uuid}/switch")
         ->assertRedirect('/dashboard');
 
     expect($this->user->currentBusiness()->id)->toBe($business2->id);
@@ -22,7 +22,7 @@ test('user cannot switch to another users business', function () {
     $otherUser = User::factory()->create();
     $otherBusiness = Business::factory()->onboarded()->create(['user_id' => $otherUser->id]);
 
-    $this->post("/businesses/{$otherBusiness->id}/switch")
+    $this->post("/businesses/{$otherBusiness->uuid}/switch")
         ->assertForbidden();
 });
 

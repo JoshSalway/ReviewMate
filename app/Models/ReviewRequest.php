@@ -16,6 +16,7 @@ class ReviewRequest extends Model
         'customer_id',
         'status',
         'channel',
+        'source',
         'sent_at',
         'opened_at',
         'reviewed_at',

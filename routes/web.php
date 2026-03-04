@@ -8,6 +8,10 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailFlowController;
 use App\Http\Controllers\GoogleBusinessController;
+use App\Http\Controllers\Integrations\ClinikoController;
+use App\Http\Controllers\Integrations\ServiceM8Controller;
+use App\Http\Controllers\Integrations\TimelyController;
+use App\Http\Controllers\Integrations\XeroController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\NotificationSettingsController;
 use App\Http\Controllers\OnboardingController;
@@ -18,7 +22,9 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReviewRequestController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\WaitlistController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
 Route::get('/', [WaitlistController::class, 'index'])->name('home');
@@ -112,7 +118,78 @@ Route::middleware([
     Route::get('google/connect', [GoogleBusinessController::class, 'redirect'])->name('google.connect');
     Route::get('google/callback', [GoogleBusinessController::class, 'callback'])->name('google.callback');
     Route::delete('google/disconnect', [GoogleBusinessController::class, 'disconnect'])->name('google.disconnect');
+
+    // Integrations settings page
+    Route::get('settings/integrations', function () {
+        $business = Auth::user()->currentBusiness();
+
+        return Inertia::render('settings/integrations', [
+            'servicem8Connected' => $business?->servicem8_access_token !== null,
+            'servicem8AutoSend'  => $business?->servicem8_auto_send_reviews ?? true,
+            'webhookUrl'         => $business?->uuid
+                ? route('webhooks.servicem8', ['business' => $business->uuid])
+                : null,
+            'xeroConnected'      => $business?->xero_access_token !== null,
+            'xeroAutoSend'       => $business?->xero_auto_send_reviews ?? true,
+            'xeroWebhookUrl'     => $business?->uuid
+                ? route('webhooks.xero', ['business' => $business->uuid])
+                : null,
+            'clinikoConnected'   => $business?->cliniko_api_key !== null,
+            'clinikoAutoSend'    => $business?->cliniko_auto_send_reviews ?? true,
+            'timelyConnected'    => $business?->timely_access_token !== null,
+            'timelyAutoSend'     => $business?->timely_auto_send_reviews ?? true,
+            'timelyWebhookUrl'   => $business?->uuid
+                ? route('webhooks.timely', ['business' => $business->uuid])
+                : null,
+        ]);
+    })->name('settings.integrations');
+
+    // ServiceM8 OAuth flow
+    Route::prefix('integrations/servicem8')->name('integrations.servicem8.')->group(function () {
+        Route::get('connect', [ServiceM8Controller::class, 'connect'])->name('connect');
+        Route::get('callback', [ServiceM8Controller::class, 'callback'])->name('callback');
+        Route::post('disconnect', [ServiceM8Controller::class, 'disconnect'])->name('disconnect');
+        Route::post('toggle-auto-send', [ServiceM8Controller::class, 'toggleAutoSend'])->name('toggle-auto-send');
+    });
+
+    // Xero OAuth flow
+    Route::prefix('integrations/xero')->name('integrations.xero.')->group(function () {
+        Route::get('connect', [XeroController::class, 'connect'])->name('connect');
+        Route::get('callback', [XeroController::class, 'callback'])->name('callback');
+        Route::post('disconnect', [XeroController::class, 'disconnect'])->name('disconnect');
+        Route::post('toggle-auto-send', [XeroController::class, 'toggleAutoSend'])->name('toggle-auto-send');
+    });
+
+    // Cliniko integration (API key, no OAuth)
+    Route::prefix('integrations/cliniko')->name('integrations.cliniko.')->group(function () {
+        Route::post('connect', [ClinikoController::class, 'store'])->name('store');
+        Route::post('disconnect', [ClinikoController::class, 'disconnect'])->name('disconnect');
+        Route::post('toggle-auto-send', [ClinikoController::class, 'toggleAutoSend'])->name('toggle-auto-send');
+    });
+
+    // Timely OAuth flow
+    Route::prefix('integrations/timely')->name('integrations.timely.')->group(function () {
+        Route::get('connect', [TimelyController::class, 'connect'])->name('connect');
+        Route::get('callback', [TimelyController::class, 'callback'])->name('callback');
+        Route::post('disconnect', [TimelyController::class, 'disconnect'])->name('disconnect');
+        Route::post('toggle-auto-send', [TimelyController::class, 'toggleAutoSend'])->name('toggle-auto-send');
+    });
 });
+
+// ServiceM8 webhook — public, no auth, each business identified by UUID in URL
+Route::post('webhooks/servicem8/{business:uuid}', [ServiceM8Controller::class, 'webhook'])
+    ->name('webhooks.servicem8')
+    ;
+
+// Xero webhook — public, no auth, each business identified by UUID in URL
+Route::post('webhooks/xero/{business:uuid}', [XeroController::class, 'webhook'])
+    ->name('webhooks.xero')
+    ;
+
+// Timely webhook — public, no auth, each business identified by UUID in URL
+Route::post('webhooks/timely/{business:uuid}', [TimelyController::class, 'webhook'])
+    ->name('webhooks.timely')
+    ;
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
