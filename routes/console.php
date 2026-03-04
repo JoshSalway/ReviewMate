@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\PollClinikoAppointments;
 use App\Jobs\SendFollowUpRequests;
 use App\Jobs\SendWeeklyDigests;
 use App\Jobs\SyncGoogleReviews;
@@ -27,3 +28,10 @@ Schedule::call(function () {
         ->whereNotNull('google_location_id')
         ->each(fn ($business) => SyncGoogleReviews::dispatch($business));
 })->everyTwoHours();
+
+// Poll Cliniko for completed appointments daily at 08:00
+Schedule::call(function () {
+    Business::whereNotNull('cliniko_api_key')
+        ->where('cliniko_auto_send_reviews', true)
+        ->each(fn ($business) => PollClinikoAppointments::dispatch($business));
+})->dailyAt('08:00')->name('poll-cliniko-appointments');
