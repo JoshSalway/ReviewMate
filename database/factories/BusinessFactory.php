@@ -18,12 +18,14 @@ class BusinessFactory extends Factory
     {
         return [
             'user_id' => \App\Models\User::factory(),
+            'uuid' => $this->faker->uuid(),
             'name' => $this->faker->company(),
             'type' => $this->faker->randomElement(['tradie', 'cafe', 'salon', 'healthcare', 'real_estate', 'retail', 'pet_services', 'fitness', 'other']),
             'google_place_id' => null,
             'owner_name' => $this->faker->name(),
             'phone' => $this->faker->phoneNumber(),
             'onboarding_completed_at' => null,
+            'servicem8_auto_send_reviews' => true,
         ];
     }
 

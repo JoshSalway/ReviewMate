@@ -1,0 +1,449 @@
+import { Head, router } from '@inertiajs/react';
+import { useState } from 'react';
+import AppLayout from '@/layouts/app-layout';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import type { BreadcrumbItem } from '@/types';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Integrations', href: '/settings/integrations' },
+];
+
+interface Props {
+    servicem8Connected: boolean;
+    servicem8AutoSend: boolean;
+    webhookUrl: string | null;
+    xeroConnected: boolean;
+    xeroAutoSend: boolean;
+    xeroWebhookUrl: string | null;
+    clinikoConnected: boolean;
+    clinikoAutoSend: boolean;
+    timelyConnected: boolean;
+    timelyAutoSend: boolean;
+    timelyWebhookUrl: string | null;
+}
+
+function ConnectedBadge({ connected }: { connected: boolean }) {
+    return connected ? (
+        <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Connected</Badge>
+    ) : (
+        <Badge className="bg-gray-100 text-gray-500 hover:bg-gray-100">Not connected</Badge>
+    );
+}
+
+function WebhookUrlBox({ url, instructions }: { url: string; instructions: React.ReactNode }) {
+    return (
+        <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+            <p className="text-xs font-medium text-blue-800">Your webhook URL</p>
+            <p className="mt-1 text-xs text-blue-700">{instructions}</p>
+            <div className="mt-2 flex items-center gap-2">
+                <code className="flex-1 truncate rounded bg-blue-100 px-2 py-1 font-mono text-xs text-blue-900">
+                    {url}
+                </code>
+                <button
+                    type="button"
+                    className="shrink-0 text-xs text-blue-600 hover:text-blue-800 underline"
+                    onClick={() => navigator.clipboard.writeText(url)}
+                >
+                    Copy
+                </button>
+            </div>
+        </div>
+    );
+}
+
+function AutoSendToggle({
+    id,
+    label,
+    description,
+    checked,
+    onToggle,
+}: {
+    id: string;
+    label: string;
+    description: string;
+    checked: boolean;
+    onToggle: () => void;
+}) {
+    return (
+        <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <div>
+                <Label htmlFor={id} className="text-sm font-medium">
+                    {label}
+                </Label>
+                <p className="mt-0.5 text-xs text-gray-500">{description}</p>
+            </div>
+            <Switch id={id} checked={checked} onCheckedChange={onToggle} />
+        </div>
+    );
+}
+
+export default function Integrations({
+    servicem8Connected,
+    servicem8AutoSend,
+    webhookUrl,
+    xeroConnected,
+    xeroAutoSend,
+    xeroWebhookUrl,
+    clinikoConnected,
+    clinikoAutoSend,
+    timelyConnected,
+    timelyAutoSend,
+    timelyWebhookUrl,
+}: Props) {
+    const [clinikoApiKey, setClinikoApiKey] = useState('');
+    const [clinikoError, setClinikoError] = useState<string | null>(null);
+    const [clinikoSubmitting, setClinikoSubmitting] = useState(false);
+
+    // ServiceM8
+    const handleServiceM8Connect = () => {
+        window.location.href = '/integrations/servicem8/connect';
+    };
+    const handleServiceM8Disconnect = () => {
+        router.post('/integrations/servicem8/disconnect');
+    };
+    const handleServiceM8ToggleAutoSend = () => {
+        router.post('/integrations/servicem8/toggle-auto-send', {}, { preserveScroll: true });
+    };
+
+    // Xero
+    const handleXeroConnect = () => {
+        window.location.href = '/integrations/xero/connect';
+    };
+    const handleXeroDisconnect = () => {
+        router.post('/integrations/xero/disconnect');
+    };
+    const handleXeroToggleAutoSend = () => {
+        router.post('/integrations/xero/toggle-auto-send', {}, { preserveScroll: true });
+    };
+
+    // Cliniko
+    const handleClinikoConnect = (e: React.FormEvent) => {
+        e.preventDefault();
+        setClinikoError(null);
+        setClinikoSubmitting(true);
+        router.post(
+            '/integrations/cliniko/connect',
+            { api_key: clinikoApiKey },
+            {
+                preserveScroll: true,
+                onError: (errors) => {
+                    setClinikoError(errors.api_key ?? 'Connection failed. Please check your API key.');
+                    setClinikoSubmitting(false);
+                },
+                onSuccess: () => {
+                    setClinikoApiKey('');
+                    setClinikoSubmitting(false);
+                },
+                onFinish: () => setClinikoSubmitting(false),
+            },
+        );
+    };
+    const handleClinikoDisconnect = () => {
+        router.post('/integrations/cliniko/disconnect');
+    };
+    const handleClinikoToggleAutoSend = () => {
+        router.post('/integrations/cliniko/toggle-auto-send', {}, { preserveScroll: true });
+    };
+
+    // Timely
+    const handleTimelyConnect = () => {
+        window.location.href = '/integrations/timely/connect';
+    };
+    const handleTimelyDisconnect = () => {
+        router.post('/integrations/timely/disconnect');
+    };
+    const handleTimelyToggleAutoSend = () => {
+        router.post('/integrations/timely/toggle-auto-send', {}, { preserveScroll: true });
+    };
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Integrations" />
+            <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6 max-w-2xl">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900">Integrations</h1>
+                    <p className="mt-1 text-sm text-gray-500">
+                        Connect ReviewMate to your other business tools to automatically send review requests.
+                    </p>
+                </div>
+
+                {/* ServiceM8 Card */}
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-100">
+                                    <span className="text-sm font-bold text-orange-700">S8</span>
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base">ServiceM8</CardTitle>
+                                    <CardDescription className="text-xs">
+                                        For tradies. Auto-sends review requests when a job is completed.
+                                    </CardDescription>
+                                </div>
+                            </div>
+                            <ConnectedBadge connected={servicem8Connected} />
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <p className="text-sm text-gray-600">
+                            Automatically send Google review requests to customers when a job is marked as complete in ServiceM8.
+                            No manual effort required — ReviewMate handles it for you.
+                        </p>
+
+                        {servicem8Connected ? (
+                            <div className="space-y-4">
+                                <AutoSendToggle
+                                    id="servicem8-auto-send"
+                                    label="Auto-send review requests"
+                                    description="Send a review request automatically when a ServiceM8 job is completed."
+                                    checked={servicem8AutoSend}
+                                    onToggle={handleServiceM8ToggleAutoSend}
+                                />
+
+                                {webhookUrl && (
+                                    <WebhookUrlBox
+                                        url={webhookUrl}
+                                        instructions={
+                                            <>
+                                                Configure this URL in your ServiceM8 account under{' '}
+                                                <strong>Settings &rarr; Webhooks</strong> for the{' '}
+                                                <strong>Job Completion</strong> event.
+                                            </>
+                                        }
+                                    />
+                                )}
+
+                                <Button
+                                    variant="outline"
+                                    className="border-red-200 text-red-600 hover:bg-red-50"
+                                    onClick={handleServiceM8Disconnect}
+                                >
+                                    Disconnect ServiceM8
+                                </Button>
+                            </div>
+                        ) : (
+                            <Button
+                                className="bg-teal-600 hover:bg-teal-700 text-white"
+                                onClick={handleServiceM8Connect}
+                            >
+                                Connect ServiceM8
+                            </Button>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Xero Card */}
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
+                                    <span className="text-sm font-bold text-blue-700">XR</span>
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base">Xero</CardTitle>
+                                    <CardDescription className="text-xs">
+                                        For any business using Xero. Triggers when an invoice is marked paid.
+                                    </CardDescription>
+                                </div>
+                            </div>
+                            <ConnectedBadge connected={xeroConnected} />
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <p className="text-sm text-gray-600">
+                            Automatically send a review request when a Xero invoice is marked as paid. Works for any
+                            business that invoices customers through Xero.
+                        </p>
+
+                        {xeroConnected ? (
+                            <div className="space-y-4">
+                                <AutoSendToggle
+                                    id="xero-auto-send"
+                                    label="Auto-send review requests"
+                                    description="Send a review request automatically when a Xero invoice is marked paid."
+                                    checked={xeroAutoSend}
+                                    onToggle={handleXeroToggleAutoSend}
+                                />
+
+                                {xeroWebhookUrl && (
+                                    <WebhookUrlBox
+                                        url={xeroWebhookUrl}
+                                        instructions={
+                                            <>
+                                                Configure this URL in your Xero account under{' '}
+                                                <strong>Settings &rarr; Webhooks</strong>.
+                                            </>
+                                        }
+                                    />
+                                )}
+
+                                <Button
+                                    variant="outline"
+                                    className="border-red-200 text-red-600 hover:bg-red-50"
+                                    onClick={handleXeroDisconnect}
+                                >
+                                    Disconnect Xero
+                                </Button>
+                            </div>
+                        ) : (
+                            <Button
+                                className="bg-teal-600 hover:bg-teal-700 text-white"
+                                onClick={handleXeroConnect}
+                            >
+                                Connect Xero
+                            </Button>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Cliniko Card */}
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-100">
+                                    <span className="text-sm font-bold text-teal-700">CL</span>
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base">Cliniko</CardTitle>
+                                    <CardDescription className="text-xs">
+                                        For allied health practitioners. Sends review requests after completed appointments.
+                                    </CardDescription>
+                                </div>
+                            </div>
+                            <ConnectedBadge connected={clinikoConnected} />
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <p className="text-sm text-gray-600">
+                            ReviewMate polls Cliniko daily for completed appointments (physios, chiros, psychologists, etc.)
+                            and automatically sends review requests to patients. Uses your personal Cliniko API key.
+                        </p>
+
+                        {clinikoConnected ? (
+                            <div className="space-y-4">
+                                <AutoSendToggle
+                                    id="cliniko-auto-send"
+                                    label="Auto-send review requests"
+                                    description="Send a review request automatically when a Cliniko appointment is completed."
+                                    checked={clinikoAutoSend}
+                                    onToggle={handleClinikoToggleAutoSend}
+                                />
+
+                                <Button
+                                    variant="outline"
+                                    className="border-red-200 text-red-600 hover:bg-red-50"
+                                    onClick={handleClinikoDisconnect}
+                                >
+                                    Disconnect Cliniko
+                                </Button>
+                            </div>
+                        ) : (
+                            <form onSubmit={handleClinikoConnect} className="space-y-3">
+                                <div className="space-y-1">
+                                    <Label htmlFor="cliniko-api-key" className="text-sm font-medium">
+                                        Cliniko API key
+                                    </Label>
+                                    <p className="text-xs text-gray-500">
+                                        Find your API key in Cliniko under <strong>My Info &rarr; Cliniko API</strong>.
+                                    </p>
+                                    <Input
+                                        id="cliniko-api-key"
+                                        type="password"
+                                        placeholder="Paste your Cliniko API key"
+                                        value={clinikoApiKey}
+                                        onChange={(e) => setClinikoApiKey(e.target.value)}
+                                        required
+                                    />
+                                    {clinikoError && (
+                                        <p className="text-xs text-red-600">{clinikoError}</p>
+                                    )}
+                                </div>
+                                <Button
+                                    type="submit"
+                                    className="bg-teal-600 hover:bg-teal-700 text-white"
+                                    disabled={clinikoSubmitting || !clinikoApiKey.trim()}
+                                >
+                                    {clinikoSubmitting ? 'Connecting...' : 'Connect Cliniko'}
+                                </Button>
+                            </form>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Timely Card */}
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
+                                    <span className="text-sm font-bold text-purple-700">TM</span>
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base">Timely</CardTitle>
+                                    <CardDescription className="text-xs">
+                                        For salons and beauty businesses. Sends review requests after completed appointments.
+                                    </CardDescription>
+                                </div>
+                            </div>
+                            <ConnectedBadge connected={timelyConnected} />
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <p className="text-sm text-gray-600">
+                            Automatically send a review request when an appointment is completed in Timely. Uses native
+                            webhooks for instant delivery — no polling required.
+                        </p>
+
+                        {timelyConnected ? (
+                            <div className="space-y-4">
+                                <AutoSendToggle
+                                    id="timely-auto-send"
+                                    label="Auto-send review requests"
+                                    description="Send a review request automatically when a Timely appointment is completed."
+                                    checked={timelyAutoSend}
+                                    onToggle={handleTimelyToggleAutoSend}
+                                />
+
+                                {timelyWebhookUrl && (
+                                    <WebhookUrlBox
+                                        url={timelyWebhookUrl}
+                                        instructions={
+                                            <>
+                                                Configure this URL in your Timely account under{' '}
+                                                <strong>Settings &rarr; Integrations &rarr; Webhooks</strong> for the{' '}
+                                                <strong>Appointment Completed</strong> event.
+                                            </>
+                                        }
+                                    />
+                                )}
+
+                                <Button
+                                    variant="outline"
+                                    className="border-red-200 text-red-600 hover:bg-red-50"
+                                    onClick={handleTimelyDisconnect}
+                                >
+                                    Disconnect Timely
+                                </Button>
+                            </div>
+                        ) : (
+                            <Button
+                                className="bg-teal-600 hover:bg-teal-700 text-white"
+                                onClick={handleTimelyConnect}
+                            >
+                                Connect Timely
+                            </Button>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+        </AppLayout>
+    );
+}
