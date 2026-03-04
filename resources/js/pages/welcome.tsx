@@ -372,7 +372,7 @@ export default function Welcome({ count }: Props) {
 
                 {/* Footer */}
                 <footer className="border-t border-gray-100 py-8">
-                    <div className="mx-auto max-w-6xl px-6 flex flex-col items-center gap-2 sm:flex-row sm:justify-between">
+                    <div className="mx-auto max-w-6xl px-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
                         <div className="flex items-center gap-2">
                             <div className="flex h-5 w-5 items-center justify-center rounded bg-teal-600">
                                 <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -381,7 +381,11 @@ export default function Welcome({ count }: Props) {
                             </div>
                             <span className="text-sm font-semibold text-gray-700">ReviewMate</span>
                         </div>
-                        <p className="text-xs text-gray-400">&copy; {new Date().getFullYear()} ReviewMate. Built for Australian small businesses.</p>
+                        <div className="flex items-center gap-4 text-xs text-gray-400">
+                            <a href="/terms" className="hover:text-gray-600 transition-colors">Terms</a>
+                            <a href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</a>
+                            <span>&copy; {new Date().getFullYear()} ReviewMate. Built for Australian small businesses.</span>
+                        </div>
                     </div>
                 </footer>
 

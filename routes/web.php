@@ -8,6 +8,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EmailFlowController;
 use App\Http\Controllers\GoogleBusinessController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\NotificationSettingsController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\QrCodeController;
@@ -22,6 +23,8 @@ use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
 Route::get('/', [WaitlistController::class, 'index'])->name('home');
 Route::post('/waitlist', [WaitlistController::class, 'store'])->name('waitlist.store');
+Route::get('/terms', [LegalController::class, 'terms'])->name('legal.terms');
+Route::get('/privacy', [LegalController::class, 'privacy'])->name('legal.privacy');
 Route::get('/r/{token}', [ReviewRequestController::class, 'track'])->name('review-requests.track');
 Route::get('/unsubscribe/{token}', [CustomerController::class, 'unsubscribe'])->name('customers.unsubscribe');
 
