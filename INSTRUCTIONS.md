@@ -1,15 +1,16 @@
 # ReviewMate — Agent Instructions
 
 > Last updated: 2026-03-04
-> Completion: ~95% code — 2 fixes needed, then deploy
+> Completion: ~100% code — deploy only remaining
 
-## ⚠️ TWO FIXES BEFORE DEPLOY
+## ✅ CODE COMPLETE — READY TO DEPLOY
 
-A code audit found 2 UX/polish issues. Fix these before deploying.
+All features are built and tested (104 tests passing, CI passing). The only remaining work is
+production deployment and acquiring first paying customers.
 
 ---
 
-## Copy and paste this prompt to fix the pre-deploy issues:
+## 🤖 AGENT TASK — DO THIS NOW
 
 ```
 You are working on ReviewMate — a Google review management SaaS for local businesses.
@@ -17,28 +18,31 @@ Stack: Laravel 12, React 19, Inertia.js v2, Tailwind CSS v4, WorkOS auth, SQLite
 
 Read AGENTS.md for full conventions.
 
-Two issues were found in a code audit. Fix both:
+The app is code-complete. Your task is to add Terms of Service and Privacy Policy pages — required for Stripe and user trust.
 
-1. GOOGLE PLACE ID UX
-   - During onboarding step 2, users connect their Google Business Profile via OAuth, but then
-     are still required to manually find and enter their Place ID — this feels broken and confusing.
-   - After a successful OAuth connection, attempt to auto-discover the Place ID from the Google
-     Business Profile API using the authenticated token. If exactly one location is found,
-     pre-fill the Place ID field automatically. If multiple locations are found, show a dropdown
-     of their locations to choose from rather than a blank text field.
-   - If the API call fails or returns no locations, fall back gracefully to the existing manual
-     text input with a help link explaining how to find a Place ID.
-   - The Google Business Profile API endpoint for listing locations is:
-     GET https://mybusinessbusinessinformation.googleapis.com/v1/accounts/{accountId}/locations
-     The accountId is already stored after OAuth — use it here.
+1. TERMS OF SERVICE — GET /terms
+   - Add route in routes/web.php (no auth required)
+   - Create resources/js/pages/terms.tsx (follow existing page patterns)
+   - Write real Terms of Service for a review management SaaS for local businesses. Include:
+     acceptance, service description (SMS/email review requests, Google integration), user
+     responsibilities (must have customer consent before sending SMS/email), Twilio SMS usage,
+     Stripe payment terms, cancellation policy, IP ownership, limitation of liability,
+     governing law: Queensland, Australia.
 
-2. MISSING BRANDED ERROR PAGES
-   - No custom error pages exist — users see raw Laravel error screens.
-   - Create resources/views/errors/403.blade.php, 404.blade.php, and 500.blade.php.
-   - Match the app's existing design (use Tailwind classes consistent with the app's style).
-   - Each page: app name/logo at top, friendly error title, short message, link back to dashboard.
+2. PRIVACY POLICY — GET /privacy
+   - Same pattern as terms
+   - Cover: data collected (business info, customer contact details, Google Business data),
+     how used, third parties (WorkOS, Stripe, Twilio SMS, Google Business Profile API, Mailgun,
+     Anthropic AI), data retention, SMS compliance (SPAM Act 2003 Australia), contact email.
 
-Write tests for any new controller logic. Run ./vendor/bin/pest --parallel before finishing.
+3. FOOTER
+   - Add footer to main authenticated layout and landing page: "© 2025 ReviewMate · Terms · Privacy"
+
+4. AUTH PAGES
+   - Add "By signing up you agree to our Terms and Privacy Policy" with links on register page.
+
+Write Pest tests confirming GET /terms and GET /privacy return 200.
+Run ./vendor/bin/pest --parallel before finishing.
 ```
 
 ---
@@ -51,7 +55,7 @@ Stack: Laravel 12, React 19, Inertia.js v2, Tailwind CSS v4, WorkOS auth, SQLite
 
 Read AGENTS.md for full conventions.
 
-The app is code-complete (99 tests passing, CI passing). Your only task is production deployment:
+The app is code-complete (104 tests passing, CI passing). Your only task is production deployment:
 
 1. Follow the checklist in DEPLOYMENT.md
 2. Run: php artisan test — confirm 99 tests pass
@@ -95,6 +99,8 @@ The app is code-complete (99 tests passing, CI passing). Your only task is produ
 | 30-day resend guard | ✅ Done |
 | Security audit (all routes scoped) | ✅ Done |
 | CI passing (PHP lint + TypeScript) | ✅ Done |
+| Google Place ID auto-discovery (onboarding) | ✅ Done |
+| Branded error pages (403, 404, 500) | ✅ Done |
 | **Deployed to production** | ❌ **#1 priority — see DEPLOYMENT.md** |
 
 ---
