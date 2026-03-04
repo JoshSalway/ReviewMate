@@ -5,45 +5,8 @@
 
 ## ✅ CODE COMPLETE — READY TO DEPLOY
 
-All features are built and tested (104 tests passing, CI passing). The only remaining work is
+All features are built and tested (107 tests passing, CI passing). The only remaining work is
 production deployment and acquiring first paying customers.
-
----
-
-## 🤖 AGENT TASK — DO THIS NOW
-
-```
-You are working on ReviewMate — a Google review management SaaS for local businesses.
-Stack: Laravel 12, React 19, Inertia.js v2, Tailwind CSS v4, WorkOS auth, SQLite (dev).
-
-Read AGENTS.md for full conventions.
-
-The app is code-complete. Your task is to add Terms of Service and Privacy Policy pages — required for Stripe and user trust.
-
-1. TERMS OF SERVICE — GET /terms
-   - Add route in routes/web.php (no auth required)
-   - Create resources/js/pages/terms.tsx (follow existing page patterns)
-   - Write real Terms of Service for a review management SaaS for local businesses. Include:
-     acceptance, service description (SMS/email review requests, Google integration), user
-     responsibilities (must have customer consent before sending SMS/email), Twilio SMS usage,
-     Stripe payment terms, cancellation policy, IP ownership, limitation of liability,
-     governing law: Queensland, Australia.
-
-2. PRIVACY POLICY — GET /privacy
-   - Same pattern as terms
-   - Cover: data collected (business info, customer contact details, Google Business data),
-     how used, third parties (WorkOS, Stripe, Twilio SMS, Google Business Profile API, Mailgun,
-     Anthropic AI), data retention, SMS compliance (SPAM Act 2003 Australia), contact email.
-
-3. FOOTER
-   - Add footer to main authenticated layout and landing page: "© 2025 ReviewMate · Terms · Privacy"
-
-4. AUTH PAGES
-   - Add "By signing up you agree to our Terms and Privacy Policy" with links on register page.
-
-Write Pest tests confirming GET /terms and GET /privacy return 200.
-Run ./vendor/bin/pest --parallel before finishing.
-```
 
 ---
 
@@ -55,7 +18,7 @@ Stack: Laravel 12, React 19, Inertia.js v2, Tailwind CSS v4, WorkOS auth, SQLite
 
 Read AGENTS.md for full conventions.
 
-The app is code-complete (104 tests passing, CI passing). Your only task is production deployment:
+The app is code-complete (107 tests passing, CI passing). Your only task is production deployment:
 
 1. Follow the checklist in DEPLOYMENT.md
 2. Run: php artisan test — confirm 99 tests pass
@@ -101,6 +64,9 @@ The app is code-complete (104 tests passing, CI passing). Your only task is prod
 | CI passing (PHP lint + TypeScript) | ✅ Done |
 | Google Place ID auto-discovery (onboarding) | ✅ Done |
 | Branded error pages (403, 404, 500) | ✅ Done |
+| Terms of Service + Privacy Policy pages | ✅ Done |
+| Footer with Terms/Privacy links (landing + app) | ✅ Done |
+| Login page with consent text | ✅ Done |
 | **Deployed to production** | ❌ **#1 priority — see DEPLOYMENT.md** |
 
 ---
