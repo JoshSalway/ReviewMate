@@ -671,6 +671,87 @@ export default function Integrations({
                         )}
                     </CardContent>
                 </Card>
+
+                {/* Custom Webhook Card */}
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+                                    <span className="text-sm font-bold text-gray-700">{'{}'}</span>
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base">Custom Webhook</CardTitle>
+                                    <CardDescription className="text-xs">
+                                        Connect any tool via Zapier, Make, or direct HTTP POST.
+                                    </CardDescription>
+                                </div>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <p className="text-sm text-gray-600">
+                            Works with Fergus, Tradify, Mindbody, and 5,000+ other apps. Any tool that can make an HTTP
+                            POST request can trigger a review request — no native integration required.
+                        </p>
+
+                        {incomingWebhookUrl ? (
+                            <div className="space-y-4">
+                                <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                                    <p className="text-xs font-medium text-blue-800">Your webhook URL</p>
+                                    <p className="mt-1 text-xs text-blue-700">
+                                        POST to this URL with <code className="bg-blue-100 px-1 rounded">name</code>,{' '}
+                                        <code className="bg-blue-100 px-1 rounded">email</code>, and/or{' '}
+                                        <code className="bg-blue-100 px-1 rounded">phone</code> fields.
+                                    </p>
+                                    <div className="mt-2 flex items-center gap-2">
+                                        <code className="flex-1 truncate rounded bg-blue-100 px-2 py-1 font-mono text-xs text-blue-900">
+                                            {incomingWebhookUrl}
+                                        </code>
+                                        <button
+                                            type="button"
+                                            className="shrink-0 text-xs text-blue-600 hover:text-blue-800 underline"
+                                            onClick={() => navigator.clipboard.writeText(incomingWebhookUrl)}
+                                        >
+                                            Copy
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                                    <p className="mb-2 text-xs font-medium text-gray-700">Example request (Zapier / Make / n8n / direct):</p>
+                                    <pre className="overflow-x-auto rounded bg-gray-900 px-3 py-2 font-mono text-xs text-gray-100">{`POST ${incomingWebhookUrl}
+Content-Type: application/json
+
+{
+  "name": "{{customer_name}}",
+  "email": "{{customer_email}}",
+  "phone": "{{customer_phone}}",
+  "trigger": "job_completed"
+}`}</pre>
+                                </div>
+
+                                <Button
+                                    variant="outline"
+                                    className="border-gray-200 text-gray-600 hover:bg-gray-50"
+                                    onClick={() =>
+                                        router.post(
+                                            '/settings/integrations/webhook/regenerate',
+                                            {},
+                                            { preserveScroll: true },
+                                        )
+                                    }
+                                >
+                                    Regenerate Token
+                                </Button>
+                            </div>
+                        ) : (
+                            <p className="text-sm text-gray-500">
+                                No webhook token generated yet. Complete your business setup to activate this feature.
+                            </p>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );

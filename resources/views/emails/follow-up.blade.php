@@ -2,8 +2,16 @@
 {{ $body }}
 
 <x-mail::button :url="$reviewLink" color="primary">
-⭐ Leave a Review
+⭐ Leave a Google Review
 </x-mail::button>
+
+@if(!empty($facebookReviewUrl))
+Or leave us a Facebook review:
+
+<x-mail::button :url="$facebookReviewUrl" color="success">
+👍 Leave a Facebook Review
+</x-mail::button>
+@endif
 
 Thanks,<br>
 {{ $ownerName }}<br>

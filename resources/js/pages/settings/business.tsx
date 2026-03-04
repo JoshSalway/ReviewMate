@@ -48,6 +48,7 @@ interface Props {
         is_google_connected: boolean;
         google_account_id: string | null;
         google_location_id: string | null;
+        facebook_page_url: string | null;
     };
 }
 
@@ -58,6 +59,7 @@ export default function BusinessSettings({ business }: Props) {
         google_place_id: business.google_place_id ?? '',
         owner_name: business.owner_name ?? '',
         phone: business.phone ?? '',
+        facebook_page_url: business.facebook_page_url ?? '',
     });
     const [processing, setProcessing] = useState(false);
     const [saved, setSaved] = useState(false);
@@ -218,6 +220,36 @@ export default function BusinessSettings({ business }: Props) {
                                             Review link:{' '}
                                             <a
                                                 href={`https://search.google.com/local/writereview?placeid=${form.google_place_id}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-teal-600 underline"
+                                            >
+                                                Preview link
+                                            </a>
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="border-t pt-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="facebook-page-url">Facebook Page URL</Label>
+                                    <p className="text-xs text-gray-500">
+                                        Optional. When set, review requests will include a link to your Facebook Reviews page
+                                        alongside Google.
+                                    </p>
+                                    <Input
+                                        id="facebook-page-url"
+                                        type="url"
+                                        value={form.facebook_page_url}
+                                        onChange={(e) => setForm({ ...form, facebook_page_url: e.target.value })}
+                                        placeholder="e.g. https://www.facebook.com/yourbusiness"
+                                    />
+                                    {form.facebook_page_url && (
+                                        <p className="text-xs text-gray-500">
+                                            Facebook review link:{' '}
+                                            <a
+                                                href={`${form.facebook_page_url.replace(/\/$/, '')}/reviews`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="text-teal-600 underline"

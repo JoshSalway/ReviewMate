@@ -24,6 +24,7 @@ class BusinessSettingsController extends Controller
                 'is_google_connected' => $business?->isGoogleConnected() ?? false,
                 'google_account_id' => $business?->google_account_id,
                 'google_location_id' => $business?->google_location_id,
+                'facebook_page_url' => $business?->facebook_page_url,
             ],
         ]);
     }
@@ -36,6 +37,7 @@ class BusinessSettingsController extends Controller
             'google_place_id' => ['nullable', 'string', 'max:255'],
             'owner_name' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
+            'facebook_page_url' => ['nullable', 'url', 'max:500'],
         ]);
 
         $business = $request->user()->currentBusiness();

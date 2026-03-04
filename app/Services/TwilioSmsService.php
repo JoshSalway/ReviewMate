@@ -40,9 +40,16 @@ class TwilioSmsService implements SmsProvider
             return;
         }
 
-        $url = $business->googleReviewUrl();
-        $message = "Hi {$customer->name}, {$business->name} would love a Google review! "
-            ."It only takes a minute: {$url}";
+        $googleUrl = $business->googleReviewUrl();
+
+        if ($business->hasFacebookReviews()) {
+            $fbUrl   = $business->facebookReviewUrl();
+            $message = "Hi {$customer->name}, {$business->name} would love a review! "
+                . "Google: {$googleUrl} | Facebook: {$fbUrl}";
+        } else {
+            $message = "Hi {$customer->name}, {$business->name} would love a Google review! "
+                . "It only takes a minute: {$googleUrl}";
+        }
 
         $this->send($customer->phone, $message);
     }
@@ -53,9 +60,16 @@ class TwilioSmsService implements SmsProvider
             return;
         }
 
-        $url = $business->googleReviewUrl();
-        $message = "Hi {$customer->name}, just a friendly reminder from {$business->name} — "
-            ."we'd really appreciate your Google review: {$url}";
+        $googleUrl = $business->googleReviewUrl();
+
+        if ($business->hasFacebookReviews()) {
+            $fbUrl   = $business->facebookReviewUrl();
+            $message = "Hi {$customer->name}, just a friendly reminder from {$business->name} — "
+                . "we'd love your review! Google: {$googleUrl} | Facebook: {$fbUrl}";
+        } else {
+            $message = "Hi {$customer->name}, just a friendly reminder from {$business->name} — "
+                . "we'd really appreciate your Google review: {$googleUrl}";
+        }
 
         $this->send($customer->phone, $message);
     }
