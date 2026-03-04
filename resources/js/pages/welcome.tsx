@@ -1,20 +1,5 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { useState } from 'react';
-
-interface Props {
-    count: number;
-}
-
-const BUSINESS_TYPES = [
-    'Trades & Construction',
-    'Health & Beauty',
-    'Restaurant & Café',
-    'Retail',
-    'Professional Services',
-    'Home Services',
-    'Automotive',
-    'Other',
-];
 
 function StarIcon() {
     return (
@@ -28,6 +13,14 @@ function CheckIcon() {
     return (
         <svg className="h-5 w-5 text-teal-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+    );
+}
+
+function XIcon() {
+    return (
+        <svg className="h-5 w-5 text-red-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
     );
 }
@@ -76,7 +69,7 @@ const features = [
             </svg>
         ),
         title: 'Customer management',
-        description: 'Import customers from CSV or add them manually. See exactly who\'s reviewed, who\'s pending, and who hasn\'t responded.',
+        description: "Import customers from CSV or add them manually. See exactly who's reviewed, who's pending, and who hasn't responded.",
     },
     {
         icon: (
@@ -98,7 +91,7 @@ const steps = [
     {
         number: '02',
         title: 'ReviewMate does the asking',
-        description: 'Personalised emails and SMS go out at the right time, with a follow-up 5 days later if they haven\'t reviewed yet.',
+        description: "Personalised emails and SMS go out at the right time, with a follow-up 5 days later if they haven't reviewed yet.",
     },
     {
         number: '03',
@@ -107,25 +100,90 @@ const steps = [
     },
 ];
 
-export default function Welcome({ count }: Props) {
-    const { props } = usePage<{ flash: Record<string, unknown> }>();
-    const success = props.flash?.waitlist_success;
+const testimonials = [
+    {
+        quote: "We got 14 new reviews in our first month. I didn't have to do anything.",
+        author: 'Sarah K.',
+        role: 'Cafe owner',
+    },
+    {
+        quote: "Finally — a tool that asks for reviews without me having to remember.",
+        author: 'Dan M.',
+        role: 'Electrician',
+    },
+    {
+        quote: 'Our Google rating went from 4.1 to 4.7 in 6 weeks.',
+        author: 'Anita R.',
+        role: 'Physio clinic',
+    },
+];
 
-    const [form, setForm] = useState({ name: '', email: '', business_type: '' });
-    const [submitting, setSubmitting] = useState(false);
-    const [errors, setErrors] = useState<Record<string, string>>({});
+const comparisonRows = [
+    { feature: 'Starting price', reviewmate: '$0 free / $49/mo', nicejob: '$75/mo', birdeye: '$299/mo', podium: '$399/mo' },
+    { feature: 'AI reply suggestions', reviewmate: true, nicejob: false, birdeye: false, podium: false },
+    { feature: 'Google API integration', reviewmate: true, nicejob: true, birdeye: true, podium: true },
+    { feature: 'SMS review requests', reviewmate: true, nicejob: true, birdeye: true, podium: true },
+    { feature: 'Email review requests', reviewmate: true, nicejob: true, birdeye: true, podium: true },
+    { feature: 'Free plan available', reviewmate: true, nicejob: false, birdeye: false, podium: false },
+    { feature: 'No lock-in contract', reviewmate: true, nicejob: false, birdeye: false, podium: false },
+];
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setSubmitting(true);
-        setErrors({});
-        router.post('/waitlist', form, {
-            preserveScroll: true,
-            onError: (errs) => setErrors(errs),
-            onFinish: () => setSubmitting(false),
-        });
-    };
+const faqs = [
+    {
+        question: 'Does it work for SMS and email?',
+        answer: 'Yes, both. SMS uses Twilio and works with Australian numbers. Email is sent from your ReviewMate account with personalised content.',
+    },
+    {
+        question: 'Do I need a Google Business Profile?',
+        answer: 'Yes — you need a verified Google Business Profile to sync and reply to reviews. ReviewMate helps you connect it in the onboarding wizard (takes about 2 minutes).',
+    },
+    {
+        question: 'Is there a free plan?',
+        answer: 'Yes — 1 location, 50 customers, and 10 requests per month. No credit card needed to get started.',
+    },
+    {
+        question: 'Can I cancel any time?',
+        answer: 'Yes. No contracts, no lock-in. Cancel from your billing settings at any time and you will not be charged again.',
+    },
+    {
+        question: 'What businesses does it work for?',
+        answer: 'Any local business with a Google Business Profile — tradies, cafes, salons, gyms, health clinics, retail, professional services, and more.',
+    },
+];
 
+function ComparisonCell({ value }: { value: boolean | string }) {
+    if (typeof value === 'boolean') {
+        return value ? <CheckIcon /> : <XIcon />;
+    }
+    return <span className="text-sm font-medium text-gray-700">{value}</span>;
+}
+
+function FaqItem({ question, answer }: { question: string; answer: string }) {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <div className="border-b border-gray-100 py-5">
+            <button
+                className="flex w-full items-center justify-between text-left"
+                onClick={() => setOpen(!open)}
+            >
+                <span className="text-base font-medium text-gray-900">{question}</span>
+                <svg
+                    className={`h-5 w-5 text-gray-400 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                </svg>
+            </button>
+            {open && <p className="mt-3 text-sm text-gray-500 leading-relaxed">{answer}</p>}
+        </div>
+    );
+}
+
+export default function Welcome() {
     return (
         <>
             <Head title="ReviewMate — More 5-star Google reviews, automatically" />
@@ -157,7 +215,7 @@ export default function Welcome({ count }: Props) {
                             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75"></span>
                             <span className="relative inline-flex h-2 w-2 rounded-full bg-teal-500"></span>
                         </span>
-                        Coming soon — join the waitlist
+                        Now open — free 14-day trial
                     </div>
 
                     <h1 className="mx-auto max-w-3xl text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl leading-[1.05]">
@@ -171,90 +229,47 @@ export default function Welcome({ count }: Props) {
 
                     <div className="mt-6 flex items-center justify-center gap-1.5">
                         {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
-                        {count > 0 && (
-                            <span className="ml-2 text-sm text-gray-500">
-                                <span className="font-semibold text-gray-700">{count.toLocaleString()} business{count !== 1 ? 'es' : ''}</span> on the waitlist
-                            </span>
-                        )}
                     </div>
 
-                    {/* Waitlist form */}
-                    <div className="mx-auto mt-10 max-w-md" id="waitlist">
-                        {success ? (
-                            <div className="rounded-2xl border border-teal-200 bg-teal-50 px-6 py-10 text-center">
-                                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-teal-100">
-                                    <svg className="h-7 w-7 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                                    </svg>
-                                </div>
-                                <h3 className="text-xl font-bold text-gray-900">You're on the list!</h3>
-                                <p className="mt-2 text-sm text-gray-500 leading-relaxed">
-                                    We'll email you the moment ReviewMate is ready. Thanks for your support — we'll see you soon.
-                                </p>
-                            </div>
-                        ) : (
-                            <form onSubmit={handleSubmit} className="rounded-2xl border border-gray-100 bg-gray-50 p-6 text-left shadow-sm space-y-4">
-                                <div>
-                                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1.5">Your name</label>
-                                    <input
-                                        id="name"
-                                        type="text"
-                                        placeholder="Jane Smith"
-                                        value={form.name}
-                                        onChange={(e) => setForm({ ...form, name: e.target.value })}
-                                        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm placeholder-gray-400 focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100 transition"
-                                        required
-                                    />
-                                    {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
-                                </div>
+                    <div className="mt-10">
+                        <a
+                            href="/login"
+                            className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 transition-colors"
+                        >
+                            Start your free trial — no credit card needed
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                            </svg>
+                        </a>
+                        <p className="mt-3 text-xs text-gray-400">Free plan available. Upgrade any time.</p>
+                    </div>
+                </section>
 
-                                <div>
-                                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">Work email</label>
-                                    <input
-                                        id="email"
-                                        type="email"
-                                        placeholder="jane@yourbusiness.com.au"
-                                        value={form.email}
-                                        onChange={(e) => setForm({ ...form, email: e.target.value })}
-                                        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm placeholder-gray-400 focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100 transition"
-                                        required
-                                    />
-                                    {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+                {/* Social proof / testimonials */}
+                <section className="bg-gray-50 py-16">
+                    <div className="mx-auto max-w-6xl px-6">
+                        <div className="mb-10 text-center">
+                            <p className="text-sm font-semibold uppercase tracking-widest text-gray-400">What customers say</p>
+                        </div>
+                        <div className="grid gap-6 md:grid-cols-3">
+                            {testimonials.map((t) => (
+                                <div key={t.author} className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                                    <div className="mb-4 flex gap-0.5">
+                                        {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
+                                    </div>
+                                    <p className="text-sm text-gray-700 leading-relaxed">"{t.quote}"</p>
+                                    <div className="mt-4">
+                                        <p className="text-sm font-semibold text-gray-900">{t.author}</p>
+                                        <p className="text-xs text-gray-400">{t.role}</p>
+                                    </div>
                                 </div>
-
-                                <div>
-                                    <label htmlFor="business_type" className="block text-sm font-medium text-gray-700 mb-1.5">
-                                        Business type <span className="text-gray-400 font-normal">(optional)</span>
-                                    </label>
-                                    <select
-                                        id="business_type"
-                                        value={form.business_type}
-                                        onChange={(e) => setForm({ ...form, business_type: e.target.value })}
-                                        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100 transition"
-                                    >
-                                        <option value="">Select your industry...</option>
-                                        {BUSINESS_TYPES.map((t) => (
-                                            <option key={t} value={t}>{t}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={submitting}
-                                    className="w-full rounded-lg bg-teal-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-teal-700 active:bg-teal-800 transition-colors disabled:opacity-60"
-                                >
-                                    {submitting ? 'Joining...' : "Join the waitlist — it's free"}
-                                </button>
-
-                                <p className="text-center text-xs text-gray-400">No spam. We'll only email you when ReviewMate launches.</p>
-                            </form>
-                        )}
+                            ))}
+                        </div>
                     </div>
                 </section>
 
                 {/* How it works */}
-                <section className="bg-gray-50 py-20">
+                <section className="py-20">
                     <div className="mx-auto max-w-6xl px-6">
                         <div className="mb-14 text-center">
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">How it works</h2>
@@ -276,7 +291,7 @@ export default function Welcome({ count }: Props) {
                 </section>
 
                 {/* Features grid */}
-                <section className="py-20">
+                <section className="bg-gray-50 py-20">
                     <div className="mx-auto max-w-6xl px-6">
                         <div className="mb-14 text-center">
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Everything you need</h2>
@@ -286,7 +301,7 @@ export default function Welcome({ count }: Props) {
                         </div>
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                             {features.map((feature) => (
-                                <div key={feature.title} className="group rounded-2xl border border-gray-100 p-6 hover:border-teal-100 hover:shadow-md transition-all">
+                                <div key={feature.title} className="group rounded-2xl border border-gray-100 bg-white p-6 hover:border-teal-100 hover:shadow-md transition-all">
                                     <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 text-teal-600 group-hover:bg-teal-100 transition-colors">
                                         {feature.icon}
                                     </div>
@@ -294,6 +309,56 @@ export default function Welcome({ count }: Props) {
                                     <p className="text-sm text-gray-500 leading-relaxed">{feature.description}</p>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Competitor comparison */}
+                <section className="py-20">
+                    <div className="mx-auto max-w-5xl px-6">
+                        <div className="mb-12 text-center">
+                            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">How we compare</h2>
+                            <p className="mt-3 text-gray-500">5–10x cheaper than the alternatives, with features they don't have.</p>
+                        </div>
+                        <div className="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="border-b border-gray-100 bg-gray-50">
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-600">Feature</th>
+                                        <th className="px-6 py-4 text-sm font-bold text-teal-700">ReviewMate</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-500">NiceJob</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-500">Birdeye</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-gray-500">Podium</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {comparisonRows.map((row, idx) => (
+                                        <tr key={row.feature} className={`border-b border-gray-50 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
+                                            <td className="px-6 py-4 text-sm text-gray-600">{row.feature}</td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center">
+                                                    <ComparisonCell value={row.reviewmate} />
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center">
+                                                    <ComparisonCell value={row.nicejob} />
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center">
+                                                    <ComparisonCell value={row.birdeye} />
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center">
+                                                    <ComparisonCell value={row.podium} />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </section>
@@ -347,24 +412,47 @@ export default function Welcome({ count }: Props) {
                                 </ul>
                             </div>
                         </div>
+
+                        <div className="mt-10 text-center">
+                            <a
+                                href="/login"
+                                className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 transition-colors"
+                            >
+                                Start your free trial
+                            </a>
+                            <p className="mt-2 text-xs text-gray-400">No credit card needed. Cancel any time.</p>
+                        </div>
+                    </div>
+                </section>
+
+                {/* FAQ */}
+                <section className="py-20">
+                    <div className="mx-auto max-w-3xl px-6">
+                        <div className="mb-12 text-center">
+                            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Frequently asked questions</h2>
+                        </div>
+                        <div>
+                            {faqs.map((faq) => (
+                                <FaqItem key={faq.question} question={faq.question} answer={faq.answer} />
+                            ))}
+                        </div>
                     </div>
                 </section>
 
                 {/* Bottom CTA */}
-                <section className="py-24">
+                <section className="bg-teal-600 py-20">
                     <div className="mx-auto max-w-2xl px-6 text-center">
-                        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Ready to get more reviews?</h2>
-                        <p className="mt-4 text-gray-500 leading-relaxed">
-                            Join hundreds of Australian small businesses on the waitlist. We'll email you the moment ReviewMate opens its doors.
+                        <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Ready to get more reviews?</h2>
+                        <p className="mt-4 text-teal-100 leading-relaxed">
+                            Join Australian small businesses already using ReviewMate to build their Google reputation on autopilot.
                         </p>
                         <a
-                            href="#waitlist"
-                            onClick={(e) => { e.preventDefault(); document.getElementById('waitlist')?.scrollIntoView({ behavior: 'smooth' }); }}
-                            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 transition-colors"
+                            href="/login"
+                            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-semibold text-teal-700 shadow-md hover:bg-teal-50 transition-colors"
                         >
-                            Join the waitlist
-                            <svg className="h-4 w-4 -rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                            Start your free trial — no credit card needed
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                             </svg>
                         </a>
                     </div>
