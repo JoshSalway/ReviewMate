@@ -48,6 +48,9 @@ interface Props {
     recentReviews: RecentReview[];
     chartData: { month: string; reviews: number; requests: number }[];
     hasData: boolean;
+    googleRating: number | null;
+    googleReviewCount: number | null;
+    googleStatsUpdatedAt: string | null;
 }
 
 function StarRating({ rating }: { rating: number }) {
@@ -112,7 +115,7 @@ function EmptyState({ businessName }: { businessName: string }) {
     );
 }
 
-export default function Dashboard({ business, stats, requestStats, recentReviews, chartData, hasData }: Props) {
+export default function Dashboard({ business, stats, requestStats, recentReviews, chartData, hasData, googleRating, googleReviewCount, googleStatsUpdatedAt }: Props) {
     const [copied, setCopied] = useState(false);
 
     const copyReviewLink = () => {
@@ -274,14 +277,68 @@ export default function Dashboard({ business, stats, requestStats, recentReviews
                                 </Card>
                             </div>
 
-                            {/* Google Review Link */}
-                            <div>
+                            {/* Right column: Google Reviews stats + Review Link */}
+                            <div className="flex flex-col gap-4">
+                                {/* Google Reviews stat card */}
+                                <Card>
+                                    <CardHeader className="pb-2">
+                                        <CardTitle className="text-base font-semibold">Google Reviews</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        {googleRating !== null ? (
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-3xl font-bold text-gray-900">{googleRating.toFixed(1)}</span>
+                                                    <div>
+                                                        <StarRating rating={Math.round(googleRating)} />
+                                                        <p className="mt-0.5 text-sm text-gray-500">
+                                                            {googleReviewCount !== null ? `${googleReviewCount} reviews` : ''}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center justify-between">
+                                                    {googleStatsUpdatedAt && (
+                                                        <p className="text-xs text-gray-400">Updated {googleStatsUpdatedAt}</p>
+                                                    )}
+                                                    {business.google_review_url && business.google_review_url !== '#' && (
+                                                        <a
+                                                            href={business.google_review_url}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="text-xs font-medium text-teal-600 hover:text-teal-700"
+                                                        >
+                                                            View on Google
+                                                        </a>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-2">
+                                                <p className="text-sm text-gray-500">
+                                                    Google review stats will appear here once your Place ID is set and stats are fetched.
+                                                </p>
+                                                {business.google_review_url && business.google_review_url !== '#' && (
+                                                    <a
+                                                        href={business.google_review_url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-xs font-medium text-teal-600 hover:text-teal-700"
+                                                    >
+                                                        View on Google
+                                                    </a>
+                                                )}
+                                            </div>
+                                        )}
+                                    </CardContent>
+                                </Card>
+
+                                {/* Google Review Link */}
                                 <Card>
                                     <CardHeader>
                                         <CardTitle className="text-base font-semibold">Your Review Link</CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                        {business.google_review_url ? (
+                                        {business.google_review_url && business.google_review_url !== '#' ? (
                                             <div className="space-y-3">
                                                 <p className="text-sm text-gray-500">Share this link with customers to collect reviews directly on Google.</p>
                                                 <div className="rounded-lg bg-gray-50 p-3">

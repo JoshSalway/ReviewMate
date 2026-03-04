@@ -85,6 +85,9 @@ class DashboardController extends Controller
             'recentReviews' => $recentReviews,
             'chartData' => $chartData,
             'hasData' => $business->reviews()->exists() || $business->reviewRequests()->exists(),
+            'googleRating' => $business->google_rating ? (float) $business->google_rating : null,
+            'googleReviewCount' => $business->google_review_count,
+            'googleStatsUpdatedAt' => $business->google_stats_updated_at?->diffForHumans(),
         ]);
     }
 }
