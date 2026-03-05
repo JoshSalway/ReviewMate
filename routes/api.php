@@ -5,7 +5,13 @@ use App\Http\Controllers\Api\V1\BusinessController;
 use App\Http\Controllers\Api\V1\CustomerController;
 use App\Http\Controllers\Api\V1\ReviewController;
 use App\Http\Controllers\Api\V1\ReviewRequestController;
+use App\Http\Controllers\WidgetController;
 use Illuminate\Support\Facades\Route;
+
+// Public widget endpoint — no auth required, rate limited 60/min per IP
+Route::middleware('throttle:60,1')
+    ->get('widget/{slug}', [WidgetController::class, 'show'])
+    ->name('widget.show');
 
 /*
 |--------------------------------------------------------------------------

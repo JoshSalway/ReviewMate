@@ -61,6 +61,12 @@ class Business extends Model
         'follow_up_enabled',
         'follow_up_days',
         'follow_up_channel',
+        // Widget settings
+        'widget_enabled',
+        'widget_min_rating',
+        'widget_max_reviews',
+        'widget_theme',
+        'slug',
         // Generic incoming webhook
         'webhook_token',
         // Review platforms
@@ -98,6 +104,7 @@ class Business extends Model
         'halaxy_auto_send_reviews' => 'boolean',
         'halaxy_last_polled_at' => 'datetime',
         'follow_up_enabled' => 'boolean',
+        'widget_enabled' => 'boolean',
         'google_rating' => 'decimal:2',
         'google_stats_updated_at' => 'datetime',
     ];
@@ -107,6 +114,18 @@ class Business extends Model
         static::creating(function (Business $model) {
             $model->uuid ??= (string) Str::uuid();
             $model->webhook_token ??= Str::random(40);
+        });
+
+        static::created(function (Business $model) {
+            if (! $model->slug) {
+                $base = Str::slug($model->name);
+                $slug = $base;
+                $i = 1;
+                while (static::where('slug', $slug)->where('id', '!=', $model->id)->exists()) {
+                    $slug = $base.'-'.$i++;
+                }
+                $model->updateQuietly(['slug' => $slug]);
+            }
         });
     }
 

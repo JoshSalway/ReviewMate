@@ -26,6 +26,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReviewRequestController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\WaitlistController;
+use App\Http\Controllers\WidgetSettingsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -124,6 +125,10 @@ Route::middleware([
     Route::post('settings/reply-templates', [ReplyTemplateController::class, 'store'])->name('settings.reply-templates.store');
     Route::put('settings/reply-templates/{replyTemplate}', [ReplyTemplateController::class, 'update'])->name('settings.reply-templates.update');
     Route::delete('settings/reply-templates/{replyTemplate}', [ReplyTemplateController::class, 'destroy'])->name('settings.reply-templates.destroy');
+
+    // Widget Settings
+    Route::get('settings/widget', [WidgetSettingsController::class, 'index'])->name('settings.widget');
+    Route::put('settings/widget', [WidgetSettingsController::class, 'update'])->name('settings.widget.update');
 
     // Notification Settings
     Route::get('settings/notifications', [NotificationSettingsController::class, 'index'])->name('settings.notifications');
