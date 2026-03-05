@@ -1,0 +1,575 @@
+openapi: 3.1.0
+info:
+  title: ReviewMate API
+  version: 1.0.0
+  description: |
+    The ReviewMate REST API lets you manage businesses, customers, review requests, and reviews programmatically.
+
+    **Authentication:** All endpoints require a Bearer token (Laravel Sanctum). Issue a token at `POST /api/v1/auth/token` (requires an active web session).
+
+    **Base URL:** `https://yourapp.com/api/v1`
+
+  contact:
+    name: ReviewMate Support
+    url: https://reviewmate.app/docs
+  license:
+    name: Proprietary
+
+servers:
+  - url: https://reviewmate.app/api/v1
+    description: Production
+  - url: http://localhost:8000/api/v1
+    description: Local development
+
+tags:
+  - name: auth
+    description: API token management
+  - name: businesses
+    description: Business management
+  - name: customers
+    description: Customer management
+  - name: review-requests
+    description: Review request sending and tracking
+  - name: reviews
+    description: Google review management and stats
+
+paths:
+  /auth/token:
+    post:
+      tags: [auth]
+      summary: Issue an API token
+      description: Creates a new Sanctum personal access token. Requires an authenticated web session.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token_name]
+              properties:
+                token_name:
+                  type: string
+                  example: "Claude MCP"
+      responses:
+        '201':
+          description: Token issued
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    example: "1|abc123..."
+                  token_type:
+                    type: string
+                    example: "Bearer"
+        '422':
+          $ref: '#/components/responses/ValidationError'
+      security:
+        - sessionAuth: []
+
+  /auth/me:
+    get:
+      tags: [auth]
+      summary: Get authenticated user
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUser'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - bearerAuth: []
+
+  /auth/tokens:
+    delete:
+      tags: [auth]
+      summary: Revoke all API tokens
+      responses:
+        '200':
+          description: All tokens revoked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+      security:
+        - bearerAuth: []
+
+  /businesses:
+    get:
+      tags: [businesses]
+      summary: List businesses
+      description: Returns all businesses for the authenticated user.
+      responses:
+        '200':
+          description: List of businesses
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Business'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      security:
+        - bearerAuth: []
+
+  /businesses/{id}:
+    get:
+      tags: [businesses]
+      summary: Get a business
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Business details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Business'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      security:
+        - bearerAuth: []
+
+  /businesses/{id}/stats:
+    get:
+      tags: [businesses]
+      summary: Get review stats
+      description: Returns aggregate review statistics for a business.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Review statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewStats'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+        - bearerAuth: []
+
+  /businesses/{id}/customers:
+    get:
+      tags: [customers]
+      summary: List customers
+      description: Returns paginated customers for a business.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Paginated customers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Customer'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+        - bearerAuth: []
+
+  /businesses/{id}/review-requests:
+    get:
+      tags: [review-requests]
+      summary: List review requests
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Paginated review requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReviewRequest'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+        - bearerAuth: []
+
+    post:
+      tags: [review-requests]
+      summary: Create a review request
+      description: |
+        Sends a review request to a customer. Enforces a 30-day duplicate guard — returns 422 if a request was already sent to this customer in the last 30 days.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customer_id, channel]
+              properties:
+                customer_id:
+                  type: integer
+                  example: 42
+                channel:
+                  type: string
+                  enum: [email, sms, both]
+                  example: email
+      responses:
+        '201':
+          description: Review request created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/ReviewRequest'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+        - bearerAuth: []
+
+  /businesses/{id}/reviews:
+    get:
+      tags: [reviews]
+      summary: List reviews
+      description: Returns paginated Google reviews synced for a business.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Paginated reviews
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Review'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    sessionAuth:
+      type: apiKey
+      in: cookie
+      name: reviewmate_session
+
+  schemas:
+    Business:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        uuid:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Sunshine Plumbing"
+        type:
+          type: string
+          example: "tradie"
+        owner_name:
+          type: string
+          example: "Dave Smith"
+        phone:
+          type: string
+          example: "+61400000000"
+        google_place_id:
+          type: string
+          nullable: true
+        google_connected:
+          type: boolean
+        google_rating:
+          type: number
+          nullable: true
+        google_review_count:
+          type: integer
+          nullable: true
+        average_rating:
+          type: number
+        conversion_rate:
+          type: number
+        onboarding_completed_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        request_status:
+          type: string
+          enum: [no_request, sent, opened, reviewed]
+        is_unsubscribed:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ReviewRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        customer_id:
+          type: integer
+        business_id:
+          type: integer
+        channel:
+          type: string
+          enum: [email, sms, both]
+        status:
+          type: string
+          enum: [sent, opened, reviewed]
+        source:
+          type: string
+          example: "api"
+        followed_up_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    Review:
+      type: object
+      properties:
+        id:
+          type: integer
+        business_id:
+          type: integer
+        customer_id:
+          type: integer
+          nullable: true
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        body:
+          type: string
+          nullable: true
+        reviewer_name:
+          type: string
+          nullable: true
+        google_review_id:
+          type: string
+          nullable: true
+        google_review_name:
+          type: string
+          nullable: true
+        google_reply:
+          type: string
+          nullable: true
+        google_reply_posted_at:
+          type: string
+          format: date-time
+          nullable: true
+        source:
+          type: string
+          enum: [google, manual]
+        created_at:
+          type: string
+          format: date-time
+
+    ReviewStats:
+      type: object
+      properties:
+        total_reviews:
+          type: integer
+        average_rating:
+          type: number
+        conversion_rate:
+          type: number
+        total_requests:
+          type: integer
+        pending_replies:
+          type: integer
+        google_rating:
+          type: number
+          nullable: true
+        google_review_count:
+          type: integer
+          nullable: true
+
+    CurrentUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [user, admin, superadmin]
+        plan:
+          type: string
+          enum: [free, paid]
+
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+        last_page:
+          type: integer
+        per_page:
+          type: integer
+        total:
+          type: integer
+
+  responses:
+    Unauthorized:
+      description: Unauthenticated — missing or invalid token
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Unauthenticated."
+
+    Forbidden:
+      description: Forbidden — resource belongs to another user
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Forbidden."
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "No query results for model."
+
+    ValidationError:
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              errors:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
