@@ -67,6 +67,8 @@ class Business extends Model
         'widget_max_reviews',
         'widget_theme',
         'slug',
+        // Referral
+        'referral_token',
         // Generic incoming webhook
         'webhook_token',
         // Review platforms
@@ -117,6 +119,8 @@ class Business extends Model
         });
 
         static::created(function (Business $model) {
+            $updates = [];
+
             if (! $model->slug) {
                 $base = Str::slug($model->name);
                 $slug = $base;
@@ -124,7 +128,15 @@ class Business extends Model
                 while (static::where('slug', $slug)->where('id', '!=', $model->id)->exists()) {
                     $slug = $base.'-'.$i++;
                 }
-                $model->updateQuietly(['slug' => $slug]);
+                $updates['slug'] = $slug;
+            }
+
+            if (! $model->referral_token) {
+                $updates['referral_token'] = Str::random(16);
+            }
+
+            if (! empty($updates)) {
+                $model->updateQuietly($updates);
             }
         });
     }
@@ -167,6 +179,16 @@ class Business extends Model
     public function replyTemplates(): HasMany
     {
         return $this->hasMany(ReplyTemplate::class);
+    }
+
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(Referral::class, 'referrer_business_id');
+    }
+
+    public function referralUrl(): string
+    {
+        return url('/r/ref/'.$this->referral_token);
     }
 
     public function googleReviewUrl(): string

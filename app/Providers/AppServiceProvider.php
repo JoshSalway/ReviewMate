@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Listeners\ApplyReferralOnRegistration;
 use App\Listeners\HandleStripeWebhook;
 use App\Listeners\SendOnboardingSequence;
 use Carbon\CarbonImmutable;
@@ -32,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
 
         Event::listen(WebhookHandled::class, HandleStripeWebhook::class);
         Event::listen(Registered::class, SendOnboardingSequence::class);
+        Event::listen(Registered::class, ApplyReferralOnRegistration::class);
     }
 
     /**

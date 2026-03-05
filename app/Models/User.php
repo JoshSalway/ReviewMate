@@ -30,6 +30,9 @@ class User extends Authenticatable implements FilamentUser
         'is_admin',
         'role',
         'notification_preferences',
+        'referral_token',
+        'referral_id',
+        'trial_ends_at',
     ];
 
     /**
@@ -53,6 +56,7 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'notification_preferences' => 'array',
+            'trial_ends_at' => 'datetime',
         ];
     }
 
@@ -83,7 +87,21 @@ class User extends Authenticatable implements FilamentUser
 
     public function onFreePlan(): bool
     {
-        return ! $this->isAdmin() && ! $this->subscribed();
+        if ($this->isAdmin()) {
+            return false;
+        }
+
+        // User is on a paid or trial plan
+        if ($this->subscribed() || $this->onTrial()) {
+            return false;
+        }
+
+        // Check generic trial_ends_at (used for referral rewards)
+        if ($this->trial_ends_at && $this->trial_ends_at->isFuture()) {
+            return false;
+        }
+
+        return true;
     }
 
     public function businesses(): HasMany

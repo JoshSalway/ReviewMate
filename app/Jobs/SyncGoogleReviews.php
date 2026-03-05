@@ -3,7 +3,9 @@
 namespace App\Jobs;
 
 use App\Mail\NewReviewAlertMail;
+use App\Mail\ReferralInviteMail;
 use App\Models\Business;
+use App\Models\Referral;
 use App\Models\Review;
 use App\Models\ReviewRequest;
 use App\Services\GoogleBusinessProfileService;
@@ -137,5 +139,38 @@ class SyncGoogleReviews implements ShouldQueue
         ]);
 
         $bestRequest->markAsReviewed();
+
+        // Send referral invite to the customer who left the review
+        $this->sendReferralInvite($bestRequest);
+    }
+
+    /**
+     * Send a referral invite email to the customer who left a review.
+     * Only sent if the customer has an email and the business allows Pro features.
+     */
+    protected function sendReferralInvite(ReviewRequest $reviewRequest): void
+    {
+        $customer = $reviewRequest->customer;
+
+        if (! $customer || ! $customer->email) {
+            return;
+        }
+
+        // Only send if the business owner is on a Pro plan
+        $user = $this->business->user;
+        if (! $user || $user->onFreePlan()) {
+            return;
+        }
+
+        // Create a referral record for this customer
+        $referral = Referral::create([
+            'referrer_business_id' => $this->business->id,
+            'referred_customer_id' => $customer->id,
+            'referral_type' => 'customer',
+            'status' => 'pending',
+        ]);
+
+        Mail::to($customer->email, $customer->name)
+            ->queue(new ReferralInviteMail($this->business, $customer, $referral));
     }
 }

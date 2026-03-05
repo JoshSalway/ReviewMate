@@ -23,6 +23,7 @@ use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\QuickSendController;
 use App\Http\Controllers\ReplyTemplateController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReviewRequestController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\WaitlistController;
@@ -53,6 +54,7 @@ Route::get('/docs/openapi.yaml', function () {
     return response()->file($path, ['Content-Type' => 'application/yaml']);
 })->name('api.openapi');
 Route::get('/r/{token}', [ReviewRequestController::class, 'track'])->name('review-requests.track');
+Route::get('/r/ref/{token}', [ReferralController::class, 'track'])->name('referrals.track');
 Route::get('/unsubscribe/{token}', [CustomerController::class, 'unsubscribe'])->name('customers.unsubscribe');
 
 // Stripe webhook (must be outside auth middleware, CSRF excluded by Cashier)
@@ -129,6 +131,9 @@ Route::middleware([
     // Widget Settings
     Route::get('settings/widget', [WidgetSettingsController::class, 'index'])->name('settings.widget');
     Route::put('settings/widget', [WidgetSettingsController::class, 'update'])->name('settings.widget.update');
+
+    // Referrals
+    Route::get('referrals', [ReferralController::class, 'index'])->name('referrals.index');
 
     // Notification Settings
     Route::get('settings/notifications', [NotificationSettingsController::class, 'index'])->name('settings.notifications');
