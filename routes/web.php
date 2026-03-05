@@ -18,6 +18,7 @@ use App\Http\Controllers\Integrations\XeroController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\NotificationSettingsController;
 use App\Http\Controllers\OnboardingController;
+use App\Http\Controllers\PublicController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\QuickSendController;
 use App\Http\Controllers\ReplyTemplateController;
@@ -34,6 +35,22 @@ Route::get('/', [WaitlistController::class, 'index'])->name('home');
 Route::post('/waitlist', [WaitlistController::class, 'store'])->name('waitlist.store');
 Route::get('/terms', [LegalController::class, 'terms'])->name('legal.terms');
 Route::get('/privacy', [LegalController::class, 'privacy'])->name('legal.privacy');
+Route::get('/pricing', [PublicController::class, 'pricing'])->name('pricing');
+Route::get('/features', [PublicController::class, 'features'])->name('features');
+Route::get('/changelog', [PublicController::class, 'changelog'])->name('changelog');
+Route::get('/docs', [PublicController::class, 'docs'])->name('docs');
+
+// API documentation (Swagger UI)
+Route::get('/api/docs', function () {
+    return view('api-docs');
+})->name('api.docs');
+
+// Serve the OpenAPI YAML spec
+Route::get('/docs/openapi.yaml', function () {
+    $path = base_path('docs/openapi.yaml');
+
+    return response()->file($path, ['Content-Type' => 'application/yaml']);
+})->name('api.openapi');
 Route::get('/r/{token}', [ReviewRequestController::class, 'track'])->name('review-requests.track');
 Route::get('/unsubscribe/{token}', [CustomerController::class, 'unsubscribe'])->name('customers.unsubscribe');
 
@@ -128,32 +145,32 @@ Route::middleware([
 
         return Inertia::render('settings/integrations', [
             'servicem8Connected' => $business?->servicem8_access_token !== null,
-            'servicem8AutoSend'  => $business?->servicem8_auto_send_reviews ?? true,
-            'webhookUrl'         => $business?->uuid
+            'servicem8AutoSend' => $business?->servicem8_auto_send_reviews ?? true,
+            'webhookUrl' => $business?->uuid
                 ? route('webhooks.servicem8', ['business' => $business->uuid])
                 : null,
-            'xeroConnected'      => $business?->xero_access_token !== null,
-            'xeroAutoSend'       => $business?->xero_auto_send_reviews ?? true,
-            'xeroWebhookUrl'     => $business?->uuid
+            'xeroConnected' => $business?->xero_access_token !== null,
+            'xeroAutoSend' => $business?->xero_auto_send_reviews ?? true,
+            'xeroWebhookUrl' => $business?->uuid
                 ? route('webhooks.xero', ['business' => $business->uuid])
                 : null,
-            'clinikoConnected'   => $business?->cliniko_api_key !== null,
-            'clinikoAutoSend'    => $business?->cliniko_auto_send_reviews ?? true,
-            'timelyConnected'    => $business?->timely_access_token !== null,
-            'timelyAutoSend'     => $business?->timely_auto_send_reviews ?? true,
-            'timelyWebhookUrl'   => $business?->uuid
+            'clinikoConnected' => $business?->cliniko_api_key !== null,
+            'clinikoAutoSend' => $business?->cliniko_auto_send_reviews ?? true,
+            'timelyConnected' => $business?->timely_access_token !== null,
+            'timelyAutoSend' => $business?->timely_auto_send_reviews ?? true,
+            'timelyWebhookUrl' => $business?->uuid
                 ? route('webhooks.timely', ['business' => $business->uuid])
                 : null,
-            'simproConnected'    => $business?->simpro_access_token !== null,
-            'simproAutoSend'     => $business?->simpro_auto_send_reviews ?? true,
-            'simproWebhookUrl'   => $business?->uuid
+            'simproConnected' => $business?->simpro_access_token !== null,
+            'simproAutoSend' => $business?->simpro_auto_send_reviews ?? true,
+            'simproWebhookUrl' => $business?->uuid
                 ? route('webhooks.simpro', ['business' => $business->uuid])
                 : null,
-            'halaxyConnected'    => $business?->halaxy_api_key !== null,
-            'halaxyAutoSend'     => $business?->halaxy_auto_send_reviews ?? true,
+            'halaxyConnected' => $business?->halaxy_api_key !== null,
+            'halaxyAutoSend' => $business?->halaxy_auto_send_reviews ?? true,
             // Generic incoming webhook
             'incomingWebhookToken' => $business?->webhook_token,
-            'incomingWebhookUrl'   => $business?->webhook_token
+            'incomingWebhookUrl' => $business?->webhook_token
                 ? route('webhooks.incoming', ['token' => $business->webhook_token])
                 : null,
         ]);
@@ -212,23 +229,19 @@ Route::middleware([
 
 // ServiceM8 webhook — public, no auth, each business identified by UUID in URL
 Route::post('webhooks/servicem8/{business:uuid}', [ServiceM8Controller::class, 'webhook'])
-    ->name('webhooks.servicem8')
-    ;
+    ->name('webhooks.servicem8');
 
 // Xero webhook — public, no auth, each business identified by UUID in URL
 Route::post('webhooks/xero/{business:uuid}', [XeroController::class, 'webhook'])
-    ->name('webhooks.xero')
-    ;
+    ->name('webhooks.xero');
 
 // Timely webhook — public, no auth, each business identified by UUID in URL
 Route::post('webhooks/timely/{business:uuid}', [TimelyController::class, 'webhook'])
-    ->name('webhooks.timely')
-    ;
+    ->name('webhooks.timely');
 
 // Simpro webhook — public, no auth, each business identified by UUID in URL
 Route::post('webhooks/simpro/{business:uuid}', [SimproController::class, 'webhook'])
-    ->name('webhooks.simpro')
-    ;
+    ->name('webhooks.simpro');
 
 // Generic incoming webhook — authenticated by secret token in URL, no session required
 Route::post('webhooks/incoming/{token}', [IncomingWebhookController::class, 'handle'])
