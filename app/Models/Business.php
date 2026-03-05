@@ -57,6 +57,10 @@ class Business extends Model
         'halaxy_api_key',
         'halaxy_auto_send_reviews',
         'halaxy_last_polled_at',
+        // Follow-up settings
+        'follow_up_enabled',
+        'follow_up_days',
+        'follow_up_channel',
         // Generic incoming webhook
         'webhook_token',
         // Review platforms
@@ -93,6 +97,7 @@ class Business extends Model
         'halaxy_api_key' => 'encrypted',
         'halaxy_auto_send_reviews' => 'boolean',
         'halaxy_last_polled_at' => 'datetime',
+        'follow_up_enabled' => 'boolean',
         'google_rating' => 'decimal:2',
         'google_stats_updated_at' => 'datetime',
     ];

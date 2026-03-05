@@ -86,8 +86,9 @@ class SyncGoogleReviews implements ShouldQueue
     }
 
     /**
-     * Try to match a newly synced Google review to a pending ReviewRequest
-     * by comparing the reviewer's display name to customer names (case-insensitive).
+     * Try to match a newly synced Google review to a pending ReviewRequest using
+     * fuzzy name matching (similar_text > 60%) against customers with pending requests
+     * sent within the last 30 days.
      * When matched, link the review and close the request as reviewed.
      */
     protected function linkToReviewRequest(Review $review): void
@@ -96,27 +97,45 @@ class SyncGoogleReviews implements ShouldQueue
             return;
         }
 
-        $request = ReviewRequest::query()
+        $candidates = ReviewRequest::query()
             ->where('business_id', $this->business->id)
-            ->whereIn('status', ['sent', 'opened'])
+            ->whereIn('status', ['sent', 'opened', 'followed_up'])
             ->whereNull('reviewed_at')
-            ->whereHas('customer', function ($q) use ($review) {
-                $q->whereRaw('LOWER(name) = ?', [strtolower($review->reviewer_name)]);
-            })
+            ->where('sent_at', '>=', now()->subDays(30))
             ->with('customer')
             ->latest('sent_at')
-            ->first();
+            ->get();
 
-        if (! $request) {
+        $bestRequest = null;
+        $bestScore = 0;
+
+        foreach ($candidates as $candidate) {
+            if (! $candidate->customer) {
+                continue;
+            }
+
+            similar_text(
+                strtolower($review->reviewer_name),
+                strtolower($candidate->customer->name),
+                $percent
+            );
+
+            if ($percent > 60 && $percent > $bestScore) {
+                $bestScore = $percent;
+                $bestRequest = $candidate;
+            }
+        }
+
+        if (! $bestRequest) {
             return;
         }
 
         // Link the review to this customer and request
         $review->update([
-            'customer_id' => $request->customer_id,
-            'review_request_id' => $request->id,
+            'customer_id' => $bestRequest->customer_id,
+            'review_request_id' => $bestRequest->id,
         ]);
 
-        $request->markAsReviewed();
+        $bestRequest->markAsReviewed();
     }
 }

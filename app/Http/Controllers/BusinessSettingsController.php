@@ -12,6 +12,7 @@ class BusinessSettingsController extends Controller
     public function index(Request $request): Response
     {
         $business = $request->user()->currentBusiness();
+        $user = $request->user();
 
         return Inertia::render('settings/business', [
             'business' => [
@@ -25,7 +26,11 @@ class BusinessSettingsController extends Controller
                 'google_account_id' => $business?->google_account_id,
                 'google_location_id' => $business?->google_location_id,
                 'facebook_page_url' => $business?->facebook_page_url,
+                'follow_up_enabled' => $business?->follow_up_enabled ?? true,
+                'follow_up_days' => $business?->follow_up_days ?? 3,
+                'follow_up_channel' => $business?->follow_up_channel ?? 'same',
             ],
+            'isProPlan' => ! $user->onFreePlan(),
         ]);
     }
 
@@ -38,6 +43,9 @@ class BusinessSettingsController extends Controller
             'owner_name' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'facebook_page_url' => ['nullable', 'url', 'max:500'],
+            'follow_up_enabled' => ['sometimes', 'boolean'],
+            'follow_up_days' => ['sometimes', 'integer', 'in:2,3,5,7'],
+            'follow_up_channel' => ['sometimes', 'string', 'in:same,sms,email'],
         ]);
 
         $business = $request->user()->currentBusiness();

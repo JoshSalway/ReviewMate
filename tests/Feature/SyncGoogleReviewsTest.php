@@ -191,3 +191,102 @@ test('sync skips business not connected to google', function () {
 
     (new SyncGoogleReviews($disconnectedBusiness))->handle($service);
 });
+
+test('sync fuzzy-matches reviewer name with similar_text above 60 percent', function () {
+    $customer = Customer::factory()->create([
+        'business_id' => $this->business->id,
+        'name' => 'Jonathan Williams',
+    ]);
+
+    $request = ReviewRequest::factory()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $customer->id,
+        'status' => 'sent',
+        'sent_at' => now()->subDays(5),
+    ]);
+
+    $service = Mockery::mock(GoogleBusinessProfileService::class);
+    // Reviewer used a shortened name — similar_text should be >60%
+    $service->shouldReceive('fetchReviews')->andReturn([
+        fakeReviewData(['reviewId' => 'review-fuzzy', 'reviewer' => ['displayName' => 'Jonathan Williams']]),
+    ]);
+
+    (new SyncGoogleReviews($this->business))->handle($service);
+
+    expect($request->fresh()->status)->toBe('reviewed');
+});
+
+test('sync does not match reviewer names with less than 60 percent similarity', function () {
+    $customer = Customer::factory()->create([
+        'business_id' => $this->business->id,
+        'name' => 'Alice Brown',
+    ]);
+
+    $request = ReviewRequest::factory()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $customer->id,
+        'status' => 'sent',
+        'sent_at' => now()->subDays(5),
+    ]);
+
+    $service = Mockery::mock(GoogleBusinessProfileService::class);
+    // Completely different name — should not match
+    $service->shouldReceive('fetchReviews')->andReturn([
+        fakeReviewData(['reviewId' => 'review-nomatch', 'reviewer' => ['displayName' => 'Xavier Thompson']]),
+    ]);
+
+    (new SyncGoogleReviews($this->business))->handle($service);
+
+    $review = Review::where('google_review_id', 'review-nomatch')->first();
+    expect($review->customer_id)->toBeNull();
+    expect($request->fresh()->status)->toBe('sent');
+});
+
+test('sync matches followed_up status requests', function () {
+    $customer = Customer::factory()->create([
+        'business_id' => $this->business->id,
+        'name' => 'Mary Johnson',
+    ]);
+
+    $request = ReviewRequest::factory()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $customer->id,
+        'status' => 'followed_up',
+        'sent_at' => now()->subDays(7),
+        'followed_up_at' => now()->subDays(4),
+    ]);
+
+    $service = Mockery::mock(GoogleBusinessProfileService::class);
+    $service->shouldReceive('fetchReviews')->andReturn([
+        fakeReviewData(['reviewId' => 'review-followedup', 'reviewer' => ['displayName' => 'Mary Johnson']]),
+    ]);
+
+    (new SyncGoogleReviews($this->business))->handle($service);
+
+    expect($request->fresh()->status)->toBe('reviewed');
+});
+
+test('sync does not match requests sent more than 30 days ago', function () {
+    $customer = Customer::factory()->create([
+        'business_id' => $this->business->id,
+        'name' => 'Old Customer',
+    ]);
+
+    $request = ReviewRequest::factory()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $customer->id,
+        'status' => 'sent',
+        'sent_at' => now()->subDays(35),
+    ]);
+
+    $service = Mockery::mock(GoogleBusinessProfileService::class);
+    $service->shouldReceive('fetchReviews')->andReturn([
+        fakeReviewData(['reviewId' => 'review-old', 'reviewer' => ['displayName' => 'Old Customer']]),
+    ]);
+
+    (new SyncGoogleReviews($this->business))->handle($service);
+
+    $review = Review::where('google_review_id', 'review-old')->first();
+    expect($review->customer_id)->toBeNull();
+    expect($request->fresh()->status)->toBe('sent');
+});

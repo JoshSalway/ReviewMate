@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import {
     Select,
     SelectContent,
@@ -49,10 +50,14 @@ interface Props {
         google_account_id: string | null;
         google_location_id: string | null;
         facebook_page_url: string | null;
+        follow_up_enabled: boolean;
+        follow_up_days: number;
+        follow_up_channel: string;
     };
+    isProPlan: boolean;
 }
 
-export default function BusinessSettings({ business }: Props) {
+export default function BusinessSettings({ business, isProPlan }: Props) {
     const [form, setForm] = useState({
         name: business.name,
         type: business.type,
@@ -60,6 +65,9 @@ export default function BusinessSettings({ business }: Props) {
         owner_name: business.owner_name ?? '',
         phone: business.phone ?? '',
         facebook_page_url: business.facebook_page_url ?? '',
+        follow_up_enabled: business.follow_up_enabled,
+        follow_up_days: business.follow_up_days,
+        follow_up_channel: business.follow_up_channel,
     });
     const [processing, setProcessing] = useState(false);
     const [saved, setSaved] = useState(false);
@@ -260,6 +268,78 @@ export default function BusinessSettings({ business }: Props) {
                                     )}
                                 </div>
                             </div>
+                        </CardContent>
+                    </Card>
+
+                    {/* Follow-up Reminder Settings */}
+                    <Card>
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+                                <CardTitle className="text-base font-semibold">Follow-up Reminder</CardTitle>
+                                {!isProPlan && (
+                                    <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">Pro Plan</Badge>
+                                )}
+                            </div>
+                        </CardHeader>
+                        <CardContent className="space-y-5">
+                            {!isProPlan ? (
+                                <p className="text-sm text-gray-500">
+                                    Upgrade to Pro to automatically send a follow-up reminder to customers who haven't reviewed yet.
+                                </p>
+                            ) : (
+                                <>
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <Label htmlFor="follow-up-enabled" className="font-medium">Send follow-up reminder</Label>
+                                            <p className="text-xs text-gray-500 mt-0.5">Automatically remind customers who haven't reviewed yet</p>
+                                        </div>
+                                        <Switch
+                                            id="follow-up-enabled"
+                                            checked={form.follow_up_enabled}
+                                            onCheckedChange={(checked) => setForm({ ...form, follow_up_enabled: checked })}
+                                        />
+                                    </div>
+
+                                    {form.follow_up_enabled && (
+                                        <div className="grid gap-4 sm:grid-cols-2">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="follow-up-days">Days after initial send</Label>
+                                                <Select
+                                                    value={String(form.follow_up_days)}
+                                                    onValueChange={(value) => setForm({ ...form, follow_up_days: Number(value) })}
+                                                >
+                                                    <SelectTrigger id="follow-up-days">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="2">2 days</SelectItem>
+                                                        <SelectItem value="3">3 days</SelectItem>
+                                                        <SelectItem value="5">5 days</SelectItem>
+                                                        <SelectItem value="7">7 days</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label htmlFor="follow-up-channel">Follow-up channel</Label>
+                                                <Select
+                                                    value={form.follow_up_channel}
+                                                    onValueChange={(value) => setForm({ ...form, follow_up_channel: value })}
+                                                >
+                                                    <SelectTrigger id="follow-up-channel">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="same">Same as initial</SelectItem>
+                                                        <SelectItem value="sms">SMS only</SelectItem>
+                                                        <SelectItem value="email">Email only</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
+                            )}
                         </CardContent>
                     </Card>
 
