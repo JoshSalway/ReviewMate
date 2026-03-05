@@ -39,6 +39,18 @@ class ReviewRequestController extends Controller
             return response()->json(['message' => 'Forbidden.'], 403);
         }
 
+        // Enforce 10 requests/month limit on free plan
+        if ($request->user()->onFreePlan()) {
+            $monthlyCount = $business->reviewRequests()
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->count();
+
+            if ($monthlyCount >= 10) {
+                return response()->json(['message' => 'Free plan allows 10 review requests per month. Upgrade for unlimited.'], 422);
+            }
+        }
+
         $validated = $request->validate([
             'customer_id' => ['required', 'integer', 'exists:customers,id'],
             'channel' => ['required', 'in:email,sms,both'],

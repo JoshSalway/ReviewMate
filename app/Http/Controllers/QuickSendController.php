@@ -65,10 +65,19 @@ class QuickSendController extends Controller
 
         $business = $user->currentBusiness();
 
-        $customer = $business->customers()->firstOrCreate(
-            ['email' => $validated['email'] ?? null, 'phone' => $validated['phone'] ?? null],
-            ['name' => $validated['name']]
-        );
+        // Look up by email alone so we find an existing customer even if they
+        // already have a phone number set, preventing silent duplicate creation.
+        $customer = $business->customers()
+            ->where('email', $validated['email'] ?? null)
+            ->first();
+
+        if (! $customer) {
+            $customer = $business->customers()->create([
+                'email' => $validated['email'] ?? null,
+                'phone' => $validated['phone'] ?? null,
+                'name'  => $validated['name'],
+            ]);
+        }
 
         if ($customer->isUnsubscribed()) {
             return back()->with('error', "{$customer->name} has unsubscribed from review request emails.");
