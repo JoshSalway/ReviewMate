@@ -10,7 +10,9 @@ use App\Http\Controllers\EmailFlowController;
 use App\Http\Controllers\GoogleBusinessController;
 use App\Http\Controllers\Integrations\ClinikoController;
 use App\Http\Controllers\Integrations\HalaxyController;
+use App\Http\Controllers\Integrations\HousecallProController;
 use App\Http\Controllers\Integrations\IncomingWebhookController;
+use App\Http\Controllers\Integrations\JobberController;
 use App\Http\Controllers\Integrations\ServiceM8Controller;
 use App\Http\Controllers\Integrations\SimproController;
 use App\Http\Controllers\Integrations\TimelyController;
@@ -179,6 +181,18 @@ Route::middleware([
                 : null,
             'halaxyConnected' => $business?->halaxy_api_key !== null,
             'halaxyAutoSend' => $business?->halaxy_auto_send_reviews ?? true,
+            // Jobber integration
+            'jobberConnected' => $business?->jobberIntegration?->isConnected() ?? false,
+            'jobberAutoSend' => $business?->jobberIntegration?->auto_send_reviews ?? true,
+            'jobberWebhookUrl' => $business?->uuid
+                ? route('webhooks.jobber', ['business' => $business->uuid])
+                : null,
+            // Housecall Pro integration
+            'housecallProConnected' => $business?->housecallProIntegration?->isConnected() ?? false,
+            'housecallProAutoSend' => $business?->housecallProIntegration?->auto_send_reviews ?? true,
+            'housecallProWebhookUrl' => $business?->uuid
+                ? route('webhooks.housecallpro', ['business' => $business->uuid])
+                : null,
             // Generic incoming webhook
             'incomingWebhookToken' => $business?->webhook_token,
             'incomingWebhookUrl' => $business?->webhook_token
@@ -233,6 +247,22 @@ Route::middleware([
         Route::post('toggle-auto-send', [HalaxyController::class, 'toggleAutoSend'])->name('toggle-auto-send');
     });
 
+    // Jobber OAuth flow
+    Route::prefix('integrations/jobber')->name('integrations.jobber.')->group(function () {
+        Route::get('connect', [JobberController::class, 'connect'])->name('connect');
+        Route::get('callback', [JobberController::class, 'callback'])->name('callback');
+        Route::post('disconnect', [JobberController::class, 'disconnect'])->name('disconnect');
+        Route::post('toggle-auto-send', [JobberController::class, 'toggleAutoSend'])->name('toggle-auto-send');
+    });
+
+    // Housecall Pro OAuth flow
+    Route::prefix('integrations/housecallpro')->name('integrations.housecallpro.')->group(function () {
+        Route::get('connect', [HousecallProController::class, 'connect'])->name('connect');
+        Route::get('callback', [HousecallProController::class, 'callback'])->name('callback');
+        Route::post('disconnect', [HousecallProController::class, 'disconnect'])->name('disconnect');
+        Route::post('toggle-auto-send', [HousecallProController::class, 'toggleAutoSend'])->name('toggle-auto-send');
+    });
+
     // Generic incoming webhook — token regeneration (auth required)
     Route::post('settings/integrations/webhook/regenerate', [IncomingWebhookController::class, 'regenerate'])
         ->name('integrations.webhook.regenerate');
@@ -253,6 +283,14 @@ Route::post('webhooks/timely/{business:uuid}', [TimelyController::class, 'webhoo
 // Simpro webhook — public, no auth, each business identified by UUID in URL
 Route::post('webhooks/simpro/{business:uuid}', [SimproController::class, 'webhook'])
     ->name('webhooks.simpro');
+
+// Jobber webhook — public, no auth, each business identified by UUID in URL
+Route::post('webhooks/jobber/{business:uuid}', [JobberController::class, 'webhook'])
+    ->name('webhooks.jobber');
+
+// Housecall Pro webhook — public, no auth, each business identified by UUID in URL
+Route::post('webhooks/housecallpro/{business:uuid}', [HousecallProController::class, 'webhook'])
+    ->name('webhooks.housecallpro');
 
 // Generic incoming webhook — authenticated by secret token in URL, no session required
 Route::post('webhooks/incoming/{token}', [IncomingWebhookController::class, 'handle'])

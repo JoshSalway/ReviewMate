@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 class Business extends Model
@@ -184,6 +185,16 @@ class Business extends Model
     public function referrals(): HasMany
     {
         return $this->hasMany(Referral::class, 'referrer_business_id');
+    }
+
+    public function jobberIntegration(): HasOne
+    {
+        return $this->hasOne(JobberIntegration::class);
+    }
+
+    public function housecallProIntegration(): HasOne
+    {
+        return $this->hasOne(HousecallProIntegration::class);
     }
 
     public function referralUrl(): string

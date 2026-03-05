@@ -30,6 +30,12 @@ interface Props {
     simproWebhookUrl: string | null;
     halaxyConnected: boolean;
     halaxyAutoSend: boolean;
+    jobberConnected: boolean;
+    jobberAutoSend: boolean;
+    jobberWebhookUrl: string | null;
+    housecallProConnected: boolean;
+    housecallProAutoSend: boolean;
+    housecallProWebhookUrl: string | null;
     incomingWebhookToken: string | null;
     incomingWebhookUrl: string | null;
 }
@@ -106,6 +112,12 @@ export default function Integrations({
     simproWebhookUrl,
     halaxyConnected,
     halaxyAutoSend,
+    jobberConnected,
+    jobberAutoSend,
+    jobberWebhookUrl,
+    housecallProConnected,
+    housecallProAutoSend,
+    housecallProWebhookUrl,
     incomingWebhookUrl,
 }: Props) {
     const [clinikoApiKey, setClinikoApiKey] = useState('');
@@ -198,6 +210,28 @@ export default function Integrations({
     };
     const handleSimproToggleAutoSend = () => {
         router.post('/integrations/simpro/toggle-auto-send', {}, { preserveScroll: true });
+    };
+
+    // Jobber
+    const handleJobberConnect = () => {
+        window.location.href = '/integrations/jobber/connect';
+    };
+    const handleJobberDisconnect = () => {
+        router.post('/integrations/jobber/disconnect');
+    };
+    const handleJobberToggleAutoSend = () => {
+        router.post('/integrations/jobber/toggle-auto-send', {}, { preserveScroll: true });
+    };
+
+    // Housecall Pro
+    const handleHousecallProConnect = () => {
+        window.location.href = '/integrations/housecallpro/connect';
+    };
+    const handleHousecallProDisconnect = () => {
+        router.post('/integrations/housecallpro/disconnect');
+    };
+    const handleHousecallProToggleAutoSend = () => {
+        router.post('/integrations/housecallpro/toggle-auto-send', {}, { preserveScroll: true });
     };
 
     // Halaxy
@@ -749,6 +783,136 @@ Content-Type: application/json
                             <p className="text-sm text-gray-500">
                                 No webhook token generated yet. Complete your business setup to activate this feature.
                             </p>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Jobber Card */}
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
+                                    <span className="text-sm font-bold text-green-700">JB</span>
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base">Jobber</CardTitle>
+                                    <CardDescription className="text-xs">
+                                        For field service businesses. Auto-sends review requests when a job is completed.
+                                    </CardDescription>
+                                </div>
+                            </div>
+                            <ConnectedBadge connected={jobberConnected} />
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <p className="text-sm text-gray-600">
+                            Automatically send a Google review request when a job is marked complete in Jobber.
+                            Works for landscapers, cleaners, HVAC, plumbers, and any field service business using Jobber.
+                        </p>
+
+                        {jobberConnected ? (
+                            <div className="space-y-4">
+                                <AutoSendToggle
+                                    id="jobber-auto-send"
+                                    label="Auto-send review requests"
+                                    description="Send a review request automatically when a Jobber job is completed."
+                                    checked={jobberAutoSend}
+                                    onToggle={handleJobberToggleAutoSend}
+                                />
+
+                                {jobberWebhookUrl && (
+                                    <WebhookUrlBox
+                                        url={jobberWebhookUrl}
+                                        instructions={
+                                            <>
+                                                In Jobber, go to <strong>Settings &rarr; Integrations &rarr; Webhooks</strong> and
+                                                add this URL for the <strong>Job Updated</strong> event.
+                                            </>
+                                        }
+                                    />
+                                )}
+
+                                <Button
+                                    variant="outline"
+                                    className="border-red-200 text-red-600 hover:bg-red-50"
+                                    onClick={handleJobberDisconnect}
+                                >
+                                    Disconnect Jobber
+                                </Button>
+                            </div>
+                        ) : (
+                            <Button
+                                className="bg-teal-600 hover:bg-teal-700 text-white"
+                                onClick={handleJobberConnect}
+                            >
+                                Connect Jobber
+                            </Button>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Housecall Pro Card */}
+                <Card>
+                    <CardHeader>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
+                                    <span className="text-sm font-bold text-blue-700">HC</span>
+                                </div>
+                                <div>
+                                    <CardTitle className="text-base">Housecall Pro</CardTitle>
+                                    <CardDescription className="text-xs">
+                                        For home service pros. Auto-sends review requests when a job is completed.
+                                    </CardDescription>
+                                </div>
+                            </div>
+                            <ConnectedBadge connected={housecallProConnected} />
+                        </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <p className="text-sm text-gray-600">
+                            Automatically send a Google review request when a job is marked complete in Housecall Pro.
+                            Works for plumbers, electricians, HVAC techs, carpet cleaners, and any home service business.
+                        </p>
+
+                        {housecallProConnected ? (
+                            <div className="space-y-4">
+                                <AutoSendToggle
+                                    id="housecallpro-auto-send"
+                                    label="Auto-send review requests"
+                                    description="Send a review request automatically when a Housecall Pro job is completed."
+                                    checked={housecallProAutoSend}
+                                    onToggle={handleHousecallProToggleAutoSend}
+                                />
+
+                                {housecallProWebhookUrl && (
+                                    <WebhookUrlBox
+                                        url={housecallProWebhookUrl}
+                                        instructions={
+                                            <>
+                                                In Housecall Pro, go to <strong>Settings &rarr; Integrations &rarr; Webhooks</strong> and
+                                                add this URL for the <strong>Job Completed</strong> event.
+                                            </>
+                                        }
+                                    />
+                                )}
+
+                                <Button
+                                    variant="outline"
+                                    className="border-red-200 text-red-600 hover:bg-red-50"
+                                    onClick={handleHousecallProDisconnect}
+                                >
+                                    Disconnect Housecall Pro
+                                </Button>
+                            </div>
+                        ) : (
+                            <Button
+                                className="bg-teal-600 hover:bg-teal-700 text-white"
+                                onClick={handleHousecallProConnect}
+                            >
+                                Connect Housecall Pro
+                            </Button>
                         )}
                     </CardContent>
                 </Card>

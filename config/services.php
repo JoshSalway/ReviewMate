@@ -90,4 +90,14 @@ return [
         'client_secret' => env('SIMPRO_CLIENT_SECRET'),
     ],
 
+    'jobber' => [
+        'client_id'     => env('JOBBER_CLIENT_ID'),
+        'client_secret' => env('JOBBER_CLIENT_SECRET'),
+    ],
+
+    'housecallpro' => [
+        'client_id'     => env('HOUSECALLPRO_CLIENT_ID'),
+        'client_secret' => env('HOUSECALLPRO_CLIENT_SECRET'),
+    ],
+
 ];
