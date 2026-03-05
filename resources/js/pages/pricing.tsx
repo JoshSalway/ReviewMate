@@ -1,0 +1,216 @@
+import { Head, Link } from '@inertiajs/react';
+
+function CheckIcon() {
+    return (
+        <svg className="h-5 w-5 text-teal-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+    );
+}
+
+const plans = [
+    {
+        name: 'Free',
+        price: '$0',
+        period: null,
+        description: 'For trying ReviewMate — no card needed.',
+        features: [
+            '1 business location',
+            'Up to 50 customers',
+            '10 review requests / month',
+            'AI reply suggestions',
+            'Review inbox + dashboard',
+            'Email review requests',
+            'QR code page',
+        ],
+        cta: 'Start for free',
+        highlighted: false,
+    },
+    {
+        name: 'Starter',
+        price: '$49',
+        period: '/month',
+        description: 'For growing local businesses ready to scale reviews.',
+        features: [
+            '1 business location',
+            'Unlimited customers',
+            'Unlimited review requests',
+            'Email + SMS sending',
+            'Automated follow-ups (day 5)',
+            'Weekly digest emails',
+            'Reply templates',
+            'Google Business Profile sync',
+            'CSV import / export',
+            'Integration: ServiceM8, Xero, Cliniko, Timely, Simpro, Halaxy',
+            'Email support',
+        ],
+        cta: 'Start free trial',
+        highlighted: true,
+    },
+    {
+        name: 'Pro',
+        price: '$99',
+        period: '/month',
+        description: 'For multi-location businesses and agencies.',
+        features: [
+            'Up to 5 business locations',
+            'Everything in Starter',
+            'Multi-location analytics',
+            'Location-by-location comparison',
+            'Priority support',
+        ],
+        cta: 'Start free trial',
+        highlighted: false,
+    },
+];
+
+const faqs = [
+    {
+        question: 'Is there a free plan?',
+        answer: 'Yes — 1 location, 50 customers, 10 requests per month. No credit card required.',
+    },
+    {
+        question: 'How does the 14-day free trial work?',
+        answer: 'Sign up for a paid plan and get 14 days free. If you cancel before the trial ends, you will not be charged. No card hold.',
+    },
+    {
+        question: 'Can I cancel any time?',
+        answer: 'Yes. No lock-in contracts. Cancel from your billing settings. You keep access until the end of your billing period.',
+    },
+    {
+        question: 'What currency is this?',
+        answer: 'All prices are in Australian dollars (AUD). GST is not included for ABN-registered businesses.',
+    },
+    {
+        question: 'Do I need a Google Business Profile?',
+        answer: 'Yes, to sync reviews and reply via ReviewMate. You can still send review requests without it — customers will be linked to your Google review page via their Google Place ID.',
+    },
+    {
+        question: 'Can I change plans at any time?',
+        answer: 'Yes. Upgrade or downgrade from your billing settings. Upgrades take effect immediately.',
+    },
+];
+
+export default function Pricing() {
+    return (
+        <>
+            <Head title="Pricing — ReviewMate" />
+
+            <div className="min-h-screen bg-white text-gray-900 antialiased">
+
+                {/* Nav */}
+                <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+                    <Link href="/" className="flex items-center gap-2">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-600">
+                            <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                        </div>
+                        <span className="text-lg font-bold tracking-tight">ReviewMate</span>
+                    </Link>
+                    <div className="flex items-center gap-4">
+                        <Link href="/features" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">Features</Link>
+                        <Link href="/login" className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900 transition-colors">
+                            Sign in
+                        </Link>
+                    </div>
+                </nav>
+
+                {/* Hero */}
+                <section className="mx-auto max-w-3xl px-6 pt-14 pb-10 text-center">
+                    <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
+                        Simple, honest pricing
+                    </h1>
+                    <p className="mt-4 text-lg text-gray-500">
+                        No setup fees. No lock-in contracts. Start free, upgrade when you need to.
+                    </p>
+                </section>
+
+                {/* Plans */}
+                <section className="mx-auto max-w-6xl px-6 pb-20">
+                    <div className="grid gap-6 md:grid-cols-3">
+                        {plans.map((plan) => (
+                            <div
+                                key={plan.name}
+                                className={`rounded-2xl p-7 ${plan.highlighted
+                                    ? 'relative border-2 border-teal-500 bg-white shadow-xl'
+                                    : 'border border-gray-200 bg-white'
+                                }`}
+                            >
+                                {plan.highlighted && (
+                                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                                        <span className="rounded-full bg-teal-500 px-3 py-1 text-xs font-bold text-white shadow">Most popular</span>
+                                    </div>
+                                )}
+                                <p className={`mb-1 text-xs font-semibold uppercase tracking-widest ${plan.highlighted ? 'text-teal-600' : 'text-gray-400'}`}>
+                                    {plan.name}
+                                </p>
+                                <div className="mb-1 flex items-end gap-1">
+                                    <span className="text-4xl font-extrabold text-gray-900">{plan.price}</span>
+                                    {plan.period && <span className="mb-1 text-sm text-gray-400">{plan.period}</span>}
+                                </div>
+                                <p className="mb-5 text-sm text-gray-500">{plan.description}</p>
+                                <Link
+                                    href="/login"
+                                    className={`mb-6 block w-full rounded-xl py-2.5 text-center text-sm font-semibold transition-colors ${plan.highlighted
+                                        ? 'bg-teal-600 text-white hover:bg-teal-700'
+                                        : 'border border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                                    }`}
+                                >
+                                    {plan.cta}
+                                </Link>
+                                <ul className="space-y-2.5">
+                                    {plan.features.map((f) => (
+                                        <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
+                                            <CheckIcon />
+                                            {f}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* FAQ */}
+                <section className="bg-gray-50 py-20">
+                    <div className="mx-auto max-w-3xl px-6">
+                        <h2 className="mb-10 text-center text-2xl font-bold tracking-tight sm:text-3xl">Pricing FAQ</h2>
+                        <div className="divide-y divide-gray-100">
+                            {faqs.map((faq) => (
+                                <div key={faq.question} className="py-5">
+                                    <p className="font-semibold text-gray-900">{faq.question}</p>
+                                    <p className="mt-2 text-sm text-gray-500 leading-relaxed">{faq.answer}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+
+                {/* CTA */}
+                <section className="py-16 text-center">
+                    <p className="text-gray-600 mb-4">Ready to get more reviews on autopilot?</p>
+                    <Link
+                        href="/login"
+                        className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 transition-colors"
+                    >
+                        Start free — no credit card needed
+                    </Link>
+                </section>
+
+                {/* Footer */}
+                <footer className="border-t border-gray-100 py-8">
+                    <div className="mx-auto max-w-6xl px-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+                        <span className="text-sm font-semibold text-gray-700">ReviewMate</span>
+                        <div className="flex items-center gap-4 text-xs text-gray-400">
+                            <Link href="/terms" className="hover:text-gray-600 transition-colors">Terms</Link>
+                            <Link href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</Link>
+                            <span>&copy; {new Date().getFullYear()} ReviewMate</span>
+                        </div>
+                    </div>
+                </footer>
+
+            </div>
+        </>
+    );
+}
