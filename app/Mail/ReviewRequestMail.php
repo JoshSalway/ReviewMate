@@ -58,6 +58,9 @@ class ReviewRequestMail extends Mailable implements ShouldQueue
             ? url('/unsubscribe/'.$customer->unsubscribe_token)
             : null;
         $this->facebookReviewUrl = $business->facebookReviewUrl();
+        $this->confirmUrl = $reviewRequest?->tracking_token
+            ? url('/reviewed/'.$reviewRequest->tracking_token)
+            : null;
     }
 
     public string $reviewLink;
@@ -65,6 +68,8 @@ class ReviewRequestMail extends Mailable implements ShouldQueue
     public ?string $unsubscribeUrl;
 
     public ?string $facebookReviewUrl;
+
+    public ?string $confirmUrl;
 
     public function envelope(): Envelope
     {
@@ -85,6 +90,7 @@ class ReviewRequestMail extends Mailable implements ShouldQueue
                 'unsubscribeUrl'    => $this->unsubscribeUrl ?? url('/'),
                 'body'              => $this->renderedBody,
                 'facebookReviewUrl' => $this->facebookReviewUrl,
+                'confirmUrl'        => $this->confirmUrl,
             ],
         );
     }

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ReviewRequestController extends Controller
 {
@@ -112,5 +113,21 @@ class ReviewRequestController extends Controller
             ?? 'https://search.google.com/local/writereview';
 
         return redirect()->away($destination);
+    }
+
+    public function confirmReview(string $token): Response
+    {
+        $reviewRequest = ReviewRequest::where('tracking_token', $token)->firstOrFail();
+
+        if (! in_array($reviewRequest->status, ['reviewed', 'self_confirmed', 'unverified_claim'])) {
+            $reviewRequest->markAsSelfConfirmed();
+        }
+
+        $reviewRequest->loadMissing(['customer', 'business']);
+
+        return Inertia::render('reviews/confirmed', [
+            'customerName' => $reviewRequest->customer->name,
+            'businessName' => $reviewRequest->business->name,
+        ]);
     }
 }

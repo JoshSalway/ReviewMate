@@ -50,4 +50,22 @@ class ReviewRequestFactory extends Factory
             'status' => 'no_response',
         ]);
     }
+
+    public function selfConfirmed(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'self_confirmed',
+            'opened_at' => now()->subDay(),
+            'reviewed_at' => now(),
+        ]);
+    }
+
+    public function unverifiedClaim(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'unverified_claim',
+            'opened_at' => now()->subDays(10),
+            'reviewed_at' => now()->subDays(8),
+        ]);
+    }
 }

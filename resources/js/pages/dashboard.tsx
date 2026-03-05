@@ -24,6 +24,12 @@ interface RecentReview {
     via_review_mate: boolean;
 }
 
+interface UnverifiedClaim {
+    id: number;
+    customer_name: string | null;
+    reviewed_at: string | null;
+}
+
 interface Props {
     business: {
         id: number;
@@ -51,6 +57,7 @@ interface Props {
     googleRating: number | null;
     googleReviewCount: number | null;
     googleStatsUpdatedAt: string | null;
+    unverifiedClaims: UnverifiedClaim[];
 }
 
 function StarRating({ rating }: { rating: number }) {
@@ -115,8 +122,9 @@ function EmptyState({ businessName }: { businessName: string }) {
     );
 }
 
-export default function Dashboard({ business, stats, requestStats, recentReviews, chartData, hasData, googleRating, googleReviewCount, googleStatsUpdatedAt }: Props) {
+export default function Dashboard({ business, stats, requestStats, recentReviews, chartData, hasData, googleRating, googleReviewCount, googleStatsUpdatedAt, unverifiedClaims }: Props) {
     const [copied, setCopied] = useState(false);
+    const [showUnverifiedDetails, setShowUnverifiedDetails] = useState(false);
 
     const copyReviewLink = () => {
         if (business.google_review_url) {
@@ -130,6 +138,37 @@ export default function Dashboard({ business, stats, requestStats, recentReviews
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto p-4 md:p-6">
+                {/* Unverified Claims Banner */}
+                {unverifiedClaims.length > 0 && (
+                    <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+                        <div className="flex items-start gap-3">
+                            <span className="text-yellow-500 text-lg">⚠️</span>
+                            <div className="flex-1">
+                                <p className="font-medium text-yellow-800">
+                                    {unverifiedClaims.length} customer{unverifiedClaims.length > 1 ? 's' : ''} said{' '}
+                                    {unverifiedClaims.length > 1 ? 'they reviewed' : 'they reviewed'} but we couldn't find{' '}
+                                    {unverifiedClaims.length > 1 ? 'their reviews' : 'their review'} on Google.
+                                </p>
+                                <button
+                                    onClick={() => setShowUnverifiedDetails(!showUnverifiedDetails)}
+                                    className="mt-1 text-sm text-yellow-700 underline hover:text-yellow-900"
+                                >
+                                    {showUnverifiedDetails ? 'Hide details' : 'View details'}
+                                </button>
+                                {showUnverifiedDetails && (
+                                    <ul className="mt-3 space-y-1">
+                                        {unverifiedClaims.map((claim) => (
+                                            <li key={claim.id} className="text-sm text-yellow-700">
+                                                {claim.customer_name ?? 'Unknown'}{claim.reviewed_at ? ` — confirmed ${claim.reviewed_at}` : ''}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
                 {!hasData ? (
                     <EmptyState businessName={business.name} />
                 ) : (

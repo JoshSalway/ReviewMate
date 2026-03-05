@@ -55,6 +55,7 @@ Route::get('/docs/openapi.yaml', function () {
 })->name('api.openapi');
 Route::get('/r/{token}', [ReviewRequestController::class, 'track'])->name('review-requests.track');
 Route::get('/r/ref/{token}', [ReferralController::class, 'track'])->name('referrals.track');
+Route::get('/reviewed/{token}', [ReviewRequestController::class, 'confirmReview'])->name('reviewed.confirm');
 Route::get('/unsubscribe/{token}', [CustomerController::class, 'unsubscribe'])->name('customers.unsubscribe');
 
 // Stripe webhook (must be outside auth middleware, CSRF excluded by Cashier)

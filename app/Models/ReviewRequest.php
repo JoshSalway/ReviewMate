@@ -72,4 +72,19 @@ class ReviewRequest extends Model
             'reviewed_at' => now(),
         ]);
     }
+
+    public function markAsSelfConfirmed(): void
+    {
+        $this->update([
+            'status' => 'self_confirmed',
+            'reviewed_at' => now(),
+        ]);
+    }
+
+    public function markAsUnverifiedClaim(): void
+    {
+        $this->update([
+            'status' => 'unverified_claim',
+        ]);
+    }
 }

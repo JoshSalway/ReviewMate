@@ -31,6 +31,9 @@ class SyncGoogleReviews implements ShouldQueue
 
         $reviews = $service->fetchReviews($this->business);
 
+        // Verify or flag self-confirmed requests that haven't been matched yet
+        $this->processSelfConfirmedRequests($reviews);
+
         foreach ($reviews as $data) {
             $reviewId = $data['reviewId'] ?? null;
 
@@ -83,6 +86,52 @@ class SyncGoogleReviews implements ShouldQueue
                     Mail::to($user->email, $user->name)
                         ->queue(new NewReviewAlertMail($user, $this->business, $review));
                 }
+            }
+        }
+    }
+
+    /**
+     * For each self_confirmed request, check whether a matching Google review exists.
+     * - If found within 7 days → upgrade to reviewed (verified).
+     * - If not found and reviewed_at is older than 7 days → flag as unverified_claim.
+     */
+    protected function processSelfConfirmedRequests(array $reviews): void
+    {
+        $selfConfirmed = ReviewRequest::query()
+            ->where('business_id', $this->business->id)
+            ->where('status', 'self_confirmed')
+            ->with('customer')
+            ->get();
+
+        foreach ($selfConfirmed as $request) {
+            if (! $request->customer) {
+                continue;
+            }
+
+            $matched = false;
+            foreach ($reviews as $data) {
+                $reviewerName = $data['reviewer']['displayName'] ?? null;
+                if (! $reviewerName) {
+                    continue;
+                }
+
+                similar_text(
+                    strtolower($reviewerName),
+                    strtolower($request->customer->name),
+                    $percent
+                );
+
+                if ($percent > 60) {
+                    // Google review found — upgrade to verified
+                    $request->markAsReviewed();
+                    $matched = true;
+                    break;
+                }
+            }
+
+            // If no match found and it's been more than 7 days since self-confirm → flag
+            if (! $matched && $request->reviewed_at && $request->reviewed_at->lte(now()->subDays(7))) {
+                $request->markAsUnverifiedClaim();
             }
         }
     }

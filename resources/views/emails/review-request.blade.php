@@ -13,6 +13,14 @@ Or leave us a Facebook review:
 </x-mail::button>
 @endif
 
+@if(!empty($confirmUrl))
+<p style="text-align:center; margin-top: 16px;">
+  <a href="{{ $confirmUrl }}" style="color: #6b7280; font-size: 13px; text-decoration: underline;">
+    ✓ I already left a review
+  </a>
+</p>
+@endif
+
 Thanks,<br>
 {{ $ownerName }}<br>
 {{ $businessName }}

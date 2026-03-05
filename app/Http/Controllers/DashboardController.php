@@ -42,6 +42,16 @@ class DashboardController extends Controller
             'reviewed' => $business->reviewRequests()->where('status', 'reviewed')->count(),
         ];
 
+        $unverifiedClaims = $business->reviewRequests()
+            ->where('status', 'unverified_claim')
+            ->with('customer')
+            ->get()
+            ->map(fn ($req) => [
+                'id'            => $req->id,
+                'customer_name' => $req->customer?->name,
+                'reviewed_at'   => $req->reviewed_at?->diffForHumans(),
+            ]);
+
         $recentReviews = $business->reviews()
             ->with('customer')
             ->latest('reviewed_at')
@@ -88,6 +98,7 @@ class DashboardController extends Controller
             'googleRating' => $business->google_rating ? (float) $business->google_rating : null,
             'googleReviewCount' => $business->google_review_count,
             'googleStatsUpdatedAt' => $business->google_stats_updated_at?->diffForHumans(),
+            'unverifiedClaims' => $unverifiedClaims,
         ]);
     }
 }

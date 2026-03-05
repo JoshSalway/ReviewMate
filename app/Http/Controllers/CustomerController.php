@@ -229,15 +229,32 @@ class CustomerController extends Controller
         return back()->with('success', "Imported {$imported} customer(s). Skipped {$skipped} row(s).");
     }
 
-    public function unsubscribe(string $token): Response|RedirectResponse
+    public function unsubscribe(Request $request, string $token): Response|RedirectResponse
     {
         $customer = Customer::where('unsubscribe_token', $token)->firstOrFail();
 
-        if (! $customer->isUnsubscribed()) {
+        $alreadyUnsubscribed = $customer->isUnsubscribed();
+
+        if (! $alreadyUnsubscribed) {
             $customer->update(['unsubscribed_at' => now()]);
         }
 
-        return Inertia::render('unsubscribed');
+        // Find the most recent review request for this customer to offer a self-confirm CTA
+        $latestRequest = $customer->reviewRequests()
+            ->whereNotIn('status', ['reviewed', 'self_confirmed', 'unverified_claim'])
+            ->latest()
+            ->first();
+
+        $confirmUrl = $latestRequest?->tracking_token
+            ? url('/reviewed/'.$latestRequest->tracking_token)
+            : null;
+
+        $customer->loadMissing('business');
+
+        return Inertia::render('unsubscribed', [
+            'businessName' => $customer->business?->name,
+            'confirmUrl'   => $confirmUrl,
+        ]);
     }
 
     private function authorizeCustomer(Request $request, Customer $customer): void

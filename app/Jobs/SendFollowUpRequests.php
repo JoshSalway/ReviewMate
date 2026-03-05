@@ -21,6 +21,7 @@ class SendFollowUpRequests implements ShouldQueue
         $requests = ReviewRequest::query()
             ->with(['business.user', 'customer'])
             ->whereIn('status', ['sent', 'opened'])
+            ->whereNotIn('status', ['reviewed', 'self_confirmed', 'unverified_claim'])
             ->whereNull('followed_up_at')
             ->whereNull('reviewed_at')
             ->get();
