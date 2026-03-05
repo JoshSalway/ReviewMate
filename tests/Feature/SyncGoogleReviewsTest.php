@@ -4,6 +4,7 @@ use App\Jobs\SyncGoogleReviews;
 use App\Mail\NewReviewAlertMail;
 use App\Models\Business;
 use App\Models\Customer;
+use App\Models\BusinessIntegration;
 use App\Models\Review;
 use App\Models\ReviewRequest;
 use App\Models\User;
@@ -15,8 +16,12 @@ beforeEach(function () {
     $this->user = User::factory()->create(['notification_preferences' => ['new_review_alert' => true]]);
     $this->business = Business::factory()->onboarded()->create([
         'user_id' => $this->user->id,
-        'google_access_token' => 'fake-token',
-        'google_location_id' => 'accounts/123/locations/456',
+    ]);
+    BusinessIntegration::create([
+        'business_id'  => $this->business->id,
+        'provider'     => 'google',
+        'access_token' => 'fake-token',
+        'meta'         => ['location_id' => 'accounts/123/locations/456'],
     ]);
 });
 

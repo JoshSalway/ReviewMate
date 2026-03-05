@@ -157,39 +157,39 @@ Route::middleware([
         $business = Auth::user()->currentBusiness();
 
         return Inertia::render('settings/integrations', [
-            'servicem8Connected' => $business?->servicem8_access_token !== null,
-            'servicem8AutoSend' => $business?->servicem8_auto_send_reviews ?? true,
+            'servicem8Connected' => $business?->integration('servicem8')?->isConnected() ?? false,
+            'servicem8AutoSend' => $business?->integration('servicem8')?->auto_send_reviews ?? true,
             'webhookUrl' => $business?->uuid
                 ? route('webhooks.servicem8', ['business' => $business->uuid])
                 : null,
-            'xeroConnected' => $business?->xero_access_token !== null,
-            'xeroAutoSend' => $business?->xero_auto_send_reviews ?? true,
+            'xeroConnected' => $business?->integration('xero')?->isConnected() ?? false,
+            'xeroAutoSend' => $business?->integration('xero')?->auto_send_reviews ?? true,
             'xeroWebhookUrl' => $business?->uuid
                 ? route('webhooks.xero', ['business' => $business->uuid])
                 : null,
-            'clinikoConnected' => $business?->cliniko_api_key !== null,
-            'clinikoAutoSend' => $business?->cliniko_auto_send_reviews ?? true,
-            'timelyConnected' => $business?->timely_access_token !== null,
-            'timelyAutoSend' => $business?->timely_auto_send_reviews ?? true,
+            'clinikoConnected' => $business?->integration('cliniko')?->isConnected() ?? false,
+            'clinikoAutoSend' => $business?->integration('cliniko')?->auto_send_reviews ?? true,
+            'timelyConnected' => $business?->integration('timely')?->isConnected() ?? false,
+            'timelyAutoSend' => $business?->integration('timely')?->auto_send_reviews ?? true,
             'timelyWebhookUrl' => $business?->uuid
                 ? route('webhooks.timely', ['business' => $business->uuid])
                 : null,
-            'simproConnected' => $business?->simpro_access_token !== null,
-            'simproAutoSend' => $business?->simpro_auto_send_reviews ?? true,
+            'simproConnected' => $business?->integration('simpro')?->isConnected() ?? false,
+            'simproAutoSend' => $business?->integration('simpro')?->auto_send_reviews ?? true,
             'simproWebhookUrl' => $business?->uuid
                 ? route('webhooks.simpro', ['business' => $business->uuid])
                 : null,
-            'halaxyConnected' => $business?->halaxy_api_key !== null,
-            'halaxyAutoSend' => $business?->halaxy_auto_send_reviews ?? true,
+            'halaxyConnected' => $business?->integration('halaxy')?->isConnected() ?? false,
+            'halaxyAutoSend' => $business?->integration('halaxy')?->auto_send_reviews ?? true,
             // Jobber integration
-            'jobberConnected' => $business?->jobberIntegration?->isConnected() ?? false,
-            'jobberAutoSend' => $business?->jobberIntegration?->auto_send_reviews ?? true,
+            'jobberConnected' => $business?->integration('jobber')?->isConnected() ?? false,
+            'jobberAutoSend' => $business?->integration('jobber')?->auto_send_reviews ?? true,
             'jobberWebhookUrl' => $business?->uuid
                 ? route('webhooks.jobber', ['business' => $business->uuid])
                 : null,
             // Housecall Pro integration
-            'housecallProConnected' => $business?->housecallProIntegration?->isConnected() ?? false,
-            'housecallProAutoSend' => $business?->housecallProIntegration?->auto_send_reviews ?? true,
+            'housecallProConnected' => $business?->integration('housecallpro')?->isConnected() ?? false,
+            'housecallProAutoSend' => $business?->integration('housecallpro')?->auto_send_reviews ?? true,
             'housecallProWebhookUrl' => $business?->uuid
                 ? route('webhooks.housecallpro', ['business' => $business->uuid])
                 : null,

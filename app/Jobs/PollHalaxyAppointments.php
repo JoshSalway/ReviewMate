@@ -24,11 +24,13 @@ class PollHalaxyAppointments implements ShouldQueue
 
     public function handle(): void
     {
-        if (! $this->business->halaxy_api_key || ! $this->business->halaxy_auto_send_reviews) {
+        $integration = $this->business->integration('halaxy');
+
+        if (! $integration?->api_key || ! $integration?->auto_send_reviews) {
             return;
         }
 
-        $since   = $this->business->halaxy_last_polled_at ?? now()->subDay();
+        $since   = $integration->last_polled_at ?? now()->subDay();
         $service = new HalaxyService($this->business);
 
         $appointments = $service->getCompletedAppointmentsSince($since);
@@ -95,6 +97,6 @@ class PollHalaxyAppointments implements ShouldQueue
             }
         }
 
-        $this->business->update(['halaxy_last_polled_at' => now()]);
+        $integration->update(['last_polled_at' => now()]);
     }
 }

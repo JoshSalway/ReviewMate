@@ -2,6 +2,7 @@
 
 use App\Jobs\PollClinikoAppointments;
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use App\Models\Customer;
 use App\Models\ReviewRequest;
 use App\Models\User;
@@ -42,9 +43,9 @@ test('valid cliniko api key is stored and shard detected', function () {
 
     $response->assertRedirect('/settings/integrations');
 
-    $this->business->refresh();
-    expect($this->business->cliniko_api_key)->toBe('test-api-key==au1');
-    expect($this->business->cliniko_shard)->toBe('au1');
+    $integration = $this->business->integration('cliniko');
+    expect($integration->api_key)->toBe('test-api-key==au1');
+    expect($integration->getMeta('shard'))->toBe('au1');
 });
 
 test('invalid cliniko api key returns validation error', function () {
@@ -58,8 +59,7 @@ test('invalid cliniko api key returns validation error', function () {
 
     $response->assertSessionHasErrors('api_key');
 
-    $this->business->refresh();
-    expect($this->business->cliniko_api_key)->toBeNull();
+    expect($this->business->integration('cliniko'))->toBeNull();
 });
 
 test('cliniko connection requires api_key field', function () {
@@ -68,33 +68,37 @@ test('cliniko connection requires api_key field', function () {
 });
 
 test('cliniko disconnect clears integration fields', function () {
-    $this->business->update([
-        'cliniko_api_key'        => 'test-key',
-        'cliniko_shard'          => 'au1',
-        'cliniko_last_polled_at' => now(),
+    BusinessIntegration::create([
+        'business_id'    => $this->business->id,
+        'provider'       => 'cliniko',
+        'api_key'        => 'test-key',
+        'meta'           => ['shard' => 'au1'],
+        'last_polled_at' => now(),
     ]);
 
     $response = $this->post('/integrations/cliniko/disconnect');
     $response->assertRedirect('/settings/integrations');
 
-    $this->business->refresh();
-    expect($this->business->cliniko_api_key)->toBeNull();
-    expect($this->business->cliniko_shard)->toBeNull();
-    expect($this->business->cliniko_last_polled_at)->toBeNull();
+    expect($this->business->integration('cliniko'))->toBeNull();
 });
 
 test('cliniko toggle auto send flips the setting', function () {
-    $this->business->update(['cliniko_auto_send_reviews' => true]);
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'cliniko',
+        'api_key'           => 'test-key',
+        'auto_send_reviews' => true,
+    ]);
 
     $this->post('/integrations/cliniko/toggle-auto-send');
 
-    $this->business->refresh();
-    expect($this->business->cliniko_auto_send_reviews)->toBeFalse();
+    $integration = $this->business->integration('cliniko');
+    expect($integration->auto_send_reviews)->toBeFalse();
 
     $this->post('/integrations/cliniko/toggle-auto-send');
 
-    $this->business->refresh();
-    expect($this->business->cliniko_auto_send_reviews)->toBeTrue();
+    $integration->refresh();
+    expect($integration->auto_send_reviews)->toBeTrue();
 });
 
 // --- PollClinikoAppointments job ---
@@ -102,8 +106,6 @@ test('cliniko toggle auto send flips the setting', function () {
 test('poll job skips business with no api key', function () {
     Queue::fake();
     Mail::fake();
-
-    $this->business->update(['cliniko_api_key' => null]);
 
     $job = new PollClinikoAppointments($this->business);
     $job->handle();
@@ -115,9 +117,11 @@ test('poll job skips business with auto send disabled', function () {
     Queue::fake();
     Mail::fake();
 
-    $this->business->update([
-        'cliniko_api_key'          => 'some-key==au1',
-        'cliniko_auto_send_reviews' => false,
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'cliniko',
+        'api_key'           => 'some-key==au1',
+        'auto_send_reviews' => false,
     ]);
 
     $job = new PollClinikoAppointments($this->business);
@@ -164,10 +168,12 @@ test('poll job skips patients already sent a review within 90 days', function ()
         'created_at'  => now()->subDays(30), // within 90-day window
     ]);
 
-    $this->business->update([
-        'cliniko_api_key'          => 'some-key==au1',
-        'cliniko_shard'            => 'au1',
-        'cliniko_auto_send_reviews' => true,
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'cliniko',
+        'api_key'           => 'some-key==au1',
+        'meta'              => ['shard' => 'au1'],
+        'auto_send_reviews' => true,
     ]);
 
     $job = new PollClinikoAppointments($this->business);
@@ -204,11 +210,13 @@ test('poll job creates review request and updates last polled at', function () {
         ], 200),
     ]);
 
-    $this->business->update([
-        'cliniko_api_key'          => 'some-key==au1',
-        'cliniko_shard'            => 'au1',
-        'cliniko_auto_send_reviews' => true,
-        'cliniko_last_polled_at'   => now()->subDay(),
+    $integration = BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'cliniko',
+        'api_key'           => 'some-key==au1',
+        'meta'              => ['shard' => 'au1'],
+        'auto_send_reviews' => true,
+        'last_polled_at'    => now()->subDay(),
     ]);
 
     $job = new PollClinikoAppointments($this->business);
@@ -221,16 +229,18 @@ test('poll job creates review request and updates last polled at', function () {
         'channel'     => 'email',
     ]);
 
-    $this->business->refresh();
-    expect($this->business->cliniko_last_polled_at)->not->toBeNull();
+    $integration->refresh();
+    expect($integration->last_polled_at)->not->toBeNull();
 });
 
 // --- Integrations page shows all statuses ---
 
 test('integrations page includes cliniko props', function () {
-    $this->business->update([
-        'cliniko_api_key'          => 'test-key',
-        'cliniko_auto_send_reviews' => false,
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'cliniko',
+        'api_key'           => 'test-key',
+        'auto_send_reviews' => false,
     ]);
 
     $this->get('/settings/integrations')

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use Illuminate\Support\Facades\Http;
 
 class XeroService
@@ -14,6 +15,11 @@ class XeroService
     const API_BASE = 'https://api.xero.com/api.xro/2.0';
 
     public function __construct(protected Business $business) {}
+
+    protected function integration(): ?BusinessIntegration
+    {
+        return $this->business->integration('xero');
+    }
 
     public function getAuthorizationUrl(string $state): string
     {
@@ -42,26 +48,28 @@ class XeroService
 
     public function refreshToken(): void
     {
+        $integration = $this->integration();
+
         $response = Http::withBasicAuth(
             config('services.xero.client_id'),
             config('services.xero.client_secret'),
         )->asForm()->post(self::TOKEN_URL, [
             'grant_type' => 'refresh_token',
-            'refresh_token' => $this->business->xero_refresh_token,
+            'refresh_token' => $integration?->refresh_token,
         ]);
 
         $data = $response->json();
 
-        $this->business->update([
-            'xero_access_token' => $data['access_token'],
-            'xero_refresh_token' => $data['refresh_token'],
-            'xero_token_expires_at' => now()->addSeconds($data['expires_in'] ?? 1800),
+        $integration?->update([
+            'access_token'     => $data['access_token'],
+            'refresh_token'    => $data['refresh_token'],
+            'token_expires_at' => now()->addSeconds($data['expires_in'] ?? 1800),
         ]);
     }
 
     public function getTenants(): array
     {
-        $response = Http::withToken($this->business->xero_access_token)
+        $response = Http::withToken($this->integration()?->access_token)
             ->get('https://api.xero.com/connections');
 
         return $response->json() ?? [];
@@ -69,12 +77,15 @@ class XeroService
 
     protected function request(string $method, string $path, array $data = []): array
     {
-        if ($this->business->xero_token_expires_at?->isPast()) {
+        $integration = $this->integration();
+
+        if ($integration?->token_expires_at?->isPast()) {
             $this->refreshToken();
+            $this->business->load('integrations');
         }
 
-        $response = Http::withToken($this->business->xero_access_token)
-            ->withHeaders(['Xero-tenant-id' => $this->business->xero_tenant_id])
+        $response = Http::withToken($this->integration()?->access_token)
+            ->withHeaders(['Xero-tenant-id' => $this->integration()?->getMeta('tenant_id')])
             ->$method(self::API_BASE.$path, $data);
 
         return $response->json() ?? [];
@@ -96,7 +107,6 @@ class XeroService
 
     public function isConnected(): bool
     {
-        return filled($this->business->xero_access_token)
-            && filled($this->business->xero_tenant_id);
+        return $this->integration()?->isConnected() ?? false;
     }
 }

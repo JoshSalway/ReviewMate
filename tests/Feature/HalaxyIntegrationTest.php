@@ -2,6 +2,7 @@
 
 use App\Jobs\PollHalaxyAppointments;
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use App\Models\Customer;
 use App\Models\ReviewRequest;
 use App\Models\User;
@@ -28,8 +29,8 @@ test('valid halaxy api key is stored', function () {
 
     $response->assertRedirect('/settings/integrations');
 
-    $this->business->refresh();
-    expect($this->business->halaxy_api_key)->toBe('halaxy-test-api-key-123');
+    $integration = $this->business->integration('halaxy');
+    expect($integration->api_key)->toBe('halaxy-test-api-key-123');
 });
 
 test('invalid halaxy api key returns validation error', function () {
@@ -43,8 +44,7 @@ test('invalid halaxy api key returns validation error', function () {
 
     $response->assertSessionHasErrors('api_key');
 
-    $this->business->refresh();
-    expect($this->business->halaxy_api_key)->toBeNull();
+    expect($this->business->integration('halaxy'))->toBeNull();
 });
 
 test('halaxy connection requires api_key field', function () {
@@ -55,41 +55,44 @@ test('halaxy connection requires api_key field', function () {
 // --- HalaxyController disconnect ---
 
 test('halaxy disconnect clears integration fields', function () {
-    $this->business->update([
-        'halaxy_api_key'        => 'test-key',
-        'halaxy_last_polled_at' => now(),
+    BusinessIntegration::create([
+        'business_id'    => $this->business->id,
+        'provider'       => 'halaxy',
+        'api_key'        => 'test-key',
+        'last_polled_at' => now(),
     ]);
 
     $response = $this->post('/integrations/halaxy/disconnect');
     $response->assertRedirect('/settings/integrations');
 
-    $this->business->refresh();
-    expect($this->business->halaxy_api_key)->toBeNull();
-    expect($this->business->halaxy_last_polled_at)->toBeNull();
+    expect($this->business->integration('halaxy'))->toBeNull();
 });
 
 // --- HalaxyController toggleAutoSend ---
 
 test('halaxy toggle auto send flips the setting', function () {
-    $this->business->update(['halaxy_auto_send_reviews' => true]);
+    $integration = BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'halaxy',
+        'api_key'           => 'test-key',
+        'auto_send_reviews' => true,
+    ]);
 
     $this->post('/integrations/halaxy/toggle-auto-send');
 
-    $this->business->refresh();
-    expect($this->business->halaxy_auto_send_reviews)->toBeFalse();
+    $integration->refresh();
+    expect($integration->auto_send_reviews)->toBeFalse();
 
     $this->post('/integrations/halaxy/toggle-auto-send');
 
-    $this->business->refresh();
-    expect($this->business->halaxy_auto_send_reviews)->toBeTrue();
+    $integration->refresh();
+    expect($integration->auto_send_reviews)->toBeTrue();
 });
 
 // --- PollHalaxyAppointments job ---
 
 test('poll job skips business with no api key', function () {
     Mail::fake();
-
-    $this->business->update(['halaxy_api_key' => null]);
 
     $job = new PollHalaxyAppointments($this->business);
     $job->handle();
@@ -100,9 +103,11 @@ test('poll job skips business with no api key', function () {
 test('poll job skips business with auto send disabled', function () {
     Mail::fake();
 
-    $this->business->update([
-        'halaxy_api_key'           => 'some-key',
-        'halaxy_auto_send_reviews' => false,
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'halaxy',
+        'api_key'           => 'some-key',
+        'auto_send_reviews' => false,
     ]);
 
     $job = new PollHalaxyAppointments($this->business);
@@ -147,9 +152,11 @@ test('poll job skips patients already sent a review within 90 days', function ()
         'created_at'  => now()->subDays(30), // within 90-day window
     ]);
 
-    $this->business->update([
-        'halaxy_api_key'           => 'some-key',
-        'halaxy_auto_send_reviews' => true,
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'halaxy',
+        'api_key'           => 'some-key',
+        'auto_send_reviews' => true,
     ]);
 
     $job = new PollHalaxyAppointments($this->business);
@@ -184,10 +191,12 @@ test('poll job creates review request and updates last polled at', function () {
         ], 200),
     ]);
 
-    $this->business->update([
-        'halaxy_api_key'           => 'some-key',
-        'halaxy_auto_send_reviews' => true,
-        'halaxy_last_polled_at'    => now()->subDay(),
+    $integration = BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'halaxy',
+        'api_key'           => 'some-key',
+        'auto_send_reviews' => true,
+        'last_polled_at'    => now()->subDay(),
     ]);
 
     $job = new PollHalaxyAppointments($this->business);
@@ -200,16 +209,18 @@ test('poll job creates review request and updates last polled at', function () {
         'channel'     => 'email',
     ]);
 
-    $this->business->refresh();
-    expect($this->business->halaxy_last_polled_at)->not->toBeNull();
+    $integration->refresh();
+    expect($integration->last_polled_at)->not->toBeNull();
 });
 
 // --- Integrations page ---
 
 test('integrations page includes halaxy props', function () {
-    $this->business->update([
-        'halaxy_api_key'           => 'test-key',
-        'halaxy_auto_send_reviews' => false,
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'halaxy',
+        'api_key'           => 'test-key',
+        'auto_send_reviews' => false,
     ]);
 
     $this->get('/settings/integrations')

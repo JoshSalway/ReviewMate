@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use Illuminate\Support\Facades\Http;
 
 class SimproService
@@ -12,9 +13,14 @@ class SimproService
 
     public function __construct(protected Business $business) {}
 
+    protected function integration(): ?BusinessIntegration
+    {
+        return $this->business->integration('simpro');
+    }
+
     protected function baseUrl(): string
     {
-        return 'https://' . $this->business->simpro_company_url;
+        return 'https://' . $this->integration()?->getMeta('company_url');
     }
 
     public function getAuthorizationUrl(string $state, string $companyUrl): string
@@ -43,30 +49,34 @@ class SimproService
 
     public function refreshToken(): void
     {
+        $integration = $this->integration();
+
         $response = Http::asForm()->post($this->baseUrl() . self::TOKEN_PATH, [
             'grant_type'    => 'refresh_token',
             'client_id'     => config('services.simpro.client_id'),
             'client_secret' => config('services.simpro.client_secret'),
-            'refresh_token' => $this->business->simpro_refresh_token,
+            'refresh_token' => $integration?->refresh_token,
         ]);
 
         $data = $response->json() ?? [];
 
-        $this->business->update([
-            'simpro_access_token'     => $data['access_token'],
-            'simpro_refresh_token'    => $data['refresh_token'] ?? $this->business->simpro_refresh_token,
-            'simpro_token_expires_at' => now()->addSeconds($data['expires_in'] ?? 3600),
+        $integration?->update([
+            'access_token'     => $data['access_token'],
+            'refresh_token'    => $data['refresh_token'] ?? $integration->refresh_token,
+            'token_expires_at' => now()->addSeconds($data['expires_in'] ?? 3600),
         ]);
     }
 
     protected function request(string $method, string $path, array $data = []): array
     {
-        if ($this->business->simpro_token_expires_at?->isPast()) {
+        $integration = $this->integration();
+
+        if ($integration?->token_expires_at?->isPast()) {
             $this->refreshToken();
-            $this->business->refresh();
+            $this->business->load('integrations');
         }
 
-        $response = Http::withToken($this->business->simpro_access_token)
+        $response = Http::withToken($this->integration()?->access_token)
             ->$method($this->baseUrl() . '/api/v1.0' . $path, $data);
 
         return $response->json() ?? [];
@@ -86,7 +96,6 @@ class SimproService
 
     public function isConnected(): bool
     {
-        return filled($this->business->simpro_access_token)
-            && filled($this->business->simpro_company_url);
+        return $this->integration()?->isConnected() ?? false;
     }
 }

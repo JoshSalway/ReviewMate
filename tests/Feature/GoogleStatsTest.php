@@ -2,6 +2,7 @@
 
 use App\Jobs\RefreshGoogleStats;
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use App\Models\Review;
 use App\Models\ReviewRequest;
 use App\Models\User;
@@ -13,8 +14,6 @@ test('RefreshGoogleStats job updates business rating and review count when api r
     $business = Business::factory()->onboarded()->create([
         'user_id' => $user->id,
         'google_place_id' => 'ChIJtestplaceid12345',
-        'google_rating' => null,
-        'google_review_count' => null,
     ]);
 
     Http::fake([
@@ -29,11 +28,11 @@ test('RefreshGoogleStats job updates business rating and review count when api r
 
     (new RefreshGoogleStats($business))->handle();
 
-    $business->refresh();
+    $integration = $business->integration('google');
 
-    expect((float) $business->google_rating)->toBe(4.7)
-        ->and($business->google_review_count)->toBe(142)
-        ->and($business->google_stats_updated_at)->not->toBeNull();
+    expect((float) $integration->getMeta('rating'))->toBe(4.7)
+        ->and($integration->getMeta('review_count'))->toBe(142)
+        ->and($integration->getMeta('stats_updated_at'))->not->toBeNull();
 });
 
 test('RefreshGoogleStats job skips when business has no google_place_id', function () {
@@ -42,19 +41,13 @@ test('RefreshGoogleStats job skips when business has no google_place_id', functi
         'user_id' => $user->id,
         'onboarding_completed_at' => now(),
         'google_place_id' => null,
-        'google_rating' => null,
-        'google_review_count' => null,
     ]);
 
     Http::fake();
 
     (new RefreshGoogleStats($business))->handle();
 
-    $business->refresh();
-
-    expect($business->google_rating)->toBeNull()
-        ->and($business->google_review_count)->toBeNull()
-        ->and($business->google_stats_updated_at)->toBeNull();
+    expect($business->integration('google'))->toBeNull();
 
     Http::assertNothingSent();
 });
@@ -64,8 +57,6 @@ test('RefreshGoogleStats job handles api failure gracefully without throwing exc
     $business = Business::factory()->onboarded()->create([
         'user_id' => $user->id,
         'google_place_id' => 'ChIJtestplaceid12345',
-        'google_rating' => null,
-        'google_review_count' => null,
     ]);
 
     Http::fake([
@@ -75,12 +66,8 @@ test('RefreshGoogleStats job handles api failure gracefully without throwing exc
     // Should not throw
     expect(fn () => (new RefreshGoogleStats($business))->handle())->not->toThrow(Exception::class);
 
-    $business->refresh();
-
-    // Stats should remain unchanged
-    expect($business->google_rating)->toBeNull()
-        ->and($business->google_review_count)->toBeNull()
-        ->and($business->google_stats_updated_at)->toBeNull();
+    // Stats should remain unchanged (no integration created on failure)
+    expect($business->integration('google'))->toBeNull();
 });
 
 test('RefreshGoogleStats job handles empty result gracefully', function () {
@@ -104,9 +91,15 @@ test('dashboard passes google stats props to inertia', function () {
     $user = User::factory()->create();
     $business = Business::factory()->onboarded()->create([
         'user_id' => $user->id,
-        'google_rating' => 4.7,
-        'google_review_count' => 142,
-        'google_stats_updated_at' => now()->subHour(),
+    ]);
+    BusinessIntegration::create([
+        'business_id' => $business->id,
+        'provider'    => 'google',
+        'meta'        => [
+            'rating'           => 4.7,
+            'review_count'     => 142,
+            'stats_updated_at' => now()->subHour()->toDateTimeString(),
+        ],
     ]);
 
     Review::factory()->count(2)->create([
@@ -137,9 +130,6 @@ test('dashboard passes null google stats when business has no stats yet', functi
     $user = User::factory()->create();
     $business = Business::factory()->onboarded()->create([
         'user_id' => $user->id,
-        'google_rating' => null,
-        'google_review_count' => null,
-        'google_stats_updated_at' => null,
     ]);
 
     Review::factory()->count(1)->create([

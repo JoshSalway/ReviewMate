@@ -2,6 +2,7 @@
 
 use App\Jobs\ProcessSimproJobComplete;
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use App\Models\User;
 use Illuminate\Support\Facades\Queue;
 
@@ -10,10 +11,13 @@ use Illuminate\Support\Facades\Queue;
 test('simpro webhook queues job when status is Complete', function () {
     Queue::fake();
 
-    $business = Business::factory()->create([
-        'simpro_access_token'  => 'test-token',
-        'simpro_company_url'   => 'mycompany.simprocloud.com',
-        'simpro_auto_send_reviews' => true,
+    $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'       => $business->id,
+        'provider'          => 'simpro',
+        'access_token'      => 'test-token',
+        'meta'              => ['company_url' => 'mycompany.simprocloud.com'],
+        'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/simpro/{$business->uuid}", [
@@ -35,8 +39,12 @@ test('simpro webhook queues job when status is Complete', function () {
 test('simpro webhook ignores non-Complete statuses', function () {
     Queue::fake();
 
-    $business = Business::factory()->create([
-        'simpro_auto_send_reviews' => true,
+    $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'       => $business->id,
+        'provider'          => 'simpro',
+        'access_token'      => 'test-token',
+        'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/simpro/{$business->uuid}", [
@@ -79,8 +87,12 @@ test('simpro webhook returns 404 for unknown business uuid', function () {
 test('simpro webhook skips queuing when auto send is disabled', function () {
     Queue::fake();
 
-    $business = Business::factory()->create([
-        'simpro_auto_send_reviews' => false,
+    $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'       => $business->id,
+        'provider'          => 'simpro',
+        'access_token'      => 'test-token',
+        'auto_send_reviews' => false,
     ]);
 
     $response = $this->postJson("/webhooks/simpro/{$business->uuid}", [
@@ -99,8 +111,12 @@ test('simpro webhook skips queuing when auto send is disabled', function () {
 test('simpro webhook returns 400 when job id is missing', function () {
     Queue::fake();
 
-    $business = Business::factory()->create([
-        'simpro_auto_send_reviews' => true,
+    $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'       => $business->id,
+        'provider'          => 'simpro',
+        'access_token'      => 'test-token',
+        'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/simpro/{$business->uuid}", [
@@ -126,10 +142,13 @@ test('simpro connect redirects unauthenticated users to login', function () {
 
 test('integrations page includes simpro props', function () {
     $user     = User::factory()->create();
-    $business = Business::factory()->create([
-        'user_id'              => $user->id,
-        'simpro_access_token'  => 'test-token',
-        'simpro_auto_send_reviews' => false,
+    $business = Business::factory()->create(['user_id' => $user->id]);
+    BusinessIntegration::create([
+        'business_id'       => $business->id,
+        'provider'          => 'simpro',
+        'access_token'      => 'test-token',
+        'meta'              => ['company_url' => 'mycompany.simprocloud.com'],
+        'auto_send_reviews' => false,
     ]);
 
     $this->actingAs($user)

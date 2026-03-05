@@ -2,6 +2,7 @@
 
 use App\Jobs\ProcessServiceM8JobCompletion;
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use App\Models\User;
 use Illuminate\Support\Facades\Queue;
 
@@ -9,6 +10,12 @@ test('servicem8 webhook queues job for known business on job completion', functi
     Queue::fake();
 
     $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'       => $business->id,
+        'provider'          => 'servicem8',
+        'access_token'      => 'test-token',
+        'auto_send_reviews' => true,
+    ]);
 
     $response = $this->postJson("/webhooks/servicem8/{$business->uuid}", [
         'entry_point' => 'JobCompletion',
@@ -26,6 +33,12 @@ test('servicem8 webhook ignores non-completion events', function () {
     Queue::fake();
 
     $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'       => $business->id,
+        'provider'          => 'servicem8',
+        'access_token'      => 'test-token',
+        'auto_send_reviews' => true,
+    ]);
 
     $response = $this->postJson("/webhooks/servicem8/{$business->uuid}", [
         'entry_point' => 'JobCreation',
@@ -49,8 +62,12 @@ test('servicem8 webhook returns 404 for unknown business uuid', function () {
 test('servicem8 webhook skips queuing when auto send is disabled', function () {
     Queue::fake();
 
-    $business = Business::factory()->create([
-        'servicem8_auto_send_reviews' => false,
+    $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'       => $business->id,
+        'provider'          => 'servicem8',
+        'access_token'      => 'test-token',
+        'auto_send_reviews' => false,
     ]);
 
     $response = $this->postJson("/webhooks/servicem8/{$business->uuid}", [
@@ -67,6 +84,12 @@ test('servicem8 webhook returns 400 when object_uuid is missing', function () {
     Queue::fake();
 
     $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'       => $business->id,
+        'provider'          => 'servicem8',
+        'access_token'      => 'test-token',
+        'auto_send_reviews' => true,
+    ]);
 
     $response = $this->postJson("/webhooks/servicem8/{$business->uuid}", [
         'entry_point' => 'JobCompletion',
@@ -98,9 +121,11 @@ test('servicem8 integrations settings page renders for authenticated user', func
 
 test('servicem8 integrations page shows connected status when token is present', function () {
     $user     = User::factory()->create();
-    $business = Business::factory()->create([
-        'user_id'                => $user->id,
-        'servicem8_access_token' => 'test-token',
+    $business = Business::factory()->create(['user_id' => $user->id]);
+    BusinessIntegration::create([
+        'business_id'  => $business->id,
+        'provider'     => 'servicem8',
+        'access_token' => 'test-token',
     ]);
 
     $this->actingAs($user)

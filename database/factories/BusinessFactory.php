@@ -25,7 +25,6 @@ class BusinessFactory extends Factory
             'owner_name' => $this->faker->name(),
             'phone' => $this->faker->phoneNumber(),
             'onboarding_completed_at' => null,
-            'servicem8_auto_send_reviews' => true,
         ];
     }
 

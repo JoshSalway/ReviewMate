@@ -2,6 +2,7 @@
 
 use App\Jobs\ProcessXeroInvoicePaid;
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use App\Models\Customer;
 use App\Models\ReviewRequest;
 use App\Services\XeroService;
@@ -16,7 +17,15 @@ use Illuminate\Support\Facades\Queue;
 test('xero webhook queues job for paid invoice UPDATE event', function () {
     Queue::fake();
 
-    $business = Business::factory()->create(['xero_auto_send_reviews' => true]);
+    $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'       => $business->id,
+        'provider'          => 'xero',
+        'access_token'      => 'test-token',
+        'meta'              => ['tenant_id' => 'test-tenant'],
+        'auto_send_reviews' => true,
+    ]);
+
     $webhookKey = 'test-webhook-key';
     config(['services.xero.webhook_key' => $webhookKey]);
 
@@ -52,7 +61,15 @@ test('xero webhook rejects invalid signature', function () {
 test('xero webhook skips dispatching when auto send is disabled', function () {
     Queue::fake();
 
-    $business = Business::factory()->create(['xero_auto_send_reviews' => false]);
+    $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'       => $business->id,
+        'provider'          => 'xero',
+        'access_token'      => 'test-token',
+        'meta'              => ['tenant_id' => 'test-tenant'],
+        'auto_send_reviews' => false,
+    ]);
+
     $webhookKey = 'test-key-2';
     config(['services.xero.webhook_key' => $webhookKey]);
 
@@ -74,7 +91,15 @@ test('xero webhook skips dispatching when auto send is disabled', function () {
 test('xero webhook ignores non-UPDATE events', function () {
     Queue::fake();
 
-    $business = Business::factory()->create(['xero_auto_send_reviews' => true]);
+    $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'       => $business->id,
+        'provider'          => 'xero',
+        'access_token'      => 'test-token',
+        'meta'              => ['tenant_id' => 'test-tenant'],
+        'auto_send_reviews' => true,
+    ]);
+
     $webhookKey = 'test-key-3';
     config(['services.xero.webhook_key' => $webhookKey]);
 
@@ -113,6 +138,12 @@ test('ProcessXeroInvoicePaid creates customer and queues email when invoice is P
     Mail::fake();
 
     $business = Business::factory()->onboarded()->create();
+    BusinessIntegration::create([
+        'business_id'  => $business->id,
+        'provider'     => 'xero',
+        'access_token' => 'test-token',
+        'meta'         => ['tenant_id' => 'test-tenant'],
+    ]);
 
     Http::fake([
         '*/Invoices/*' => Http::response([
@@ -154,6 +185,12 @@ test('ProcessXeroInvoicePaid skips non-PAID invoices', function () {
     Mail::fake();
 
     $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'  => $business->id,
+        'provider'     => 'xero',
+        'access_token' => 'test-token',
+        'meta'         => ['tenant_id' => 'test-tenant'],
+    ]);
 
     Http::fake([
         '*/Invoices/*' => Http::response([
@@ -176,6 +213,13 @@ test('ProcessXeroInvoicePaid skips customer with recent review request', functio
     Mail::fake();
 
     $business = Business::factory()->onboarded()->create();
+    BusinessIntegration::create([
+        'business_id'  => $business->id,
+        'provider'     => 'xero',
+        'access_token' => 'test-token',
+        'meta'         => ['tenant_id' => 'test-tenant'],
+    ]);
+
     $customer = Customer::factory()->create([
         'business_id' => $business->id,
         'email' => 'repeat@example.com',
@@ -208,7 +252,6 @@ test('ProcessXeroInvoicePaid skips customer with recent review request', functio
     $job = new \App\Jobs\ProcessXeroInvoicePaid($business, 'inv-003');
     $job->handle();
 
-    // Only the original request should exist, no new one
     $this->assertDatabaseCount('review_requests', 1);
     Mail::assertNothingQueued();
 });
@@ -217,6 +260,12 @@ test('ProcessXeroInvoicePaid skips contact with no email and no phone', function
     Mail::fake();
 
     $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'  => $business->id,
+        'provider'     => 'xero',
+        'access_token' => 'test-token',
+        'meta'         => ['tenant_id' => 'test-tenant'],
+    ]);
 
     Http::fake([
         '*/Invoices/*' => Http::response([
@@ -248,10 +297,7 @@ test('ProcessXeroInvoicePaid skips contact with no email and no phone', function
 // ---------------------------------------------------------------------------
 
 test('XeroService isConnected returns false when tokens are missing', function () {
-    $business = Business::factory()->make([
-        'xero_access_token' => null,
-        'xero_tenant_id' => null,
-    ]);
+    $business = Business::factory()->create();
 
     $service = new XeroService($business);
 
@@ -259,9 +305,12 @@ test('XeroService isConnected returns false when tokens are missing', function (
 });
 
 test('XeroService isConnected returns true when tokens are present', function () {
-    $business = Business::factory()->make([
-        'xero_access_token' => 'some-token',
-        'xero_tenant_id' => 'some-tenant-id',
+    $business = Business::factory()->create();
+    BusinessIntegration::create([
+        'business_id'  => $business->id,
+        'provider'     => 'xero',
+        'access_token' => 'some-token',
+        'meta'         => ['tenant_id' => 'some-tenant-id'],
     ]);
 
     $service = new XeroService($business);

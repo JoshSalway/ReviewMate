@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Integrations;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessXeroInvoicePaid;
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use App\Services\XeroService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,13 +15,10 @@ class XeroController extends Controller
 {
     public function connect(Request $request)
     {
-        $business = Auth::user()->business;
         $state = Str::random(40);
         session(['xero_oauth_state' => $state]);
 
-        $service = new XeroService($business);
-
-        return redirect($service->getAuthorizationUrl($state));
+        return redirect((new XeroService(Auth::user()->currentBusiness()))->getAuthorizationUrl($state));
     }
 
     public function callback(Request $request)
@@ -29,58 +27,53 @@ class XeroController extends Controller
             abort(403, 'Invalid OAuth state');
         }
 
-        $business = Auth::user()->business;
-        $service = new XeroService($business);
-        $tokens = $service->exchangeCodeForToken($request->code);
+        $business = Auth::user()->currentBusiness();
+        $service  = new XeroService($business);
+        $tokens   = $service->exchangeCodeForToken($request->code);
 
-        $business->update([
-            'xero_access_token' => $tokens['access_token'],
-            'xero_refresh_token' => $tokens['refresh_token'],
-            'xero_token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 1800),
-        ]);
+        BusinessIntegration::updateOrCreate(
+            ['business_id' => $business->id, 'provider' => 'xero'],
+            [
+                'access_token'     => $tokens['access_token'],
+                'refresh_token'    => $tokens['refresh_token'],
+                'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 1800),
+            ]
+        );
 
-        // Fetch tenant ID (Xero organisation) — take first
-        $tempService = new XeroService($business->fresh());
-        $tenants = $tempService->getTenants();
+        // Reload so XeroService can use the new token, then fetch tenant ID
+        $business->load('integrations');
+        $tenants  = (new XeroService($business))->getTenants();
         $tenantId = $tenants[0]['tenantId'] ?? null;
 
-        $business->update(['xero_tenant_id' => $tenantId]);
+        $business->integration('xero')?->mergeMeta(['tenant_id' => $tenantId]);
 
         return redirect()->route('settings.integrations')->with('success', 'Xero connected successfully!');
     }
 
     public function disconnect()
     {
-        Auth::user()->business->update([
-            'xero_access_token' => null,
-            'xero_refresh_token' => null,
-            'xero_token_expires_at' => null,
-            'xero_tenant_id' => null,
-        ]);
+        Auth::user()->currentBusiness()->integrations()->where('provider', 'xero')->delete();
 
         return redirect()->route('settings.integrations')->with('success', 'Xero disconnected.');
     }
 
     public function webhook(Request $request, Business $business)
     {
-        // Xero webhooks use HMAC-SHA256 signature verification
-        $payload = $request->getContent();
+        $payload   = $request->getContent();
         $signature = $request->header('x-xero-signature');
-        $expected = base64_encode(hash_hmac('sha256', $payload, config('services.xero.webhook_key'), true));
+        $expected  = base64_encode(hash_hmac('sha256', $payload, config('services.xero.webhook_key'), true));
 
         if (! hash_equals($expected, $signature ?? '')) {
             return response()->json(['status' => 'invalid signature'], 401);
         }
 
-        $events = $request->input('events', []);
-
-        foreach ($events as $event) {
+        foreach ($request->input('events', []) as $event) {
             if (($event['eventType'] ?? '') === 'UPDATE' && ($event['resourceUrl'] ?? '') !== '') {
-                // Extract invoice ID from resource URL
                 preg_match('/Invoices\/([^\/\?]+)/', $event['resourceUrl'], $matches);
-                $invoiceId = $matches[1] ?? null;
+                $invoiceId   = $matches[1] ?? null;
+                $integration = $business->integration('xero');
 
-                if ($invoiceId && $business->xero_auto_send_reviews) {
+                if ($invoiceId && $integration?->auto_send_reviews) {
                     ProcessXeroInvoicePaid::dispatch($business, $invoiceId);
                 }
             }
@@ -91,8 +84,8 @@ class XeroController extends Controller
 
     public function toggleAutoSend()
     {
-        $business = Auth::user()->business;
-        $business->update(['xero_auto_send_reviews' => ! $business->xero_auto_send_reviews]);
+        $integration = Auth::user()->currentBusiness()->integration('xero');
+        $integration?->update(['auto_send_reviews' => ! $integration->auto_send_reviews]);
 
         return back()->with('success', 'Auto-send setting updated.');
     }

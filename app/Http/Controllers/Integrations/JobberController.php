@@ -41,7 +41,7 @@ class JobberController extends Controller
 
     public function disconnect(Request $request): RedirectResponse
     {
-        Auth::user()->currentBusiness()->jobberIntegration?->delete();
+        Auth::user()->currentBusiness()->integrations()->where('provider', 'jobber')->delete();
 
         return redirect()->route('settings.integrations')
             ->with('success', 'Jobber disconnected.');
@@ -49,7 +49,7 @@ class JobberController extends Controller
 
     public function toggleAutoSend(Request $request): RedirectResponse
     {
-        $integration = Auth::user()->currentBusiness()->jobberIntegration;
+        $integration = Auth::user()->currentBusiness()->integration('jobber');
 
         $integration?->update([
             'auto_send_reviews' => ! $integration->auto_send_reviews,
@@ -75,7 +75,7 @@ class JobberController extends Controller
             return response()->json(['status' => 'ignored']);
         }
 
-        $integration = $business->jobberIntegration;
+        $integration = $business->integration('jobber');
 
         if ($integration?->auto_send_reviews) {
             ProcessJobberJobCompletion::dispatch($business, $jobId);

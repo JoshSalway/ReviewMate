@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Integrations;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessSimproJobComplete;
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use App\Services\SimproService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -14,9 +15,6 @@ use Illuminate\Support\Str;
 
 class SimproController extends Controller
 {
-    /**
-     * Step 1: Validate the company URL and redirect to Simpro OAuth.
-     */
     public function connect(Request $request): RedirectResponse
     {
         $request->validate([
@@ -24,7 +22,6 @@ class SimproController extends Controller
         ]);
 
         $companyUrl = $request->company_url;
-        $business   = Auth::user()->currentBusiness();
         $state      = Str::random(40);
 
         session([
@@ -32,14 +29,11 @@ class SimproController extends Controller
             'simpro_oauth_company_url' => $companyUrl,
         ]);
 
-        $service = new SimproService($business);
-
-        return redirect($service->getAuthorizationUrl($state, $companyUrl));
+        return redirect(
+            (new SimproService(Auth::user()->currentBusiness()))->getAuthorizationUrl($state, $companyUrl)
+        );
     }
 
-    /**
-     * Step 2: Handle the OAuth callback and store tokens.
-     */
     public function callback(Request $request): RedirectResponse
     {
         if ($request->state !== session('simpro_oauth_state')) {
@@ -53,54 +47,38 @@ class SimproController extends Controller
         }
 
         $business = Auth::user()->currentBusiness();
-        $service  = new SimproService($business);
-        $tokens   = $service->exchangeCodeForToken($request->code, $companyUrl);
+        $tokens   = (new SimproService($business))->exchangeCodeForToken($request->code, $companyUrl);
 
-        $business->update([
-            'simpro_access_token'     => $tokens['access_token'] ?? null,
-            'simpro_refresh_token'    => $tokens['refresh_token'] ?? null,
-            'simpro_token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 3600),
-            'simpro_company_url'      => $companyUrl,
-        ]);
+        BusinessIntegration::updateOrCreate(
+            ['business_id' => $business->id, 'provider' => 'simpro'],
+            [
+                'access_token'     => $tokens['access_token'] ?? null,
+                'refresh_token'    => $tokens['refresh_token'] ?? null,
+                'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 3600),
+                'meta'             => ['company_url' => $companyUrl],
+            ]
+        );
 
         return redirect()->route('settings.integrations')
             ->with('success', 'Simpro connected successfully!');
     }
 
-    /**
-     * Step 3: Disconnect (clear tokens).
-     */
     public function disconnect(): RedirectResponse
     {
-        Auth::user()->currentBusiness()->update([
-            'simpro_access_token'     => null,
-            'simpro_refresh_token'    => null,
-            'simpro_token_expires_at' => null,
-            'simpro_company_url'      => null,
-        ]);
+        Auth::user()->currentBusiness()->integrations()->where('provider', 'simpro')->delete();
 
         return redirect()->route('settings.integrations')
             ->with('success', 'Simpro disconnected.');
     }
 
-    /**
-     * Toggle auto-send setting.
-     */
     public function toggleAutoSend(): RedirectResponse
     {
-        $business = Auth::user()->currentBusiness();
-
-        $business->update([
-            'simpro_auto_send_reviews' => ! $business->simpro_auto_send_reviews,
-        ]);
+        $integration = Auth::user()->currentBusiness()->integration('simpro');
+        $integration?->update(['auto_send_reviews' => ! $integration->auto_send_reviews]);
 
         return back()->with('success', 'Auto-send setting updated.');
     }
 
-    /**
-     * Webhook endpoint — Simpro calls this when a job status changes.
-     * Each business has a unique URL identified by their UUID.
-     */
     public function webhook(Request $request, Business $business): JsonResponse
     {
         $payload = $request->all();
@@ -122,7 +100,9 @@ class SimproController extends Controller
             return response()->json(['status' => 'no job id'], 400);
         }
 
-        if ($business->simpro_auto_send_reviews) {
+        $integration = $business->integration('simpro');
+
+        if ($integration?->auto_send_reviews) {
             ProcessSimproJobComplete::dispatch($business, (int) $jobId);
 
             return response()->json(['status' => 'queued']);

@@ -33,8 +33,8 @@ class WidgetController extends Controller
         return response()->json([
             'business' => [
                 'name' => $business->name,
-                'rating' => (float) ($business->google_rating ?? $business->averageRating()),
-                'review_count' => $business->google_review_count ?? $business->reviews()->count(),
+                'rating' => (float) ($business->integration('google')?->getMeta('rating') ?? $business->averageRating()),
+                'review_count' => $business->integration('google')?->getMeta('review_count') ?? $business->reviews()->count(),
             ],
             'reviews' => $reviews,
             'powered_by_url' => 'https://reviewmate.app?ref=widget',

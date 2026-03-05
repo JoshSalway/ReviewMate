@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use Illuminate\Support\Facades\Http;
 
 class ServiceM8Service
@@ -12,6 +13,11 @@ class ServiceM8Service
     const TOKEN_URL = 'https://go.servicem8.com/oauth/access_token';
 
     public function __construct(protected Business $business) {}
+
+    protected function integration(): ?BusinessIntegration
+    {
+        return $this->business->integration('servicem8');
+    }
 
     public function getAuthorizationUrl(string $state): string
     {
@@ -39,30 +45,34 @@ class ServiceM8Service
 
     public function refreshToken(): void
     {
+        $integration = $this->integration();
+
         $response = Http::asForm()->post(self::TOKEN_URL, [
             'grant_type'    => 'refresh_token',
             'client_id'     => config('services.servicem8.client_id'),
             'client_secret' => config('services.servicem8.client_secret'),
-            'refresh_token' => $this->business->servicem8_refresh_token,
+            'refresh_token' => $integration?->refresh_token,
         ]);
 
         $data = $response->json() ?? [];
 
-        $this->business->update([
-            'servicem8_access_token'     => $data['access_token'],
-            'servicem8_refresh_token'    => $data['refresh_token'] ?? $this->business->servicem8_refresh_token,
-            'servicem8_token_expires_at' => now()->addSeconds($data['expires_in'] ?? 3600),
+        $integration?->update([
+            'access_token'     => $data['access_token'],
+            'refresh_token'    => $data['refresh_token'] ?? $integration->refresh_token,
+            'token_expires_at' => now()->addSeconds($data['expires_in'] ?? 3600),
         ]);
     }
 
     protected function request(string $method, string $path, array $data = []): array
     {
-        if ($this->business->servicem8_token_expires_at?->isPast()) {
+        $integration = $this->integration();
+
+        if ($integration?->token_expires_at?->isPast()) {
             $this->refreshToken();
-            $this->business->refresh();
+            $this->business->load('integrations');
         }
 
-        $response = Http::withToken($this->business->servicem8_access_token)
+        $response = Http::withToken($this->integration()?->access_token)
             ->$method(self::API_BASE . $path, $data);
 
         return $response->json() ?? [];
@@ -87,6 +97,6 @@ class ServiceM8Service
 
     public function isConnected(): bool
     {
-        return filled($this->business->servicem8_access_token);
+        return $this->integration()?->isConnected() ?? false;
     }
 }

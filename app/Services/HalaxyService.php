@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Http;
 
@@ -12,9 +13,14 @@ class HalaxyService
 
     public function __construct(protected Business $business) {}
 
+    protected function integration(): ?BusinessIntegration
+    {
+        return $this->business->integration('halaxy');
+    }
+
     protected function request(string $path, array $query = []): array
     {
-        $response = Http::withToken($this->business->halaxy_api_key)
+        $response = Http::withToken($this->integration()?->api_key)
             ->withHeaders(['Accept' => 'application/json'])
             ->get(self::API_BASE . $path, $query);
 

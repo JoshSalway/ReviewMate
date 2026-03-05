@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use App\Models\User;
 use App\Services\GoogleBusinessProfileService;
 
@@ -88,13 +89,14 @@ test('connect-google passes isGoogleConnected false when not connected', functio
 });
 
 test('connect-google passes discovered locations when google is connected', function () {
-    Business::factory()->create([
-        'user_id' => $this->user->id,
-        'google_access_token' => 'fake-token',
-        'google_refresh_token' => 'fake-refresh',
-        'google_token_expires_at' => now()->addHour(),
-        'google_account_id' => 'accounts/123',
-        'google_location_id' => 'accounts/123/locations/456',
+    $business = Business::factory()->create(['user_id' => $this->user->id]);
+    BusinessIntegration::create([
+        'business_id'      => $business->id,
+        'provider'         => 'google',
+        'access_token'     => 'fake-token',
+        'refresh_token'    => 'fake-refresh',
+        'token_expires_at' => now()->addHour(),
+        'meta'             => ['account_id' => 'accounts/123', 'location_id' => 'accounts/123/locations/456'],
     ]);
 
     $service = Mockery::mock(GoogleBusinessProfileService::class);
@@ -113,13 +115,14 @@ test('connect-google passes discovered locations when google is connected', func
 });
 
 test('connect-google falls back to empty locations when google api fails', function () {
-    Business::factory()->create([
-        'user_id' => $this->user->id,
-        'google_access_token' => 'fake-token',
-        'google_refresh_token' => 'fake-refresh',
-        'google_token_expires_at' => now()->addHour(),
-        'google_account_id' => 'accounts/123',
-        'google_location_id' => 'accounts/123/locations/456',
+    $business = Business::factory()->create(['user_id' => $this->user->id]);
+    BusinessIntegration::create([
+        'business_id'      => $business->id,
+        'provider'         => 'google',
+        'access_token'     => 'fake-token',
+        'refresh_token'    => 'fake-refresh',
+        'token_expires_at' => now()->addHour(),
+        'meta'             => ['account_id' => 'accounts/123', 'location_id' => 'accounts/123/locations/456'],
     ]);
 
     $service = Mockery::mock(GoogleBusinessProfileService::class);

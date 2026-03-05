@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use Illuminate\Support\Facades\Http;
 
 class TimelyService
@@ -12,6 +13,11 @@ class TimelyService
     const API_BASE  = 'https://api.gettimely.com';
 
     public function __construct(protected Business $business) {}
+
+    protected function integration(): ?BusinessIntegration
+    {
+        return $this->business->integration('timely');
+    }
 
     public function getAuthorizationUrl(string $state): string
     {
@@ -39,7 +45,7 @@ class TimelyService
 
     public function getClient(int $accountId, int $clientId): ?array
     {
-        $response = Http::withToken($this->business->timely_access_token)
+        $response = Http::withToken($this->integration()?->access_token)
             ->get(self::API_BASE . "/{$accountId}/clients/{$clientId}");
 
         return $response->json() ?? null;
@@ -47,6 +53,6 @@ class TimelyService
 
     public function isConnected(): bool
     {
-        return filled($this->business->timely_access_token);
+        return $this->integration()?->isConnected() ?? false;
     }
 }

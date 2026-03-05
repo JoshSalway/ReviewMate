@@ -24,11 +24,13 @@ class PollClinikoAppointments implements ShouldQueue
 
     public function handle(): void
     {
-        if (! $this->business->cliniko_api_key || ! $this->business->cliniko_auto_send_reviews) {
+        $integration = $this->business->integration('cliniko');
+
+        if (! $integration?->api_key || ! $integration?->auto_send_reviews) {
             return;
         }
 
-        $since   = $this->business->cliniko_last_polled_at ?? now()->subDay();
+        $since   = $integration->last_polled_at ?? now()->subDay();
         $service = new ClinikoService($this->business);
 
         $appointments = $service->getCompletedAppointmentsSince($since);
@@ -100,6 +102,6 @@ class PollClinikoAppointments implements ShouldQueue
             }
         }
 
-        $this->business->update(['cliniko_last_polled_at' => now()]);
+        $integration->update(['last_polled_at' => now()]);
     }
 }

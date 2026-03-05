@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use App\Services\GooglePlacesService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -28,10 +29,13 @@ class RefreshGoogleStats implements ShouldQueue
         $stats = $service->getReviewStats($placeId);
 
         if ($stats) {
-            $this->business->update([
-                'google_rating' => $stats['rating'],
-                'google_review_count' => $stats['review_count'],
-                'google_stats_updated_at' => now(),
+            $integration = BusinessIntegration::firstOrCreate(
+                ['business_id' => $this->business->id, 'provider' => 'google']
+            );
+            $integration->mergeMeta([
+                'rating'           => $stats['rating'],
+                'review_count'     => $stats['review_count'],
+                'stats_updated_at' => now()->toDateTimeString(),
             ]);
         }
     }

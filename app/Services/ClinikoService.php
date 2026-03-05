@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\Http;
 
@@ -13,15 +14,20 @@ class ClinikoService
 
     public function __construct(protected Business $business) {}
 
+    protected function integration(): ?BusinessIntegration
+    {
+        return $this->business->integration('cliniko');
+    }
+
     protected function baseUrl(): string
     {
-        $shard = $this->business->cliniko_shard ?? 'au1';
+        $shard = $this->integration()?->getMeta('shard') ?? 'au1';
         return "https://api.{$shard}.cliniko.com/v1";
     }
 
     protected function request(string $path, array $query = []): array
     {
-        $response = Http::withBasicAuth($this->business->cliniko_api_key, '')
+        $response = Http::withBasicAuth($this->integration()?->api_key, '')
             ->withHeaders([
                 'User-Agent' => 'ReviewMate (reviewmate.com.au)',
                 'Accept'     => 'application/json',

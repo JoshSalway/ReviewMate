@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use App\Models\Review;
 use App\Models\User;
 
@@ -14,8 +15,11 @@ beforeEach(function () {
         'widget_min_rating' => 4,
         'widget_max_reviews' => 6,
         'widget_theme' => 'light',
-        'google_rating' => 4.8,
-        'google_review_count' => 42,
+    ]);
+    BusinessIntegration::create([
+        'business_id' => $this->business->id,
+        'provider'    => 'google',
+        'meta'        => ['rating' => 4.8, 'review_count' => 42],
     ]);
 });
 

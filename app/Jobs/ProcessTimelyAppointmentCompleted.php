@@ -33,7 +33,7 @@ class ProcessTimelyAppointmentCompleted implements ShouldQueue
         if (! $client) {
             // Fall back to fetching from API
             $clientId  = $this->appointmentData['client_id'] ?? null;
-            $accountId = $this->business->timely_account_id;
+            $accountId = $this->business->integration('timely')?->getMeta('account_id');
 
             if (! $clientId || ! $accountId) {
                 Log::info('Timely: missing client_id or account_id in webhook payload');

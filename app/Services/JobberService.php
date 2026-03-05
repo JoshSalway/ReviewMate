@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Business;
-use App\Models\JobberIntegration;
+use App\Models\BusinessIntegration;
 use Illuminate\Support\Facades\Http;
 
 class JobberService
@@ -14,9 +14,9 @@ class JobberService
 
     public function __construct(protected Business $business) {}
 
-    protected function integration(): ?JobberIntegration
+    protected function integration(): ?BusinessIntegration
     {
-        return $this->business->jobberIntegration;
+        return $this->business->integration('jobber');
     }
 
     public function getAuthorizationUrl(string $state): string
@@ -42,10 +42,10 @@ class JobberService
         return $response->json() ?? [];
     }
 
-    public function storeTokens(array $tokens): JobberIntegration
+    public function storeTokens(array $tokens): BusinessIntegration
     {
-        return JobberIntegration::updateOrCreate(
-            ['business_id' => $this->business->id],
+        return BusinessIntegration::updateOrCreate(
+            ['business_id' => $this->business->id, 'provider' => 'jobber'],
             [
                 'access_token'     => $tokens['access_token'] ?? null,
                 'refresh_token'    => $tokens['refresh_token'] ?? null,
@@ -80,7 +80,7 @@ class JobberService
 
         if ($integration?->token_expires_at?->isPast()) {
             $this->refreshToken();
-            $this->business->load('jobberIntegration');
+            $this->business->load('integrations');
             $integration = $this->integration();
         }
 

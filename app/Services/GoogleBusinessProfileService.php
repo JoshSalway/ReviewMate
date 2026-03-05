@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use Illuminate\Support\Facades\Http;
 
 class GoogleBusinessProfileService
@@ -14,7 +15,7 @@ class GoogleBusinessProfileService
     public function fetchReviews(Business $business, int $pageSize = 50): array
     {
         $token = $this->getAccessToken($business);
-        $locationId = $business->google_location_id;
+        $locationId = $business->integration('google')?->getMeta('location_id');
 
         $response = Http::withToken($token)
             ->get("{$this->REVIEWS_BASE_URL}/{$locationId}/reviews", [
@@ -54,7 +55,7 @@ class GoogleBusinessProfileService
     public function listLocationsWithPlaceIds(Business $business): array
     {
         $token = $this->getAccessToken($business);
-        $accountName = $business->google_account_id;
+        $accountName = $business->integration('google')?->getMeta('account_id');
 
         if (! $accountName) {
             return [];
@@ -107,8 +108,10 @@ class GoogleBusinessProfileService
                 'readMask' => 'name,title',
             ]);
 
+        $integration = $business->integration('google');
+
         if ($locationsResponse->failed()) {
-            $business->update(['google_account_id' => $accountName]);
+            $integration?->mergeMeta(['account_id' => $accountName]);
 
             return;
         }
@@ -116,36 +119,40 @@ class GoogleBusinessProfileService
         $locations = $locationsResponse->json('locations', []);
         $locationName = $locations[0]['name'] ?? null;
 
-        $business->update([
-            'google_account_id' => $accountName,
-            'google_location_id' => $locationName,
+        $integration?->mergeMeta([
+            'account_id'  => $accountName,
+            'location_id' => $locationName,
         ]);
     }
 
     private function getAccessToken(Business $business): string
     {
-        if ($business->google_token_expires_at && now()->gte($business->google_token_expires_at)) {
+        $integration = $business->integration('google');
+
+        if ($integration?->token_expires_at && now()->gte($integration->token_expires_at)) {
             $this->refreshToken($business);
-            $business->refresh();
+            $business->load('integrations');
         }
 
-        return $business->google_access_token;
+        return $business->integration('google')?->access_token;
     }
 
     private function refreshToken(Business $business): void
     {
+        $integration = $business->integration('google');
+
         $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
             'client_id' => config('services.google.client_id'),
             'client_secret' => config('services.google.client_secret'),
-            'refresh_token' => $business->google_refresh_token,
+            'refresh_token' => $integration?->refresh_token,
             'grant_type' => 'refresh_token',
         ])->throw();
 
         $data = $response->json();
 
-        $business->update([
-            'google_access_token' => $data['access_token'],
-            'google_token_expires_at' => now()->addSeconds($data['expires_in'] - 60)->toDateTimeString(),
+        $integration?->update([
+            'access_token'     => $data['access_token'],
+            'token_expires_at' => now()->addSeconds($data['expires_in'] - 60)->toDateTimeString(),
         ]);
     }
 }

@@ -95,9 +95,9 @@ class DashboardController extends Controller
             'recentReviews' => $recentReviews,
             'chartData' => $chartData,
             'hasData' => $business->reviews()->exists() || $business->reviewRequests()->exists(),
-            'googleRating' => $business->google_rating ? (float) $business->google_rating : null,
-            'googleReviewCount' => $business->google_review_count,
-            'googleStatsUpdatedAt' => $business->google_stats_updated_at?->diffForHumans(),
+            'googleRating' => ($r = $business->integration('google')?->getMeta('rating')) ? (float) $r : null,
+            'googleReviewCount' => $business->integration('google')?->getMeta('review_count'),
+            'googleStatsUpdatedAt' => ($t = $business->integration('google')?->getMeta('stats_updated_at')) ? \Carbon\Carbon::parse($t)->diffForHumans() : null,
             'unverifiedClaims' => $unverifiedClaims,
         ]);
     }

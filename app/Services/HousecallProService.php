@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\Business;
-use App\Models\HousecallProIntegration;
+use App\Models\BusinessIntegration;
 use Illuminate\Support\Facades\Http;
 
 class HousecallProService
@@ -14,9 +14,9 @@ class HousecallProService
 
     public function __construct(protected Business $business) {}
 
-    protected function integration(): ?HousecallProIntegration
+    protected function integration(): ?BusinessIntegration
     {
-        return $this->business->housecallProIntegration;
+        return $this->business->integration('housecallpro');
     }
 
     public function getAuthorizationUrl(string $state): string
@@ -42,10 +42,10 @@ class HousecallProService
         return $response->json() ?? [];
     }
 
-    public function storeTokens(array $tokens): HousecallProIntegration
+    public function storeTokens(array $tokens): BusinessIntegration
     {
-        return HousecallProIntegration::updateOrCreate(
-            ['business_id' => $this->business->id],
+        return BusinessIntegration::updateOrCreate(
+            ['business_id' => $this->business->id, 'provider' => 'housecallpro'],
             [
                 'access_token'     => $tokens['access_token'] ?? null,
                 'refresh_token'    => $tokens['refresh_token'] ?? null,
@@ -80,7 +80,7 @@ class HousecallProService
 
         if ($integration?->token_expires_at?->isPast()) {
             $this->refreshToken();
-            $this->business->load('housecallProIntegration');
+            $this->business->load('integrations');
             $integration = $this->integration();
         }
 

@@ -41,7 +41,7 @@ class HousecallProController extends Controller
 
     public function disconnect(Request $request): RedirectResponse
     {
-        Auth::user()->currentBusiness()->housecallProIntegration?->delete();
+        Auth::user()->currentBusiness()->integrations()->where('provider', 'housecallpro')->delete();
 
         return redirect()->route('settings.integrations')
             ->with('success', 'Housecall Pro disconnected.');
@@ -49,7 +49,7 @@ class HousecallProController extends Controller
 
     public function toggleAutoSend(Request $request): RedirectResponse
     {
-        $integration = Auth::user()->currentBusiness()->housecallProIntegration;
+        $integration = Auth::user()->currentBusiness()->integration('housecallpro');
 
         $integration?->update([
             'auto_send_reviews' => ! $integration->auto_send_reviews,
@@ -77,7 +77,7 @@ class HousecallProController extends Controller
             return response()->json(['status' => 'no job data'], 400);
         }
 
-        $integration = $business->housecallProIntegration;
+        $integration = $business->integration('housecallpro');
 
         if ($integration?->auto_send_reviews) {
             ProcessHousecallProJobCompletion::dispatch($business, $jobData);

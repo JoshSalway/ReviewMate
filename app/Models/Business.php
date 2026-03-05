@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 class Business extends Model
@@ -22,42 +21,6 @@ class Business extends Model
         'owner_name',
         'phone',
         'onboarding_completed_at',
-        'google_access_token',
-        'google_refresh_token',
-        'google_token_expires_at',
-        'google_account_id',
-        'google_location_id',
-        'servicem8_access_token',
-        'servicem8_refresh_token',
-        'servicem8_token_expires_at',
-        'servicem8_auto_send_reviews',
-        // Xero integration
-        'xero_access_token',
-        'xero_refresh_token',
-        'xero_token_expires_at',
-        'xero_tenant_id',
-        'xero_auto_send_reviews',
-        // Cliniko integration
-        'cliniko_api_key',
-        'cliniko_shard',
-        'cliniko_auto_send_reviews',
-        'cliniko_last_polled_at',
-        // Timely integration
-        'timely_access_token',
-        'timely_refresh_token',
-        'timely_token_expires_at',
-        'timely_account_id',
-        'timely_auto_send_reviews',
-        // Simpro integration
-        'simpro_access_token',
-        'simpro_refresh_token',
-        'simpro_token_expires_at',
-        'simpro_company_url',
-        'simpro_auto_send_reviews',
-        // Halaxy integration
-        'halaxy_api_key',
-        'halaxy_auto_send_reviews',
-        'halaxy_last_polled_at',
         // Follow-up settings
         'follow_up_enabled',
         'follow_up_days',
@@ -74,42 +37,12 @@ class Business extends Model
         'webhook_token',
         // Review platforms
         'facebook_page_url',
-        // Google Places stats cache
-        'google_rating',
-        'google_review_count',
-        'google_stats_updated_at',
     ];
 
     protected $casts = [
         'onboarding_completed_at' => 'datetime',
-        'google_access_token' => 'encrypted',
-        'google_refresh_token' => 'encrypted',
-        'servicem8_access_token' => 'encrypted',
-        'servicem8_refresh_token' => 'encrypted',
-        'servicem8_token_expires_at' => 'datetime',
-        'servicem8_auto_send_reviews' => 'boolean',
-        'xero_access_token' => 'encrypted',
-        'xero_refresh_token' => 'encrypted',
-        'xero_token_expires_at' => 'datetime',
-        'xero_auto_send_reviews' => 'boolean',
-        'cliniko_api_key' => 'encrypted',
-        'cliniko_auto_send_reviews' => 'boolean',
-        'cliniko_last_polled_at' => 'datetime',
-        'timely_access_token' => 'encrypted',
-        'timely_refresh_token' => 'encrypted',
-        'timely_token_expires_at' => 'datetime',
-        'timely_auto_send_reviews' => 'boolean',
-        'simpro_access_token' => 'encrypted',
-        'simpro_refresh_token' => 'encrypted',
-        'simpro_token_expires_at' => 'datetime',
-        'simpro_auto_send_reviews' => 'boolean',
-        'halaxy_api_key' => 'encrypted',
-        'halaxy_auto_send_reviews' => 'boolean',
-        'halaxy_last_polled_at' => 'datetime',
         'follow_up_enabled' => 'boolean',
         'widget_enabled' => 'boolean',
-        'google_rating' => 'decimal:2',
-        'google_stats_updated_at' => 'datetime',
     ];
 
     protected static function booted(): void
@@ -149,7 +82,8 @@ class Business extends Model
 
     public function isGoogleConnected(): bool
     {
-        return $this->google_access_token !== null && $this->google_location_id !== null;
+        $google = $this->integration('google');
+        return $google?->isConnected() && filled($google->getMeta('location_id'));
     }
 
     public function user(): BelongsTo
@@ -187,14 +121,18 @@ class Business extends Model
         return $this->hasMany(Referral::class, 'referrer_business_id');
     }
 
-    public function jobberIntegration(): HasOne
+    public function integrations(): HasMany
     {
-        return $this->hasOne(JobberIntegration::class);
+        return $this->hasMany(BusinessIntegration::class);
     }
 
-    public function housecallProIntegration(): HasOne
+    public function integration(string $provider): ?BusinessIntegration
     {
-        return $this->hasOne(HousecallProIntegration::class);
+        // Use already-loaded collection if available, otherwise query
+        if ($this->relationLoaded('integrations')) {
+            return $this->integrations->firstWhere('provider', $provider);
+        }
+        return $this->integrations()->where('provider', $provider)->first();
     }
 
     public function referralUrl(): string

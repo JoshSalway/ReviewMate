@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BusinessIntegration;
 use App\Services\GoogleBusinessProfileService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,11 +30,16 @@ class GoogleBusinessController extends Controller
 
         $googleUser = Socialite::driver('google')->user();
 
-        $business->update([
-            'google_access_token' => $googleUser->token,
-            'google_refresh_token' => $googleUser->refreshToken,
-            'google_token_expires_at' => now()->addSeconds($googleUser->expiresIn - 60)->toDateTimeString(),
-        ]);
+        BusinessIntegration::updateOrCreate(
+            ['business_id' => $business->id, 'provider' => 'google'],
+            [
+                'access_token'     => $googleUser->token,
+                'refresh_token'    => $googleUser->refreshToken,
+                'token_expires_at' => now()->addSeconds($googleUser->expiresIn - 60)->toDateTimeString(),
+            ]
+        );
+
+        $business->load('integrations');
 
         // Discover account and location IDs
         try {
@@ -55,13 +61,7 @@ class GoogleBusinessController extends Controller
         $business = $request->user()->currentBusiness();
 
         if ($business) {
-            $business->update([
-                'google_access_token' => null,
-                'google_refresh_token' => null,
-                'google_token_expires_at' => null,
-                'google_account_id' => null,
-                'google_location_id' => null,
-            ]);
+            $business->integrations()->where('provider', 'google')->delete();
         }
 
         return redirect()->route('settings.business')

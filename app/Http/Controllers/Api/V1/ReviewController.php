@@ -51,8 +51,8 @@ class ReviewController extends Controller
             'conversion_rate' => $conversionRate,
             'total_requests' => $totalRequests,
             'pending_replies' => $pendingReplies,
-            'google_rating' => $business->google_rating,
-            'google_review_count' => $business->google_review_count,
+            'google_rating' => $business->integration('google')?->getMeta('rating'),
+            'google_review_count' => $business->integration('google')?->getMeta('review_count'),
         ]);
     }
 }

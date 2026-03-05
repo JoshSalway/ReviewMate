@@ -2,6 +2,7 @@
 
 use App\Jobs\ProcessTimelyAppointmentCompleted;
 use App\Models\Business;
+use App\Models\BusinessIntegration;
 use App\Models\Customer;
 use App\Models\ReviewRequest;
 use App\Models\User;
@@ -20,9 +21,11 @@ beforeEach(function () {
 test('timely webhook queues job for appointment.completed event', function () {
     Queue::fake();
 
-    $this->business->update([
-        'timely_access_token'      => 'some-token',
-        'timely_auto_send_reviews' => true,
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'timely',
+        'access_token'      => 'some-token',
+        'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/timely/{$this->business->uuid}", [
@@ -37,9 +40,11 @@ test('timely webhook queues job for appointment.completed event', function () {
 test('timely webhook ignores non-completion events', function () {
     Queue::fake();
 
-    $this->business->update([
-        'timely_access_token'      => 'some-token',
-        'timely_auto_send_reviews' => true,
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'timely',
+        'access_token'      => 'some-token',
+        'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/timely/{$this->business->uuid}", [
@@ -54,9 +59,11 @@ test('timely webhook ignores non-completion events', function () {
 test('timely webhook ignores appointment.updated that is not completed status', function () {
     Queue::fake();
 
-    $this->business->update([
-        'timely_access_token'      => 'some-token',
-        'timely_auto_send_reviews' => true,
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'timely',
+        'access_token'      => 'some-token',
+        'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/timely/{$this->business->uuid}", [
@@ -71,9 +78,11 @@ test('timely webhook ignores appointment.updated that is not completed status', 
 test('timely webhook processes appointment.updated with completed status', function () {
     Queue::fake();
 
-    $this->business->update([
-        'timely_access_token'      => 'some-token',
-        'timely_auto_send_reviews' => true,
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'timely',
+        'access_token'      => 'some-token',
+        'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/timely/{$this->business->uuid}", [
@@ -88,9 +97,11 @@ test('timely webhook processes appointment.updated with completed status', funct
 test('timely webhook skips when auto_send is disabled', function () {
     Queue::fake();
 
-    $this->business->update([
-        'timely_access_token'      => 'some-token',
-        'timely_auto_send_reviews' => false,
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'timely',
+        'access_token'      => 'some-token',
+        'auto_send_reviews' => false,
     ]);
 
     $response = $this->postJson("/webhooks/timely/{$this->business->uuid}", [
@@ -107,9 +118,11 @@ test('timely webhook skips when auto_send is disabled', function () {
 test('job creates review request from embedded client data', function () {
     Mail::fake();
 
-    $this->business->update([
-        'timely_access_token' => 'some-token',
-        'timely_account_id'   => '999',
+    BusinessIntegration::create([
+        'business_id'  => $this->business->id,
+        'provider'     => 'timely',
+        'access_token' => 'some-token',
+        'meta'         => ['account_id' => '999'],
     ]);
 
     $job = new ProcessTimelyAppointmentCompleted($this->business, [
@@ -143,9 +156,11 @@ test('job fetches client from api when not embedded in payload', function () {
         ], 200),
     ]);
 
-    $this->business->update([
-        'timely_access_token' => 'some-token',
-        'timely_account_id'   => '999',
+    BusinessIntegration::create([
+        'business_id'  => $this->business->id,
+        'provider'     => 'timely',
+        'access_token' => 'some-token',
+        'meta'         => ['account_id' => '999'],
     ]);
 
     $job = new ProcessTimelyAppointmentCompleted($this->business, [
@@ -164,9 +179,11 @@ test('job fetches client from api when not embedded in payload', function () {
 test('job skips client already sent a review within 90 days', function () {
     Mail::fake();
 
-    $this->business->update([
-        'timely_access_token' => 'some-token',
-        'timely_account_id'   => '999',
+    BusinessIntegration::create([
+        'business_id'  => $this->business->id,
+        'provider'     => 'timely',
+        'access_token' => 'some-token',
+        'meta'         => ['account_id' => '999'],
     ]);
 
     $customer = Customer::factory()->create([
@@ -199,9 +216,11 @@ test('job skips client already sent a review within 90 days', function () {
 test('job skips when client has no contact details', function () {
     Mail::fake();
 
-    $this->business->update([
-        'timely_access_token' => 'some-token',
-        'timely_account_id'   => '999',
+    BusinessIntegration::create([
+        'business_id'  => $this->business->id,
+        'provider'     => 'timely',
+        'access_token' => 'some-token',
+        'meta'         => ['account_id' => '999'],
     ]);
 
     $job = new ProcessTimelyAppointmentCompleted($this->business, [
@@ -223,9 +242,11 @@ test('job skips when client has no contact details', function () {
 test('job skips when no client_id and no account_id configured', function () {
     Mail::fake();
 
-    $this->business->update([
-        'timely_access_token' => 'some-token',
-        'timely_account_id'   => null,
+    BusinessIntegration::create([
+        'business_id'  => $this->business->id,
+        'provider'     => 'timely',
+        'access_token' => 'some-token',
+        'meta'         => ['account_id' => null],
     ]);
 
     $job = new ProcessTimelyAppointmentCompleted($this->business, [
@@ -242,42 +263,48 @@ test('job skips when no client_id and no account_id configured', function () {
 // --- Timely connect/disconnect ---
 
 test('timely disconnect clears all token fields', function () {
-    $this->business->update([
-        'timely_access_token'     => 'token',
-        'timely_refresh_token'    => 'refresh',
-        'timely_token_expires_at' => now()->addHour(),
-        'timely_account_id'       => '123',
+    BusinessIntegration::create([
+        'business_id'      => $this->business->id,
+        'provider'         => 'timely',
+        'access_token'     => 'token',
+        'refresh_token'    => 'refresh',
+        'token_expires_at' => now()->addHour(),
+        'meta'             => ['account_id' => '123'],
     ]);
 
     $response = $this->post('/integrations/timely/disconnect');
     $response->assertRedirect('/settings/integrations');
 
-    $this->business->refresh();
-    expect($this->business->timely_access_token)->toBeNull();
-    expect($this->business->timely_refresh_token)->toBeNull();
-    expect($this->business->timely_account_id)->toBeNull();
+    expect($this->business->integration('timely'))->toBeNull();
 });
 
 test('timely toggle auto send flips the setting', function () {
-    $this->business->update(['timely_auto_send_reviews' => true]);
+    $integration = BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'timely',
+        'access_token'      => 'token',
+        'auto_send_reviews' => true,
+    ]);
 
     $this->post('/integrations/timely/toggle-auto-send');
 
-    $this->business->refresh();
-    expect($this->business->timely_auto_send_reviews)->toBeFalse();
+    $integration->refresh();
+    expect($integration->auto_send_reviews)->toBeFalse();
 
     $this->post('/integrations/timely/toggle-auto-send');
 
-    $this->business->refresh();
-    expect($this->business->timely_auto_send_reviews)->toBeTrue();
+    $integration->refresh();
+    expect($integration->auto_send_reviews)->toBeTrue();
 });
 
 // --- Integrations page ---
 
 test('integrations page includes timely props', function () {
-    $this->business->update([
-        'timely_access_token'      => 'some-token',
-        'timely_auto_send_reviews' => true,
+    BusinessIntegration::create([
+        'business_id'       => $this->business->id,
+        'provider'          => 'timely',
+        'access_token'      => 'some-token',
+        'auto_send_reviews' => true,
     ]);
 
     $this->get('/settings/integrations')
