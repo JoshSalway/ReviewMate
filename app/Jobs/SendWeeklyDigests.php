@@ -12,25 +12,27 @@ class SendWeeklyDigests implements ShouldQueue
 {
     use Queueable;
 
+    public function __construct(public readonly ?Business $business = null) {}
+
     public function handle(): void
     {
-        Business::with('user')
-            ->whereHas('user')
-            ->chunk(100, function ($businesses) {
-                foreach ($businesses as $business) {
-                    $user = $business->user;
+        $businesses = $this->business
+            ? collect([$this->business->loadMissing('user')])->filter()
+            : Business::with('user')->whereHas('user')->lazy(100);
 
-                    if (! $user || ! $user->email) {
-                        continue;
-                    }
+        foreach ($businesses as $business) {
+            $user = $business->user;
 
-                    if (! $user->notificationPreference('weekly_digest')) {
-                        continue;
-                    }
+            if (! $user || ! $user->email) {
+                continue;
+            }
 
-                    Mail::to($user->email, $user->name)
-                        ->queue(new WeeklyDigestMail($user, $business));
-                }
-            });
+            if (! $user->notificationPreference('weekly_digest')) {
+                continue;
+            }
+
+            Mail::to($user->email, $user->name)
+                ->queue(new WeeklyDigestMail($user, $business));
+        }
     }
 }

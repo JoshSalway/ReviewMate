@@ -1,6 +1,6 @@
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
-import { AlertCircle, Sparkles, Zap } from 'lucide-react';
+import { AlertCircle, Clock, Sparkles, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,8 +26,19 @@ interface Settings {
     auto_reply_custom_instructions: string;
 }
 
+interface Schedule {
+    timezone: string;
+    timezone_abbr: string;
+    next_run_at: string;
+    last_run_at: string | null;
+    last_reply_count: number;
+    follow_up_time: string;
+    auto_reply_time: string;
+}
+
 interface Props {
     settings: Settings;
+    schedule: Schedule;
     businessType: string;
     businessName: string;
     isGoogleConnected: boolean;
@@ -95,7 +106,18 @@ const businessTypeTips: Record<string, { tip: string; exampleInstructions: strin
     },
 };
 
-export default function AutoReplySettings({ settings, businessType, businessName, isGoogleConnected, isProPlan }: Props) {
+function formatLocalDate(isoString: string): string {
+    return new Date(isoString).toLocaleString('en-AU', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+    });
+}
+
+export default function AutoReplySettings({ settings, schedule, businessType, businessName, isGoogleConnected, isProPlan }: Props) {
     const [form, setForm] = useState<Settings>(settings);
     const [processing, setProcessing] = useState(false);
     const [preview, setPreview] = useState('');
@@ -188,7 +210,7 @@ export default function AutoReplySettings({ settings, businessType, businessName
                             <div>
                                 <p className="font-semibold text-gray-900">Enable auto-reply</p>
                                 <p className="mt-0.5 text-sm text-gray-500">
-                                    Runs nightly at 6pm AEST. Replies to reviews that match your settings.
+                                    Runs nightly at {schedule.auto_reply_time} {schedule.timezone_abbr}. Replies to reviews that match your settings.
                                 </p>
                             </div>
                             <button
@@ -208,6 +230,55 @@ export default function AutoReplySettings({ settings, businessType, businessName
                                 />
                             </button>
                         </div>
+                    </CardContent>
+                </Card>
+
+                {/* Schedule info */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-base font-semibold flex items-center gap-2">
+                            <Clock className="h-4 w-4 text-teal-600" />
+                            Schedule
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Auto-replies</p>
+                                <p className="mt-1 text-sm font-semibold text-gray-900">
+                                    Nightly at {schedule.auto_reply_time} {schedule.timezone_abbr}
+                                </p>
+                                <p className="mt-0.5 text-xs text-gray-500">
+                                    Next run: {formatLocalDate(schedule.next_run_at)}
+                                </p>
+                            </div>
+                            <div className="rounded-lg border border-gray-100 bg-gray-50 p-3">
+                                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Follow-up emails</p>
+                                <p className="mt-1 text-sm font-semibold text-gray-900">
+                                    Daily at {schedule.follow_up_time} {schedule.timezone_abbr}
+                                </p>
+                                <p className="mt-0.5 text-xs text-gray-500">
+                                    Sent to customers who haven't reviewed yet
+                                </p>
+                            </div>
+                        </div>
+                        {schedule.last_run_at ? (
+                            <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+                                <span className="inline-block h-2 w-2 rounded-full bg-teal-400" />
+                                Last run: {formatLocalDate(schedule.last_run_at)} —{' '}
+                                <span className="font-medium text-gray-700">
+                                    {schedule.last_reply_count === 0
+                                        ? 'No new reviews to reply to'
+                                        : `Replied to ${schedule.last_reply_count} review${schedule.last_reply_count === 1 ? '' : 's'}`}
+                                </span>
+                            </div>
+                        ) : (
+                            <p className="mt-3 text-xs text-gray-400">Auto-reply hasn't run yet.</p>
+                        )}
+                        <p className="mt-2 text-xs text-gray-400">
+                            Times shown in your business timezone ({schedule.timezone}).{' '}
+                            <a href="/settings/business" className="text-teal-600 underline hover:text-teal-700">Change timezone</a>
+                        </p>
                     </CardContent>
                 </Card>
 

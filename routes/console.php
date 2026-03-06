@@ -8,6 +8,7 @@ use App\Jobs\SendFollowUpRequests;
 use App\Jobs\SendWeeklyDigests;
 use App\Jobs\SyncGoogleReviews;
 use App\Models\Business;
+use Carbon\Carbon;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -16,45 +17,114 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-// Send follow-up emails daily at 9am (5-day window job)
-Schedule::job(new SendFollowUpRequests)->dailyAt('09:00');
+/**
+ * Timezone-aware helper: returns true when it is currently $targetHour (local time)
+ * for a given business timezone. Runs on every tick of the scheduler (hourly).
+ */
+if (! function_exists('isLocalHour')) {
+    function isLocalHour(string $timezone, int $targetHour): bool
+    {
+        try {
+            return Carbon::now($timezone)->hour === $targetHour;
+        } catch (\Throwable) {
+            return Carbon::now('UTC')->hour === $targetHour;
+        }
+    }
+}
 
-// Also run legacy artisan command for backward compatibility
-Schedule::command('reviewmate:send-followups')->dailyAt('09:05');
-
-// Send weekly digest every Monday at 08:00
-Schedule::job(new SendWeeklyDigests)->weeklyOn(1, '08:00');
-
-// Sync Google reviews every 2 hours for all connected businesses
+// ---------------------------------------------------------------------------
+// Follow-up review request emails — 9am in the business's local timezone
+// Runs hourly; dispatches only for businesses where it is currently 9am local.
+// ---------------------------------------------------------------------------
 Schedule::call(function () {
-    Business::whereNotNull('google_access_token')
-        ->whereNotNull('google_location_id')
-        ->each(fn ($business) => SyncGoogleReviews::dispatch($business));
-})->everyTwoHours();
+    Business::with(['user', 'reviewRequests.customer'])
+        ->get()
+        ->each(function (Business $business) {
+            if (isLocalHour($business->timezone ?? 'Australia/Sydney', 9)) {
+                SendFollowUpRequests::dispatch($business);
+            }
+        });
+})->hourly()->name('follow-up-requests');
 
-// Poll Cliniko for completed appointments daily at 08:00
+// ---------------------------------------------------------------------------
+// Sync Google reviews — every 2 hours for all connected businesses
+// (not timezone-specific — always-on monitoring)
+// ---------------------------------------------------------------------------
+Schedule::call(function () {
+    Business::with('integrations')
+        ->get()
+        ->filter(fn ($b) => $b->isGoogleConnected())
+        ->each(fn ($business) => SyncGoogleReviews::dispatch($business));
+})->everyTwoHours()->name('sync-google-reviews');
+
+// ---------------------------------------------------------------------------
+// Poll Cliniko — 8am in the business's local timezone
+// ---------------------------------------------------------------------------
 Schedule::call(function () {
     Business::whereNotNull('cliniko_api_key')
         ->where('cliniko_auto_send_reviews', true)
-        ->each(fn ($business) => PollClinikoAppointments::dispatch($business));
-})->dailyAt('08:00')->name('poll-cliniko-appointments');
+        ->get()
+        ->each(function (Business $business) {
+            if (isLocalHour($business->timezone ?? 'Australia/Sydney', 8)) {
+                PollClinikoAppointments::dispatch($business);
+            }
+        });
+})->hourly()->name('poll-cliniko-appointments');
 
-// Poll Halaxy for completed appointments daily at 08:00
+// ---------------------------------------------------------------------------
+// Poll Halaxy — 8am in the business's local timezone
+// ---------------------------------------------------------------------------
 Schedule::call(function () {
     Business::whereNotNull('halaxy_api_key')
         ->where('halaxy_auto_send_reviews', true)
-        ->each(fn ($business) => PollHalaxyAppointments::dispatch($business));
-})->dailyAt('08:00')->name('poll-halaxy-appointments');
+        ->get()
+        ->each(function (Business $business) {
+            if (isLocalHour($business->timezone ?? 'Australia/Sydney', 8)) {
+                PollHalaxyAppointments::dispatch($business);
+            }
+        });
+})->hourly()->name('poll-halaxy-appointments');
 
-// Refresh Google Places stats (rating + review count) daily at 06:00
+// ---------------------------------------------------------------------------
+// Refresh Google Places stats — 6am in the business's local timezone
+// ---------------------------------------------------------------------------
 Schedule::call(function () {
     Business::whereNotNull('google_place_id')
-        ->each(fn ($b) => RefreshGoogleStats::dispatch($b));
-})->dailyAt('06:00')->name('refresh-google-stats');
+        ->get()
+        ->each(function (Business $business) {
+            if (isLocalHour($business->timezone ?? 'Australia/Sydney', 6)) {
+                RefreshGoogleStats::dispatch($business);
+            }
+        });
+})->hourly()->name('refresh-google-stats');
 
-// Auto-reply to Google reviews daily at 18:00 AEST (08:00 UTC)
+// ---------------------------------------------------------------------------
+// AI auto-reply to Google reviews — 6pm in the business's local timezone
+// Runs hourly; dispatches only for businesses where it is currently 6pm local.
+// ---------------------------------------------------------------------------
 Schedule::call(function () {
     Business::where('auto_reply_enabled', true)
         ->with(['integrations', 'user'])
-        ->each(fn ($business) => AutoReplyReviews::dispatch($business));
-})->dailyAt('08:00')->timezone('UTC')->name('auto-reply-reviews');
+        ->get()
+        ->each(function (Business $business) {
+            if (isLocalHour($business->timezone ?? 'Australia/Sydney', 18)) {
+                AutoReplyReviews::dispatch($business);
+            }
+        });
+})->hourly()->name('auto-reply-reviews');
+
+// ---------------------------------------------------------------------------
+// Weekly digest — Monday 8am in the business's local timezone
+// ---------------------------------------------------------------------------
+Schedule::call(function () {
+    if (Carbon::now('UTC')->dayOfWeek !== Carbon::MONDAY) {
+        return;
+    }
+    Business::with('user')
+        ->get()
+        ->each(function (Business $business) {
+            if (isLocalHour($business->timezone ?? 'Australia/Sydney', 8)) {
+                SendWeeklyDigests::dispatch($business);
+            }
+        });
+})->hourly()->name('weekly-digests');

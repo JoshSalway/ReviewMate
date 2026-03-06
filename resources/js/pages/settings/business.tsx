@@ -53,6 +53,7 @@ interface Props {
         follow_up_enabled: boolean;
         follow_up_days: number;
         follow_up_channel: string;
+        timezone: string;
     };
     isProPlan: boolean;
 }
@@ -68,6 +69,7 @@ export default function BusinessSettings({ business, isProPlan }: Props) {
         follow_up_enabled: business.follow_up_enabled,
         follow_up_days: business.follow_up_days,
         follow_up_channel: business.follow_up_channel,
+        timezone: business.timezone ?? 'Australia/Sydney',
     });
     const [processing, setProcessing] = useState(false);
     const [saved, setSaved] = useState(false);
@@ -124,6 +126,35 @@ export default function BusinessSettings({ business, isProPlan }: Props) {
                                         placeholder="e.g. John Smith"
                                     />
                                 </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="timezone">Business Timezone</Label>
+                                <Select
+                                    value={form.timezone}
+                                    onValueChange={(value) => setForm({ ...form, timezone: value })}
+                                >
+                                    <SelectTrigger id="timezone">
+                                        <SelectValue placeholder="Select timezone" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Australia/Sydney">Sydney / Melbourne (AEST/AEDT)</SelectItem>
+                                        <SelectItem value="Australia/Brisbane">Brisbane (AEST, no DST)</SelectItem>
+                                        <SelectItem value="Australia/Adelaide">Adelaide (ACST/ACDT)</SelectItem>
+                                        <SelectItem value="Australia/Perth">Perth (AWST)</SelectItem>
+                                        <SelectItem value="Australia/Darwin">Darwin (ACST, no DST)</SelectItem>
+                                        <SelectItem value="Australia/Hobart">Hobart (AEST/AEDT)</SelectItem>
+                                        <SelectItem value="Pacific/Auckland">Auckland (NZST/NZDT)</SelectItem>
+                                        <SelectItem value="Asia/Singapore">Singapore (SGT)</SelectItem>
+                                        <SelectItem value="America/New_York">New York (EST/EDT)</SelectItem>
+                                        <SelectItem value="America/Chicago">Chicago (CST/CDT)</SelectItem>
+                                        <SelectItem value="America/Denver">Denver (MST/MDT)</SelectItem>
+                                        <SelectItem value="America/Los_Angeles">Los Angeles (PST/PDT)</SelectItem>
+                                        <SelectItem value="Europe/London">London (GMT/BST)</SelectItem>
+                                        <SelectItem value="UTC">UTC</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <p className="text-xs text-gray-500">Used to schedule follow-ups and auto-replies at the right local time.</p>
                             </div>
 
                             <div className="grid gap-4 sm:grid-cols-2">

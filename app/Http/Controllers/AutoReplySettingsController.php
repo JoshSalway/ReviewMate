@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Ai\Agents\ReviewReplyAgent;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +21,15 @@ class AutoReplySettingsController extends Controller
             return redirect()->route('onboarding.business-type');
         }
 
+        $timezone = $business->timezone ?? 'Australia/Sydney';
+        $nowLocal = Carbon::now($timezone);
+
+        // Next 6pm run in local time
+        $nextRun = $nowLocal->copy()->setTime(18, 0);
+        if ($nowLocal->gte($nextRun)) {
+            $nextRun->addDay();
+        }
+
         return Inertia::render('settings/auto-reply', [
             'settings' => [
                 'auto_reply_enabled' => $business->auto_reply_enabled ?? false,
@@ -28,6 +38,15 @@ class AutoReplySettingsController extends Controller
                 'auto_reply_length' => $business->auto_reply_length ?? 'medium',
                 'auto_reply_signature' => $business->auto_reply_signature ?? '',
                 'auto_reply_custom_instructions' => $business->auto_reply_custom_instructions ?? '',
+            ],
+            'schedule' => [
+                'timezone' => $timezone,
+                'timezone_abbr' => $nowLocal->format('T'),
+                'next_run_at' => $nextRun->toISOString(),
+                'last_run_at' => $business->auto_reply_last_run_at?->setTimezone($timezone)->toISOString(),
+                'last_reply_count' => $business->auto_reply_last_reply_count ?? 0,
+                'follow_up_time' => '9:00am',
+                'auto_reply_time' => '6:00pm',
             ],
             'businessType' => $business->type,
             'businessName' => $business->name,

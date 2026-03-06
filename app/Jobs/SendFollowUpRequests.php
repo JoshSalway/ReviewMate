@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Mail\FollowUpMail;
+use App\Models\Business;
 use App\Models\ReviewRequest;
 use App\Services\SmsService;
 use Illuminate\Bus\Queueable;
@@ -16,10 +17,13 @@ class SendFollowUpRequests implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public function __construct(public readonly ?Business $business = null) {}
+
     public function handle(): void
     {
         $requests = ReviewRequest::query()
             ->with(['business.user', 'customer'])
+            ->when($this->business, fn ($q) => $q->where('business_id', $this->business->id))
             ->whereIn('status', ['sent', 'opened'])
             ->whereNotIn('status', ['reviewed', 'self_confirmed', 'unverified_claim'])
             ->whereNull('followed_up_at')

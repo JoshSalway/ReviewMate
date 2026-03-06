@@ -60,16 +60,25 @@ class AutoReplyReviews implements ShouldQueue
             ->limit(20)
             ->get();
 
+        $repliedCount = 0;
+
         foreach ($reviews as $review) {
-            $this->replyToReview($agent, $googleService, $review);
+            if ($this->replyToReview($agent, $googleService, $review)) {
+                $repliedCount++;
+            }
         }
+
+        $this->business->update([
+            'auto_reply_last_run_at' => now(),
+            'auto_reply_last_reply_count' => $repliedCount,
+        ]);
     }
 
     private function replyToReview(
         ReviewReplyAgent $agent,
         GoogleBusinessProfileService $googleService,
         Review $review,
-    ): void {
+    ): bool {
         try {
             $response = $agent->prompt(
                 "Generate a reply for this {$review->rating}-star Google review:\n\n\"{$review->body}\""
@@ -78,7 +87,7 @@ class AutoReplyReviews implements ShouldQueue
             $replyText = trim($response->text);
 
             if (empty($replyText)) {
-                return;
+                return false;
             }
 
             $googleService->postReply(
@@ -92,8 +101,10 @@ class AutoReplyReviews implements ShouldQueue
                 'google_reply_posted_at' => now(),
                 'auto_replied_at' => now(),
             ]);
+
+            return true;
         } catch (Throwable) {
-            // Don't fail the whole job if one review fails
+            return false;
         }
     }
 }

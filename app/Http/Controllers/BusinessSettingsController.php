@@ -29,6 +29,7 @@ class BusinessSettingsController extends Controller
                 'follow_up_enabled' => $business?->follow_up_enabled ?? true,
                 'follow_up_days' => $business?->follow_up_days ?? 3,
                 'follow_up_channel' => $business?->follow_up_channel ?? 'same',
+                'timezone' => $business?->timezone ?? 'Australia/Sydney',
             ],
             'isProPlan' => ! $user->onFreePlan(),
         ]);
@@ -46,6 +47,7 @@ class BusinessSettingsController extends Controller
             'follow_up_enabled' => ['sometimes', 'boolean'],
             'follow_up_days' => ['sometimes', 'integer', 'in:2,3,5,7'],
             'follow_up_channel' => ['sometimes', 'string', 'in:same,sms,email'],
+            'timezone' => ['sometimes', 'string', 'timezone'],
         ]);
 
         $business = $request->user()->currentBusiness();

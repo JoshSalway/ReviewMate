@@ -206,8 +206,7 @@ it('submitFeedback saves private rating and feedback and notifies owner', functi
     expect($request->fresh()->status)->toBe('feedback_received');
     expect($request->fresh()->feedback_received_at)->not->toBeNull();
 
-    Mail::assertQueued(PrivateFeedbackMail::class, fn ($mail) =>
-        $mail->hasTo($this->user->email)
+    Mail::assertQueued(PrivateFeedbackMail::class, fn ($mail) => $mail->hasTo($this->user->email)
     );
 });
 

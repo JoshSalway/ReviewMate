@@ -44,6 +44,10 @@ class Business extends Model
         'auto_reply_length',
         'auto_reply_signature',
         'auto_reply_custom_instructions',
+        // Timezone & run stats
+        'timezone',
+        'auto_reply_last_run_at',
+        'auto_reply_last_reply_count',
     ];
 
     protected $casts = [
@@ -51,6 +55,7 @@ class Business extends Model
         'follow_up_enabled' => 'boolean',
         'widget_enabled' => 'boolean',
         'auto_reply_enabled' => 'boolean',
+        'auto_reply_last_run_at' => 'datetime',
     ];
 
     protected static function booted(): void
