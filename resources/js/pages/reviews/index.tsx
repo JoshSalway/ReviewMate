@@ -84,20 +84,22 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
 
     const handleGetSuggestions = (review: Review) => {
         updateReviewState(review.id, { loading: true });
-        router.post(
-            replySuggestionsRoute(review.id).url,
-            {},
-            {
-                preserveScroll: true,
-                onSuccess: (page: any) => {
-                    const data = page.props.suggestions as string[] | undefined;
-                    if (data && Array.isArray(data)) {
-                        updateReviewState(review.id, { suggestions: data, selected: null });
-                    }
-                },
-                onFinish: () => updateReviewState(review.id, { loading: false }),
+        fetch(replySuggestionsRoute(review.id).url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ?? '',
+                'Accept': 'application/json',
             },
-        );
+            body: JSON.stringify({}),
+        })
+            .then((res) => res.json())
+            .then((data: { suggestions?: string[] }) => {
+                if (data.suggestions && Array.isArray(data.suggestions)) {
+                    updateReviewState(review.id, { suggestions: data.suggestions, selected: null });
+                }
+            })
+            .finally(() => updateReviewState(review.id, { loading: false }));
     };
 
     const handleSelectSuggestion = (reviewId: number, index: number, suggestions: string[]) => {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Ai\Agents\ReviewReplyAgent;
 use App\Models\Business;
 use App\Models\BusinessIntegration;
 use App\Models\Customer;
@@ -8,6 +9,7 @@ use App\Models\Review;
 use App\Models\ReviewRequest;
 use App\Models\User;
 use App\Services\GoogleBusinessProfileService;
+use Laravel\Ai\Ai;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
@@ -207,4 +209,41 @@ test('review show exposes wasViaReviewMate as false when not linked', function (
         ->assertInertia(fn ($page) => $page
             ->where('review.via_review_mate', false)
         );
+});
+
+test('reply suggestions returns 403 for review from another business', function () {
+    $otherBusiness = Business::factory()->onboarded()->create();
+    $review = Review::factory()->create([
+        'business_id' => $otherBusiness->id,
+        'body' => 'Great service!',
+    ]);
+
+    $this->postJson("/reviews/{$review->id}/reply-suggestions")
+        ->assertForbidden();
+});
+
+test('reply suggestions returns 422 when review has no body', function () {
+    $review = Review::factory()->create([
+        'business_id' => $this->business->id,
+        'body' => null,
+    ]);
+
+    $this->postJson("/reviews/{$review->id}/reply-suggestions")
+        ->assertUnprocessable();
+});
+
+test('reply suggestions returns three ai-generated options', function () {
+    $review = Review::factory()->create([
+        'business_id' => $this->business->id,
+        'body' => 'Excellent work, very professional!',
+        'rating' => 5,
+    ]);
+
+    $suggestions = ['Thank you so much!', 'Really appreciate the kind words!', 'We are glad you were happy!'];
+
+    Ai::fakeAgent(ReviewReplyAgent::class, [json_encode($suggestions)]);
+
+    $this->postJson("/reviews/{$review->id}/reply-suggestions")
+        ->assertOk()
+        ->assertJson(['suggestions' => $suggestions]);
 });
