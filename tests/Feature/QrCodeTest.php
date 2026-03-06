@@ -48,19 +48,22 @@ test('qr-code page includes google review url when place id is set', function ()
         );
 });
 
-test('qr-code page shows hash url when no place id is set', function () {
+test('qr-code page shows google search fallback url when no place id is set', function () {
     $user = User::factory()->create();
     // Create business with onboarding done but explicitly no place id
     $business = Business::factory()->create([
         'user_id' => $user->id,
+        'name' => 'Test Plumbing Co',
         'onboarding_completed_at' => now(),
         'google_place_id' => null,
     ]);
     $this->actingAs($user);
 
+    $expectedUrl = 'https://www.google.com/search?q=' . urlencode('Test Plumbing Co reviews');
+
     $this->get('/qr-code')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->where('business.google_review_url', '#')
+            ->where('business.google_review_url', $expectedUrl)
         );
 });

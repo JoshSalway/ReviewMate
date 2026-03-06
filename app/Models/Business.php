@@ -146,7 +146,8 @@ class Business extends Model
             return "https://search.google.com/local/writereview?placeid={$this->google_place_id}";
         }
 
-        return '#';
+        // Fallback: Google search for the business by name
+        return 'https://www.google.com/search?q=' . urlencode($this->name . ' reviews');
     }
 
     public function facebookReviewUrl(): ?string
