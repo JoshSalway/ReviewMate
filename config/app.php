@@ -123,4 +123,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Beta Mode
+    |--------------------------------------------------------------------------
+    |
+    | When beta_mode is true, only superadmins and waitlist-approved users can
+    | access the authenticated app. Set BETA_MODE=true in your .env to enable.
+    |
+    */
+
+    'beta_mode' => (bool) env('BETA_MODE', false),
+
 ];

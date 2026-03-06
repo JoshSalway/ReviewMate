@@ -23,9 +23,9 @@ use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\QrCodeController;
 use App\Http\Controllers\QuickSendController;
+use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReplyTemplateController;
 use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ReviewRequestController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\WaitlistController;
@@ -36,7 +36,8 @@ use Inertia\Inertia;
 use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
 Route::get('/', [WaitlistController::class, 'index'])->name('home');
-Route::post('/waitlist', [WaitlistController::class, 'store'])->name('waitlist.store');
+Route::get('/waitlist', [WaitlistController::class, 'waitlistPage'])->name('waitlist');
+Route::post('/waitlist', [WaitlistController::class, 'store'])->middleware('throttle:10,1')->name('waitlist.store');
 Route::get('/terms', [LegalController::class, 'terms'])->name('legal.terms');
 Route::get('/privacy', [LegalController::class, 'privacy'])->name('legal.privacy');
 Route::get('/pricing', [PublicController::class, 'pricing'])->name('pricing');
@@ -55,10 +56,10 @@ Route::get('/docs/openapi.yaml', function () {
 
     return response()->file($path, ['Content-Type' => 'application/yaml']);
 })->name('api.openapi');
-Route::get('/r/{token}', [ReviewRequestController::class, 'track'])->name('review-requests.track');
-Route::get('/r/ref/{token}', [ReferralController::class, 'track'])->name('referrals.track');
-Route::get('/reviewed/{token}', [ReviewRequestController::class, 'confirmReview'])->name('reviewed.confirm');
-Route::get('/unsubscribe/{token}', [CustomerController::class, 'unsubscribe'])->name('customers.unsubscribe');
+Route::get('/r/{token}', [ReviewRequestController::class, 'track'])->middleware('throttle:60,1')->name('review-requests.track');
+Route::get('/r/ref/{token}', [ReferralController::class, 'track'])->middleware('throttle:60,1')->name('referrals.track');
+Route::get('/reviewed/{token}', [ReviewRequestController::class, 'confirmReview'])->middleware('throttle:30,1')->name('reviewed.confirm');
+Route::get('/unsubscribe/{token}', [CustomerController::class, 'unsubscribe'])->middleware('throttle:30,1')->name('customers.unsubscribe');
 
 // Stripe webhook (must be outside auth middleware, CSRF excluded by Cashier)
 Route::post('stripe/webhook', '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook')
@@ -67,7 +68,13 @@ Route::post('stripe/webhook', '\Laravel\Cashier\Http\Controllers\WebhookControll
 Route::middleware([
     'auth',
     ValidateSessionWithWorkOS::class,
+    'beta',
 ])->group(function () {
+    // Admin: waitlist management (superadmin only)
+    Route::post('admin/waitlist/{waitlistEntry}/approve', [WaitlistController::class, 'approve'])
+        ->middleware('superadmin')
+        ->name('admin.waitlist.approve');
+
     // Dashboard
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 

@@ -1,4 +1,5 @@
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
+import type { FormEvent} from 'react';
 import { useState } from 'react';
 
 function StarIcon() {
@@ -183,7 +184,72 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
     );
 }
 
-export default function Welcome() {
+interface Props {
+    count?: number;
+}
+
+function HeroWaitlistForm() {
+    const { data, setData, post, processing, errors, wasSuccessful } = useForm({
+        name: '',
+        email: '',
+        business_type: '',
+    });
+
+    function handleSubmit(e: FormEvent) {
+        e.preventDefault();
+        post('/waitlist');
+    }
+
+    if (wasSuccessful) {
+        return (
+            <div className="mt-8 inline-flex items-center gap-3 rounded-xl border border-teal-200 bg-teal-50 px-6 py-4 text-sm text-teal-700">
+                <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+                <span><strong>You're on the list!</strong> We'll email you when your spot is ready.</span>
+            </div>
+        );
+    }
+
+    return (
+        <form onSubmit={handleSubmit} className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <div className="w-full sm:w-56">
+                <input
+                    type="text"
+                    placeholder="Your name"
+                    value={data.name}
+                    onChange={(e) => setData('name', e.target.value)}
+                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+                />
+                {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
+            </div>
+            <div className="w-full sm:w-64">
+                <input
+                    type="email"
+                    placeholder="Work email"
+                    value={data.email}
+                    onChange={(e) => setData('email', e.target.value)}
+                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+                />
+                {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
+            </div>
+            <button
+                type="submit"
+                disabled={processing}
+                className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-7 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 disabled:opacity-60 transition-colors"
+            >
+                {processing ? 'Joining…' : 'Join the waitlist'}
+                {!processing && (
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                )}
+            </button>
+        </form>
+    );
+}
+
+export default function Welcome({ count }: Props) {
     return (
         <>
             <Head title="ReviewMate — More 5-star Google reviews, automatically" />
@@ -210,12 +276,11 @@ export default function Welcome() {
 
                 {/* Hero */}
                 <section className="mx-auto max-w-6xl px-6 pt-16 pb-20 text-center">
-                    <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-teal-100 bg-teal-50 px-4 py-1.5 text-sm font-medium text-teal-700">
-                        <span className="relative flex h-2 w-2">
-                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-teal-400 opacity-75"></span>
-                            <span className="relative inline-flex h-2 w-2 rounded-full bg-teal-500"></span>
-                        </span>
-                        Now open — free 14-day trial
+                    <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-100 bg-amber-50 px-4 py-1.5 text-sm font-medium text-amber-700">
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        Currently in private beta — join the waitlist
                     </div>
 
                     <h1 className="mx-auto max-w-3xl text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl leading-[1.05]">
@@ -231,18 +296,15 @@ export default function Welcome() {
                         {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
                     </div>
 
-                    <div className="mt-10">
-                        <a
-                            href="/login"
-                            className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 transition-colors"
-                        >
-                            Start your free trial — no credit card needed
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                            </svg>
-                        </a>
-                        <p className="mt-3 text-xs text-gray-400">Free plan available. Upgrade any time.</p>
-                    </div>
+                    {count !== undefined && count > 0 && (
+                        <p className="mt-2 text-sm text-gray-400">
+                            {count.toLocaleString()} {count === 1 ? 'business' : 'businesses'} already on the list
+                        </p>
+                    )}
+
+                    <HeroWaitlistForm />
+
+                    <p className="mt-3 text-xs text-gray-400">We'll email you when your spot is ready. No spam, ever.</p>
                 </section>
 
                 {/* Social proof / testimonials */}
@@ -415,12 +477,12 @@ export default function Welcome() {
 
                         <div className="mt-10 text-center">
                             <a
-                                href="/login"
+                                href="/waitlist"
                                 className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 transition-colors"
                             >
-                                Start your free trial
+                                Join the waitlist
                             </a>
-                            <p className="mt-2 text-xs text-gray-400">No credit card needed. Cancel any time.</p>
+                            <p className="mt-2 text-xs text-gray-400">We'll notify you when your spot is ready.</p>
                         </div>
                     </div>
                 </section>
@@ -444,17 +506,18 @@ export default function Welcome() {
                     <div className="mx-auto max-w-2xl px-6 text-center">
                         <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Ready to get more reviews?</h2>
                         <p className="mt-4 text-teal-100 leading-relaxed">
-                            Join Australian small businesses already using ReviewMate to build their Google reputation on autopilot.
+                            Join Australian small businesses waiting to use ReviewMate and build their Google reputation on autopilot.
                         </p>
                         <a
-                            href="/login"
+                            href="/waitlist"
                             className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-semibold text-teal-700 shadow-md hover:bg-teal-50 transition-colors"
                         >
-                            Start your free trial — no credit card needed
+                            Join the waitlist
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                             </svg>
                         </a>
+                        <p className="mt-3 text-sm text-teal-100 opacity-80">We'll email you when your spot is ready.</p>
                     </div>
                 </section>
 
