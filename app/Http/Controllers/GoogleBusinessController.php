@@ -33,8 +33,8 @@ class GoogleBusinessController extends Controller
         BusinessIntegration::updateOrCreate(
             ['business_id' => $business->id, 'provider' => 'google'],
             [
-                'access_token'     => $googleUser->token,
-                'refresh_token'    => $googleUser->refreshToken,
+                'access_token' => $googleUser->token,
+                'refresh_token' => $googleUser->refreshToken,
                 'token_expires_at' => now()->addSeconds($googleUser->expiresIn - 60)->toDateTimeString(),
             ]
         );

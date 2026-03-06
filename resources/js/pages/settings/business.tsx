@@ -1,15 +1,10 @@
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
-import AppLayout from '@/layouts/app-layout';
-import { business as businessSettingsRoute } from '@/routes/settings';
-import { update as businessUpdate } from '@/routes/settings/business';
-import { connect as googleConnect, disconnect as googleDisconnect } from '@/routes/google';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import {
     Select,
     SelectContent,
@@ -17,6 +12,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import AppLayout from '@/layouts/app-layout';
+import { connect as googleConnect, disconnect as googleDisconnect } from '@/routes/google';
+import { business as businessSettingsRoute } from '@/routes/settings';
+import { update as businessUpdate } from '@/routes/settings/business';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [

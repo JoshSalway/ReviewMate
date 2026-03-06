@@ -34,9 +34,9 @@ class IncomingWebhookController extends Controller
         }
 
         $data = $request->validate([
-            'name'    => 'nullable|string|max:255',
-            'email'   => 'nullable|email|max:255',
-            'phone'   => 'nullable|string|max:30',
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:30',
             'trigger' => 'nullable|string|max:100',
         ]);
 

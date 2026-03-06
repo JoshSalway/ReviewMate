@@ -22,7 +22,7 @@ class HalaxyService
     {
         $response = Http::withToken($this->integration()?->api_key)
             ->withHeaders(['Accept' => 'application/json'])
-            ->get(self::API_BASE . $path, $query);
+            ->get(self::API_BASE.$path, $query);
 
         return $response->json() ?? [];
     }
@@ -35,8 +35,8 @@ class HalaxyService
     {
         $data = $this->request('/appointments', [
             'date_from' => $since->format('Y-m-d'),
-            'status'    => 'COMPLETED',
-            'per_page'  => 200,
+            'status' => 'COMPLETED',
+            'per_page' => 200,
         ]);
 
         return $data['data'] ?? $data['entry'] ?? [];
@@ -45,12 +45,14 @@ class HalaxyService
     public function getPatient(string $patientId): ?array
     {
         $data = $this->request("/patients/{$patientId}");
+
         return $data ?: null;
     }
 
     public function testConnection(): bool
     {
         $data = $this->request('/practitioners', ['per_page' => 1]);
+
         return ! empty($data);
     }
 }

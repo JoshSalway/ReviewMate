@@ -146,7 +146,7 @@ test('RequireBetaAccess: beta off allows all users through', function () {
     config(['app.beta_mode' => false]);
 
     $user = User::factory()->create(['role' => 'user']);
-    $middleware = new \App\Http\Middleware\RequireBetaAccess();
+    $middleware = new \App\Http\Middleware\RequireBetaAccess;
 
     $request = \Illuminate\Http\Request::create('/dashboard');
     $request->setUserResolver(fn () => $user);
@@ -154,6 +154,7 @@ test('RequireBetaAccess: beta off allows all users through', function () {
     $called = false;
     $response = $middleware->handle($request, function () use (&$called) {
         $called = true;
+
         return response('ok');
     });
 
@@ -164,7 +165,7 @@ test('RequireBetaAccess: beta on blocks unapproved user', function () {
     config(['app.beta_mode' => true]);
 
     $user = User::factory()->create(['role' => 'user']);
-    $middleware = new \App\Http\Middleware\RequireBetaAccess();
+    $middleware = new \App\Http\Middleware\RequireBetaAccess;
 
     $request = \Illuminate\Http\Request::create('/dashboard');
     $request->setUserResolver(fn () => $user);
@@ -172,6 +173,7 @@ test('RequireBetaAccess: beta on blocks unapproved user', function () {
     $called = false;
     $response = $middleware->handle($request, function () use (&$called) {
         $called = true;
+
         return response('ok');
     });
 
@@ -183,7 +185,7 @@ test('RequireBetaAccess: beta on allows superadmin', function () {
     config(['app.beta_mode' => true]);
 
     $superadmin = User::factory()->create(['role' => 'superadmin']);
-    $middleware = new \App\Http\Middleware\RequireBetaAccess();
+    $middleware = new \App\Http\Middleware\RequireBetaAccess;
 
     $request = \Illuminate\Http\Request::create('/dashboard');
     $request->setUserResolver(fn () => $superadmin);
@@ -191,6 +193,7 @@ test('RequireBetaAccess: beta on allows superadmin', function () {
     $called = false;
     $middleware->handle($request, function () use (&$called) {
         $called = true;
+
         return response('ok');
     });
 
@@ -206,13 +209,14 @@ test('RequireBetaAccess: beta on allows approved waitlist user', function () {
         'approved_at' => now(),
     ]);
 
-    $middleware = new \App\Http\Middleware\RequireBetaAccess();
+    $middleware = new \App\Http\Middleware\RequireBetaAccess;
     $request = \Illuminate\Http\Request::create('/dashboard');
     $request->setUserResolver(fn () => $user);
 
     $called = false;
     $middleware->handle($request, function () use (&$called) {
         $called = true;
+
         return response('ok');
     });
 

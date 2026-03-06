@@ -1,12 +1,12 @@
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
-import { connectGoogle as connectGoogleRoute } from '@/routes/onboarding';
-import { connect as googleConnect } from '@/routes/google';
 import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { connect as googleConnect } from '@/routes/google';
+import { connectGoogle as connectGoogleRoute } from '@/routes/onboarding';
 
 interface Location {
     name: string;

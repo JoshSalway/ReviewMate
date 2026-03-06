@@ -55,12 +55,12 @@ class SendFollowUpRequests implements ShouldQueue
 
             $useEmail = match ($followUpChannel) {
                 'email' => true,
-                'sms'   => false,
+                'sms' => false,
                 default => in_array($originalChannel, ['email', 'both']),
             };
 
             $useSms = match ($followUpChannel) {
-                'sms'   => true,
+                'sms' => true,
                 'email' => false,
                 default => in_array($originalChannel, ['sms', 'both']),
             };
@@ -76,7 +76,7 @@ class SendFollowUpRequests implements ShouldQueue
 
             $request->update([
                 'followed_up_at' => now(),
-                'status'         => 'followed_up',
+                'status' => 'followed_up',
             ]);
         }
     }

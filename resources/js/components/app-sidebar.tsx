@@ -9,12 +9,12 @@ import {
     SidebarHeader,
 } from '@/components/ui/sidebar';
 import { dashboard, qrCode, emailFlow, analytics } from '@/routes';
-import * as reviews from '@/routes/reviews';
 import * as customers from '@/routes/customers';
-import * as requests from '@/routes/requests';
-import * as templates from '@/routes/templates';
 import * as quickSend from '@/routes/quick-send';
+import * as requests from '@/routes/requests';
+import * as reviews from '@/routes/reviews';
 import * as settingsRoutes from '@/routes/settings';
+import * as templates from '@/routes/templates';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [

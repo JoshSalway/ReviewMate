@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 
 beforeEach(function () {
-    $this->user     = User::factory()->create();
+    $this->user = User::factory()->create();
     $this->business = Business::factory()->onboarded()->create(['user_id' => $this->user->id]);
     $this->actingAs($this->user);
 });
@@ -22,15 +22,15 @@ test('timely webhook queues job for appointment.completed event', function () {
     Queue::fake();
 
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'timely',
-        'access_token'      => 'some-token',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
+        'access_token' => 'some-token',
         'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/timely/{$this->business->uuid}", [
         'event' => 'appointment.completed',
-        'data'  => ['client_id' => 42, 'status' => 'completed'],
+        'data' => ['client_id' => 42, 'status' => 'completed'],
     ]);
 
     $response->assertOk()->assertJson(['status' => 'queued']);
@@ -41,15 +41,15 @@ test('timely webhook ignores non-completion events', function () {
     Queue::fake();
 
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'timely',
-        'access_token'      => 'some-token',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
+        'access_token' => 'some-token',
         'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/timely/{$this->business->uuid}", [
         'event' => 'appointment.created',
-        'data'  => ['client_id' => 42],
+        'data' => ['client_id' => 42],
     ]);
 
     $response->assertOk()->assertJson(['status' => 'ignored']);
@@ -60,15 +60,15 @@ test('timely webhook ignores appointment.updated that is not completed status', 
     Queue::fake();
 
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'timely',
-        'access_token'      => 'some-token',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
+        'access_token' => 'some-token',
         'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/timely/{$this->business->uuid}", [
         'event' => 'appointment.updated',
-        'data'  => ['client_id' => 42, 'status' => 'cancelled'],
+        'data' => ['client_id' => 42, 'status' => 'cancelled'],
     ]);
 
     $response->assertOk()->assertJson(['status' => 'ignored']);
@@ -79,15 +79,15 @@ test('timely webhook processes appointment.updated with completed status', funct
     Queue::fake();
 
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'timely',
-        'access_token'      => 'some-token',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
+        'access_token' => 'some-token',
         'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/timely/{$this->business->uuid}", [
         'event' => 'appointment.updated',
-        'data'  => ['client_id' => 42, 'status' => 'completed'],
+        'data' => ['client_id' => 42, 'status' => 'completed'],
     ]);
 
     $response->assertOk()->assertJson(['status' => 'queued']);
@@ -98,15 +98,15 @@ test('timely webhook skips when auto_send is disabled', function () {
     Queue::fake();
 
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'timely',
-        'access_token'      => 'some-token',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
+        'access_token' => 'some-token',
         'auto_send_reviews' => false,
     ]);
 
     $response = $this->postJson("/webhooks/timely/{$this->business->uuid}", [
         'event' => 'appointment.completed',
-        'data'  => ['client_id' => 42],
+        'data' => ['client_id' => 42],
     ]);
 
     $response->assertOk()->assertJson(['status' => 'auto_send_disabled']);
@@ -119,17 +119,17 @@ test('job creates review request from embedded client data', function () {
     Mail::fake();
 
     BusinessIntegration::create([
-        'business_id'  => $this->business->id,
-        'provider'     => 'timely',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
         'access_token' => 'some-token',
-        'meta'         => ['account_id' => '999'],
+        'meta' => ['account_id' => '999'],
     ]);
 
     $job = new ProcessTimelyAppointmentCompleted($this->business, [
         'client' => [
-            'first_name'  => 'Sara',
-            'last_name'   => 'Jones',
-            'email'       => 'sara@example.com',
+            'first_name' => 'Sara',
+            'last_name' => 'Jones',
+            'email' => 'sara@example.com',
             'mobile_phone' => null,
         ],
     ]);
@@ -138,9 +138,9 @@ test('job creates review request from embedded client data', function () {
 
     $this->assertDatabaseHas('review_requests', [
         'business_id' => $this->business->id,
-        'source'      => 'timely',
-        'status'      => 'sent',
-        'channel'     => 'email',
+        'source' => 'timely',
+        'status' => 'sent',
+        'channel' => 'email',
     ]);
 });
 
@@ -149,18 +149,18 @@ test('job fetches client from api when not embedded in payload', function () {
 
     Http::fake([
         'api.gettimely.com/999/clients/42' => Http::response([
-            'first_name'  => 'Mark',
-            'last_name'   => 'Taylor',
-            'email'       => 'mark@example.com',
+            'first_name' => 'Mark',
+            'last_name' => 'Taylor',
+            'email' => 'mark@example.com',
             'mobile_phone' => null,
         ], 200),
     ]);
 
     BusinessIntegration::create([
-        'business_id'  => $this->business->id,
-        'provider'     => 'timely',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
         'access_token' => 'some-token',
-        'meta'         => ['account_id' => '999'],
+        'meta' => ['account_id' => '999'],
     ]);
 
     $job = new ProcessTimelyAppointmentCompleted($this->business, [
@@ -171,8 +171,8 @@ test('job fetches client from api when not embedded in payload', function () {
 
     $this->assertDatabaseHas('review_requests', [
         'business_id' => $this->business->id,
-        'source'      => 'timely',
-        'status'      => 'sent',
+        'source' => 'timely',
+        'status' => 'sent',
     ]);
 });
 
@@ -180,28 +180,28 @@ test('job skips client already sent a review within 90 days', function () {
     Mail::fake();
 
     BusinessIntegration::create([
-        'business_id'  => $this->business->id,
-        'provider'     => 'timely',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
         'access_token' => 'some-token',
-        'meta'         => ['account_id' => '999'],
+        'meta' => ['account_id' => '999'],
     ]);
 
     $customer = Customer::factory()->create([
         'business_id' => $this->business->id,
-        'email'       => 'repeat@example.com',
+        'email' => 'repeat@example.com',
     ]);
 
     ReviewRequest::factory()->create([
         'business_id' => $this->business->id,
         'customer_id' => $customer->id,
-        'created_at'  => now()->subDays(10), // within 90-day window
+        'created_at' => now()->subDays(10), // within 90-day window
     ]);
 
     $job = new ProcessTimelyAppointmentCompleted($this->business, [
         'client' => [
-            'first_name'  => 'Repeat',
-            'last_name'   => 'Customer',
-            'email'       => 'repeat@example.com',
+            'first_name' => 'Repeat',
+            'last_name' => 'Customer',
+            'email' => 'repeat@example.com',
             'mobile_phone' => null,
         ],
     ]);
@@ -217,19 +217,19 @@ test('job skips when client has no contact details', function () {
     Mail::fake();
 
     BusinessIntegration::create([
-        'business_id'  => $this->business->id,
-        'provider'     => 'timely',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
         'access_token' => 'some-token',
-        'meta'         => ['account_id' => '999'],
+        'meta' => ['account_id' => '999'],
     ]);
 
     $job = new ProcessTimelyAppointmentCompleted($this->business, [
         'client' => [
-            'first_name'  => 'Ghost',
-            'last_name'   => 'Client',
-            'email'       => null,
+            'first_name' => 'Ghost',
+            'last_name' => 'Client',
+            'email' => null,
             'mobile_phone' => null,
-            'phone'        => null,
+            'phone' => null,
         ],
     ]);
 
@@ -243,10 +243,10 @@ test('job skips when no client_id and no account_id configured', function () {
     Mail::fake();
 
     BusinessIntegration::create([
-        'business_id'  => $this->business->id,
-        'provider'     => 'timely',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
         'access_token' => 'some-token',
-        'meta'         => ['account_id' => null],
+        'meta' => ['account_id' => null],
     ]);
 
     $job = new ProcessTimelyAppointmentCompleted($this->business, [
@@ -264,12 +264,12 @@ test('job skips when no client_id and no account_id configured', function () {
 
 test('timely disconnect clears all token fields', function () {
     BusinessIntegration::create([
-        'business_id'      => $this->business->id,
-        'provider'         => 'timely',
-        'access_token'     => 'token',
-        'refresh_token'    => 'refresh',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
+        'access_token' => 'token',
+        'refresh_token' => 'refresh',
         'token_expires_at' => now()->addHour(),
-        'meta'             => ['account_id' => '123'],
+        'meta' => ['account_id' => '123'],
     ]);
 
     $response = $this->post('/integrations/timely/disconnect');
@@ -280,9 +280,9 @@ test('timely disconnect clears all token fields', function () {
 
 test('timely toggle auto send flips the setting', function () {
     $integration = BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'timely',
-        'access_token'      => 'token',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
+        'access_token' => 'token',
         'auto_send_reviews' => true,
     ]);
 
@@ -301,9 +301,9 @@ test('timely toggle auto send flips the setting', function () {
 
 test('integrations page includes timely props', function () {
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'timely',
-        'access_token'      => 'some-token',
+        'business_id' => $this->business->id,
+        'provider' => 'timely',
+        'access_token' => 'some-token',
         'auto_send_reviews' => true,
     ]);
 

@@ -18,9 +18,9 @@ test('jobber webhook queues job for JOB_UPDATED topic with a jobId', function ()
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'jobber',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'jobber',
+        'access_token' => 'test-token',
         'auto_send_reviews' => true,
     ]);
 
@@ -28,7 +28,7 @@ test('jobber webhook queues job for JOB_UPDATED topic with a jobId', function ()
         'data' => [
             'webHookEvent' => [
                 'topic' => 'JOB_UPDATED',
-                'data'  => ['jobId' => 'job-abc-123'],
+                'data' => ['jobId' => 'job-abc-123'],
             ],
         ],
     ]);
@@ -45,9 +45,9 @@ test('jobber webhook ignores non-JOB_UPDATED topics', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'jobber',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'jobber',
+        'access_token' => 'test-token',
         'auto_send_reviews' => true,
     ]);
 
@@ -55,7 +55,7 @@ test('jobber webhook ignores non-JOB_UPDATED topics', function () {
         'data' => [
             'webHookEvent' => [
                 'topic' => 'JOB_CREATED',
-                'data'  => ['jobId' => 'job-abc-456'],
+                'data' => ['jobId' => 'job-abc-456'],
             ],
         ],
     ]);
@@ -70,7 +70,7 @@ test('jobber webhook returns 404 for unknown business uuid', function () {
         'data' => [
             'webHookEvent' => [
                 'topic' => 'JOB_UPDATED',
-                'data'  => ['jobId' => 'job-xyz'],
+                'data' => ['jobId' => 'job-xyz'],
             ],
         ],
     ]);
@@ -83,9 +83,9 @@ test('jobber webhook returns ignored when auto_send disabled', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'jobber',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'jobber',
+        'access_token' => 'test-token',
         'auto_send_reviews' => false,
     ]);
 
@@ -93,7 +93,7 @@ test('jobber webhook returns ignored when auto_send disabled', function () {
         'data' => [
             'webHookEvent' => [
                 'topic' => 'JOB_UPDATED',
-                'data'  => ['jobId' => 'job-abc-123'],
+                'data' => ['jobId' => 'job-abc-123'],
             ],
         ],
     ]);
@@ -108,9 +108,9 @@ test('jobber webhook returns ignored when jobId is missing', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'jobber',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'jobber',
+        'access_token' => 'test-token',
         'auto_send_reviews' => true,
     ]);
 
@@ -118,7 +118,7 @@ test('jobber webhook returns ignored when jobId is missing', function () {
         'data' => [
             'webHookEvent' => [
                 'topic' => 'JOB_UPDATED',
-                'data'  => [],
+                'data' => [],
             ],
         ],
     ]);
@@ -131,11 +131,11 @@ test('jobber webhook returns ignored when jobId is missing', function () {
 // ─── Controller actions ──────────────────────────────────────────────────────
 
 test('jobber disconnect removes integration and redirects', function () {
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $business = Business::factory()->create(['user_id' => $user->id]);
     BusinessIntegration::create([
-        'business_id'  => $business->id,
-        'provider'     => 'jobber',
+        'business_id' => $business->id,
+        'provider' => 'jobber',
         'access_token' => 'test-token',
     ]);
 
@@ -147,12 +147,12 @@ test('jobber disconnect removes integration and redirects', function () {
 });
 
 test('jobber toggleAutoSend flips auto_send_reviews', function () {
-    $user        = User::factory()->create();
-    $business    = Business::factory()->create(['user_id' => $user->id]);
+    $user = User::factory()->create();
+    $business = Business::factory()->create(['user_id' => $user->id]);
     $integration = BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'jobber',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'jobber',
+        'access_token' => 'test-token',
         'auto_send_reviews' => true,
     ]);
 
@@ -175,11 +175,11 @@ test('jobber connect redirects unauthenticated users to login', function () {
 // ─── Integrations page ───────────────────────────────────────────────────────
 
 test('integrations page shows jobberConnected true when token present', function () {
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $business = Business::factory()->create(['user_id' => $user->id]);
     BusinessIntegration::create([
-        'business_id'  => $business->id,
-        'provider'     => 'jobber',
+        'business_id' => $business->id,
+        'provider' => 'jobber',
         'access_token' => 'test-token',
     ]);
 
@@ -197,14 +197,14 @@ test('integrations page shows jobberConnected true when token present', function
 test('ProcessJobberJobCompletion creates customer and queues email for COMPLETED job', function () {
     Mail::fake();
 
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $business = Business::factory()->onboarded()->create(['user_id' => $user->id]);
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'jobber',
-        'access_token'      => 'test-token',
-        'refresh_token'     => 'test-refresh',
-        'token_expires_at'  => now()->addHour(),
+        'business_id' => $business->id,
+        'provider' => 'jobber',
+        'access_token' => 'test-token',
+        'refresh_token' => 'test-refresh',
+        'token_expires_at' => now()->addHour(),
         'auto_send_reviews' => true,
     ]);
 
@@ -213,9 +213,9 @@ test('ProcessJobberJobCompletion creates customer and queues email for COMPLETED
             'data' => [
                 'job' => [
                     'jobStatus' => 'COMPLETED',
-                    'client'    => [
-                        'name'   => 'John Doe',
-                        'email'  => 'john@example.com',
+                    'client' => [
+                        'name' => 'John Doe',
+                        'email' => 'john@example.com',
                         'phones' => [
                             ['number' => '+61400000001', 'primary' => true],
                         ],
@@ -230,13 +230,13 @@ test('ProcessJobberJobCompletion creates customer and queues email for COMPLETED
 
     $this->assertDatabaseHas('customers', [
         'business_id' => $business->id,
-        'email'       => 'john@example.com',
+        'email' => 'john@example.com',
     ]);
 
     $this->assertDatabaseHas('review_requests', [
         'business_id' => $business->id,
-        'source'      => 'jobber',
-        'status'      => 'sent',
+        'source' => 'jobber',
+        'status' => 'sent',
     ]);
 
     Mail::assertQueued(ReviewRequestMail::class, fn ($mail) => $mail->hasTo('john@example.com'));
@@ -245,13 +245,13 @@ test('ProcessJobberJobCompletion creates customer and queues email for COMPLETED
 test('ProcessJobberJobCompletion skips non-COMPLETED jobs', function () {
     Mail::fake();
 
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $business = Business::factory()->onboarded()->create(['user_id' => $user->id]);
     BusinessIntegration::create([
-        'business_id'      => $business->id,
-        'provider'         => 'jobber',
-        'access_token'     => 'test-token',
-        'refresh_token'    => 'test-refresh',
+        'business_id' => $business->id,
+        'provider' => 'jobber',
+        'access_token' => 'test-token',
+        'refresh_token' => 'test-refresh',
         'token_expires_at' => now()->addHour(),
     ]);
 
@@ -260,9 +260,9 @@ test('ProcessJobberJobCompletion skips non-COMPLETED jobs', function () {
             'data' => [
                 'job' => [
                     'jobStatus' => 'IN_PROGRESS',
-                    'client'    => [
-                        'name'   => 'Jane Doe',
-                        'email'  => 'jane@example.com',
+                    'client' => [
+                        'name' => 'Jane Doe',
+                        'email' => 'jane@example.com',
                         'phones' => [],
                     ],
                 ],
@@ -275,7 +275,7 @@ test('ProcessJobberJobCompletion skips non-COMPLETED jobs', function () {
 
     $this->assertDatabaseMissing('review_requests', [
         'business_id' => $business->id,
-        'source'      => 'jobber',
+        'source' => 'jobber',
     ]);
 
     Mail::assertNothingQueued();
@@ -284,13 +284,13 @@ test('ProcessJobberJobCompletion skips non-COMPLETED jobs', function () {
 test('ProcessJobberJobCompletion skips customer with recent review request within 90 days', function () {
     Mail::fake();
 
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $business = Business::factory()->onboarded()->create(['user_id' => $user->id]);
     BusinessIntegration::create([
-        'business_id'      => $business->id,
-        'provider'         => 'jobber',
-        'access_token'     => 'test-token',
-        'refresh_token'    => 'test-refresh',
+        'business_id' => $business->id,
+        'provider' => 'jobber',
+        'access_token' => 'test-token',
+        'refresh_token' => 'test-refresh',
         'token_expires_at' => now()->addHour(),
     ]);
 
@@ -299,9 +299,9 @@ test('ProcessJobberJobCompletion skips customer with recent review request withi
             'data' => [
                 'job' => [
                     'jobStatus' => 'COMPLETED',
-                    'client'    => [
-                        'name'   => 'Repeat Customer',
-                        'email'  => 'repeat@example.com',
+                    'client' => [
+                        'name' => 'Repeat Customer',
+                        'email' => 'repeat@example.com',
                         'phones' => [],
                     ],
                 ],
@@ -311,13 +311,13 @@ test('ProcessJobberJobCompletion skips customer with recent review request withi
 
     $customer = Customer::factory()->create([
         'business_id' => $business->id,
-        'email'       => 'repeat@example.com',
+        'email' => 'repeat@example.com',
     ]);
 
     ReviewRequest::factory()->create([
         'business_id' => $business->id,
         'customer_id' => $customer->id,
-        'created_at'  => now()->subDays(30),
+        'created_at' => now()->subDays(30),
     ]);
 
     $job = new ProcessJobberJobCompletion($business, 'job-id-003');

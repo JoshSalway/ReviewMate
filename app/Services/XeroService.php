@@ -61,8 +61,8 @@ class XeroService
         $data = $response->json();
 
         $integration?->update([
-            'access_token'     => $data['access_token'],
-            'refresh_token'    => $data['refresh_token'],
+            'access_token' => $data['access_token'],
+            'refresh_token' => $data['refresh_token'],
             'token_expires_at' => now()->addSeconds($data['expires_in'] ?? 1800),
         ]);
     }

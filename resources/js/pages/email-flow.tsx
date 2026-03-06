@@ -1,9 +1,9 @@
 import { Head } from '@inertiajs/react';
 import { Mail, Clock, CheckCircle, XCircle, RefreshCw, ArrowDown, Zap } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { emailFlow } from '@/routes';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [

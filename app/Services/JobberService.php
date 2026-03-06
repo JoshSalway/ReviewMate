@@ -8,9 +8,11 @@ use Illuminate\Support\Facades\Http;
 
 class JobberService
 {
-    const AUTH_URL  = 'https://api.getjobber.com/api/oauth/authorize';
+    const AUTH_URL = 'https://api.getjobber.com/api/oauth/authorize';
+
     const TOKEN_URL = 'https://api.getjobber.com/api/oauth/token';
-    const GQL_URL   = 'https://api.getjobber.com/api/graphql';
+
+    const GQL_URL = 'https://api.getjobber.com/api/graphql';
 
     public function __construct(protected Business $business) {}
 
@@ -21,22 +23,22 @@ class JobberService
 
     public function getAuthorizationUrl(string $state): string
     {
-        return self::AUTH_URL . '?' . http_build_query([
+        return self::AUTH_URL.'?'.http_build_query([
             'response_type' => 'code',
-            'client_id'     => config('services.jobber.client_id'),
-            'redirect_uri'  => route('integrations.jobber.callback'),
-            'state'         => $state,
+            'client_id' => config('services.jobber.client_id'),
+            'redirect_uri' => route('integrations.jobber.callback'),
+            'state' => $state,
         ]);
     }
 
     public function exchangeCodeForToken(string $code): array
     {
         $response = Http::asForm()->post(self::TOKEN_URL, [
-            'grant_type'    => 'authorization_code',
-            'client_id'     => config('services.jobber.client_id'),
+            'grant_type' => 'authorization_code',
+            'client_id' => config('services.jobber.client_id'),
             'client_secret' => config('services.jobber.client_secret'),
-            'redirect_uri'  => route('integrations.jobber.callback'),
-            'code'          => $code,
+            'redirect_uri' => route('integrations.jobber.callback'),
+            'code' => $code,
         ]);
 
         return $response->json() ?? [];
@@ -47,8 +49,8 @@ class JobberService
         return BusinessIntegration::updateOrCreate(
             ['business_id' => $this->business->id, 'provider' => 'jobber'],
             [
-                'access_token'     => $tokens['access_token'] ?? null,
-                'refresh_token'    => $tokens['refresh_token'] ?? null,
+                'access_token' => $tokens['access_token'] ?? null,
+                'refresh_token' => $tokens['refresh_token'] ?? null,
                 'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 3600),
             ]
         );
@@ -59,8 +61,8 @@ class JobberService
         $integration = $this->integration();
 
         $response = Http::asForm()->post(self::TOKEN_URL, [
-            'grant_type'    => 'refresh_token',
-            'client_id'     => config('services.jobber.client_id'),
+            'grant_type' => 'refresh_token',
+            'client_id' => config('services.jobber.client_id'),
             'client_secret' => config('services.jobber.client_secret'),
             'refresh_token' => $integration->refresh_token,
         ]);
@@ -68,8 +70,8 @@ class JobberService
         $data = $response->json() ?? [];
 
         $integration->update([
-            'access_token'     => $data['access_token'],
-            'refresh_token'    => $data['refresh_token'] ?? $integration->refresh_token,
+            'access_token' => $data['access_token'],
+            'refresh_token' => $data['refresh_token'] ?? $integration->refresh_token,
             'token_expires_at' => now()->addSeconds($data['expires_in'] ?? 3600),
         ]);
     }
@@ -87,7 +89,7 @@ class JobberService
         $response = Http::withToken($integration->access_token)
             ->withHeader('X-JOBBER-GRAPHQL-VERSION', '2023-11-15')
             ->post(self::GQL_URL, [
-                'query'     => $query,
+                'query' => $query,
                 'variables' => $variables,
             ]);
 

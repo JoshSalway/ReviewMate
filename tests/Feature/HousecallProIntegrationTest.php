@@ -7,7 +7,6 @@ use App\Models\BusinessIntegration;
 use App\Models\Customer;
 use App\Models\ReviewRequest;
 use App\Models\User;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 
@@ -18,24 +17,24 @@ test('housecallpro webhook queues job for job.completed event', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'housecallpro',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'housecallpro',
+        'access_token' => 'test-token',
         'auto_send_reviews' => true,
     ]);
 
     $jobData = [
-        'id'       => 'hcp-job-123',
+        'id' => 'hcp-job-123',
         'customer' => [
-            'first_name'    => 'Alice',
-            'last_name'     => 'Smith',
-            'email'         => 'alice@example.com',
+            'first_name' => 'Alice',
+            'last_name' => 'Smith',
+            'email' => 'alice@example.com',
             'mobile_number' => '+61400000002',
         ],
     ];
 
     $response = $this->postJson("/webhooks/housecallpro/{$business->uuid}", [
-        'event_action'   => 'job.completed',
+        'event_action' => 'job.completed',
         'event_resource' => $jobData,
     ]);
 
@@ -52,14 +51,14 @@ test('housecallpro webhook ignores non-job.completed events', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'housecallpro',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'housecallpro',
+        'access_token' => 'test-token',
         'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/housecallpro/{$business->uuid}", [
-        'event_action'   => 'job.created',
+        'event_action' => 'job.created',
         'event_resource' => ['id' => 'hcp-job-456'],
     ]);
 
@@ -70,7 +69,7 @@ test('housecallpro webhook ignores non-job.completed events', function () {
 
 test('housecallpro webhook returns 404 for unknown business uuid', function () {
     $response = $this->postJson('/webhooks/housecallpro/00000000-0000-0000-0000-000000000000', [
-        'event_action'   => 'job.completed',
+        'event_action' => 'job.completed',
         'event_resource' => ['id' => 'hcp-job-789'],
     ]);
 
@@ -82,16 +81,16 @@ test('housecallpro webhook returns auto_send_disabled when auto send is disabled
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'housecallpro',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'housecallpro',
+        'access_token' => 'test-token',
         'auto_send_reviews' => false,
     ]);
 
     $response = $this->postJson("/webhooks/housecallpro/{$business->uuid}", [
-        'event_action'   => 'job.completed',
+        'event_action' => 'job.completed',
         'event_resource' => [
-            'id'       => 'hcp-job-123',
+            'id' => 'hcp-job-123',
             'customer' => ['first_name' => 'Bob', 'email' => 'bob@example.com'],
         ],
     ]);
@@ -106,9 +105,9 @@ test('housecallpro webhook returns 400 when payload has no job data', function (
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'housecallpro',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'housecallpro',
+        'access_token' => 'test-token',
         'auto_send_reviews' => true,
     ]);
 
@@ -125,11 +124,11 @@ test('housecallpro webhook returns 400 when payload has no job data', function (
 // ─── Controller actions ──────────────────────────────────────────────────────
 
 test('housecallpro disconnect removes integration and redirects', function () {
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $business = Business::factory()->create(['user_id' => $user->id]);
     BusinessIntegration::create([
-        'business_id'  => $business->id,
-        'provider'     => 'housecallpro',
+        'business_id' => $business->id,
+        'provider' => 'housecallpro',
         'access_token' => 'test-token',
     ]);
 
@@ -141,12 +140,12 @@ test('housecallpro disconnect removes integration and redirects', function () {
 });
 
 test('housecallpro toggleAutoSend flips auto_send_reviews', function () {
-    $user        = User::factory()->create();
-    $business    = Business::factory()->create(['user_id' => $user->id]);
+    $user = User::factory()->create();
+    $business = Business::factory()->create(['user_id' => $user->id]);
     $integration = BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'housecallpro',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'housecallpro',
+        'access_token' => 'test-token',
         'auto_send_reviews' => true,
     ]);
 
@@ -169,11 +168,11 @@ test('housecallpro connect redirects unauthenticated users to login', function (
 // ─── Integrations page ───────────────────────────────────────────────────────
 
 test('integrations page shows housecallProConnected true when token present', function () {
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $business = Business::factory()->create(['user_id' => $user->id]);
     BusinessIntegration::create([
-        'business_id'  => $business->id,
-        'provider'     => 'housecallpro',
+        'business_id' => $business->id,
+        'provider' => 'housecallpro',
         'access_token' => 'test-token',
     ]);
 
@@ -191,23 +190,23 @@ test('integrations page shows housecallProConnected true when token present', fu
 test('ProcessHousecallProJobCompletion creates customer and queues email', function () {
     Mail::fake();
 
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $business = Business::factory()->onboarded()->create(['user_id' => $user->id]);
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'housecallpro',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'housecallpro',
+        'access_token' => 'test-token',
         'auto_send_reviews' => true,
     ]);
 
     $jobData = [
-        'id'       => 'hcp-job-999',
+        'id' => 'hcp-job-999',
         'customer' => [
-            'first_name'    => 'Carol',
-            'last_name'     => 'Jones',
-            'email'         => 'carol@example.com',
+            'first_name' => 'Carol',
+            'last_name' => 'Jones',
+            'email' => 'carol@example.com',
             'mobile_number' => null,
-            'home_number'   => null,
+            'home_number' => null,
         ],
     ];
 
@@ -216,14 +215,14 @@ test('ProcessHousecallProJobCompletion creates customer and queues email', funct
 
     $this->assertDatabaseHas('customers', [
         'business_id' => $business->id,
-        'email'       => 'carol@example.com',
+        'email' => 'carol@example.com',
     ]);
 
     $this->assertDatabaseHas('review_requests', [
         'business_id' => $business->id,
-        'source'      => 'housecallpro',
-        'status'      => 'sent',
-        'channel'     => 'email',
+        'source' => 'housecallpro',
+        'status' => 'sent',
+        'channel' => 'email',
     ]);
 
     Mail::assertQueued(ReviewRequestMail::class, fn ($mail) => $mail->hasTo('carol@example.com'));
@@ -232,34 +231,34 @@ test('ProcessHousecallProJobCompletion creates customer and queues email', funct
 test('ProcessHousecallProJobCompletion skips customer with recent review request within 90 days', function () {
     Mail::fake();
 
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $business = Business::factory()->onboarded()->create(['user_id' => $user->id]);
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'housecallpro',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'housecallpro',
+        'access_token' => 'test-token',
         'auto_send_reviews' => true,
     ]);
 
     $customer = Customer::factory()->create([
         'business_id' => $business->id,
-        'email'       => 'repeat@example.com',
+        'email' => 'repeat@example.com',
     ]);
 
     ReviewRequest::factory()->create([
         'business_id' => $business->id,
         'customer_id' => $customer->id,
-        'created_at'  => now()->subDays(14),
+        'created_at' => now()->subDays(14),
     ]);
 
     $jobData = [
-        'id'       => 'hcp-job-888',
+        'id' => 'hcp-job-888',
         'customer' => [
-            'first_name'    => 'Repeat',
-            'last_name'     => 'Customer',
-            'email'         => 'repeat@example.com',
+            'first_name' => 'Repeat',
+            'last_name' => 'Customer',
+            'email' => 'repeat@example.com',
             'mobile_number' => null,
-            'home_number'   => null,
+            'home_number' => null,
         ],
     ];
 

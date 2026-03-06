@@ -31,8 +31,8 @@ class JobberController extends Controller
         }
 
         $business = Auth::user()->currentBusiness();
-        $service  = new JobberService($business);
-        $tokens   = $service->exchangeCodeForToken($request->code);
+        $service = new JobberService($business);
+        $tokens = $service->exchangeCodeForToken($request->code);
         $service->storeTokens($tokens);
 
         return redirect()->route('settings.integrations')
@@ -64,12 +64,22 @@ class JobberController extends Controller
      */
     public function webhook(Request $request, Business $business): JsonResponse
     {
+        // Verify Jobber webhook signature (HMAC-SHA256 over the raw body)
+        $secret = config('services.jobber.webhook_secret');
+        if ($secret) {
+            $signature = $request->header('x-jobber-hmac-256');
+            $expected = base64_encode(hash_hmac('sha256', $request->getContent(), $secret, true));
+            if (! hash_equals($expected, $signature ?? '')) {
+                return response()->json(['error' => 'Invalid signature'], 401);
+            }
+        }
+
         $payload = $request->all();
 
         // Jobber wraps the event in data.webHookEvent
-        $event  = $payload['data']['webHookEvent'] ?? $payload;
-        $topic  = $event['topic'] ?? '';
-        $jobId  = $event['data']['jobId'] ?? null;
+        $event = $payload['data']['webHookEvent'] ?? $payload;
+        $topic = $event['topic'] ?? '';
+        $jobId = $event['data']['jobId'] ?? null;
 
         if ($topic !== 'JOB_UPDATED' || ! $jobId) {
             return response()->json(['status' => 'ignored']);

@@ -47,9 +47,9 @@ class DashboardController extends Controller
             ->with('customer')
             ->get()
             ->map(fn ($req) => [
-                'id'            => $req->id,
+                'id' => $req->id,
                 'customer_name' => $req->customer?->name,
-                'reviewed_at'   => $req->reviewed_at?->diffForHumans(),
+                'reviewed_at' => $req->reviewed_at?->diffForHumans(),
             ]);
 
         $recentReviews = $business->reviews()

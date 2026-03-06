@@ -59,8 +59,8 @@ return [
 
     'clicksend' => [
         'username' => env('CLICKSEND_USERNAME'),
-        'api_key'  => env('CLICKSEND_API_KEY'),
-        'from'     => env('CLICKSEND_FROM', 'ReviewMate'),
+        'api_key' => env('CLICKSEND_API_KEY'),
+        'from' => env('CLICKSEND_FROM', 'ReviewMate'),
     ],
 
     'twilio' => [
@@ -70,33 +70,33 @@ return [
     ],
 
     'servicem8' => [
-        'client_id'     => env('SERVICEM8_CLIENT_ID'),
+        'client_id' => env('SERVICEM8_CLIENT_ID'),
         'client_secret' => env('SERVICEM8_CLIENT_SECRET'),
     ],
 
     'xero' => [
-        'client_id'     => env('XERO_CLIENT_ID'),
+        'client_id' => env('XERO_CLIENT_ID'),
         'client_secret' => env('XERO_CLIENT_SECRET'),
-        'webhook_key'   => env('XERO_WEBHOOK_KEY'),
+        'webhook_key' => env('XERO_WEBHOOK_KEY'),
     ],
 
     'timely' => [
-        'client_id'     => env('TIMELY_CLIENT_ID'),
+        'client_id' => env('TIMELY_CLIENT_ID'),
         'client_secret' => env('TIMELY_CLIENT_SECRET'),
     ],
 
     'simpro' => [
-        'client_id'     => env('SIMPRO_CLIENT_ID'),
+        'client_id' => env('SIMPRO_CLIENT_ID'),
         'client_secret' => env('SIMPRO_CLIENT_SECRET'),
     ],
 
     'jobber' => [
-        'client_id'     => env('JOBBER_CLIENT_ID'),
+        'client_id' => env('JOBBER_CLIENT_ID'),
         'client_secret' => env('JOBBER_CLIENT_SECRET'),
     ],
 
     'housecallpro' => [
-        'client_id'     => env('HOUSECALLPRO_CLIENT_ID'),
+        'client_id' => env('HOUSECALLPRO_CLIENT_ID'),
         'client_secret' => env('HOUSECALLPRO_CLIENT_SECRET'),
     ],
 

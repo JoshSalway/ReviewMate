@@ -13,18 +13,18 @@ test('simpro webhook queues job when status is Complete', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'simpro',
-        'access_token'      => 'test-token',
-        'meta'              => ['company_url' => 'mycompany.simprocloud.com'],
+        'business_id' => $business->id,
+        'provider' => 'simpro',
+        'access_token' => 'test-token',
+        'meta' => ['company_url' => 'mycompany.simprocloud.com'],
         'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/simpro/{$business->uuid}", [
         'event' => 'job.status.changed',
-        'data'  => [
-            'jobId'      => 12345,
-            'status'     => 'Complete',
+        'data' => [
+            'jobId' => 12345,
+            'status' => 'Complete',
             'customerId' => 67890,
         ],
     ]);
@@ -41,16 +41,16 @@ test('simpro webhook ignores non-Complete statuses', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'simpro',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'simpro',
+        'access_token' => 'test-token',
         'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/simpro/{$business->uuid}", [
         'event' => 'job.status.changed',
-        'data'  => [
-            'jobId'  => 12345,
+        'data' => [
+            'jobId' => 12345,
             'status' => 'In Progress',
         ],
     ]);
@@ -67,7 +67,7 @@ test('simpro webhook ignores unknown events', function () {
 
     $response = $this->postJson("/webhooks/simpro/{$business->uuid}", [
         'event' => 'job.created',
-        'data'  => ['jobId' => 1],
+        'data' => ['jobId' => 1],
     ]);
 
     $response->assertStatus(200);
@@ -78,7 +78,7 @@ test('simpro webhook ignores unknown events', function () {
 test('simpro webhook returns 404 for unknown business uuid', function () {
     $response = $this->postJson('/webhooks/simpro/00000000-0000-0000-0000-000000000000', [
         'event' => 'job.status.changed',
-        'data'  => ['jobId' => 1, 'status' => 'Complete'],
+        'data' => ['jobId' => 1, 'status' => 'Complete'],
     ]);
 
     $response->assertStatus(404);
@@ -89,16 +89,16 @@ test('simpro webhook skips queuing when auto send is disabled', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'simpro',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'simpro',
+        'access_token' => 'test-token',
         'auto_send_reviews' => false,
     ]);
 
     $response = $this->postJson("/webhooks/simpro/{$business->uuid}", [
         'event' => 'job.status.changed',
-        'data'  => [
-            'jobId'  => 12345,
+        'data' => [
+            'jobId' => 12345,
             'status' => 'Complete',
         ],
     ]);
@@ -113,15 +113,15 @@ test('simpro webhook returns 400 when job id is missing', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'simpro',
-        'access_token'      => 'test-token',
+        'business_id' => $business->id,
+        'provider' => 'simpro',
+        'access_token' => 'test-token',
         'auto_send_reviews' => true,
     ]);
 
     $response = $this->postJson("/webhooks/simpro/{$business->uuid}", [
         'event' => 'job.status.changed',
-        'data'  => ['status' => 'Complete'],
+        'data' => ['status' => 'Complete'],
     ]);
 
     $response->assertStatus(400);
@@ -141,13 +141,13 @@ test('simpro connect redirects unauthenticated users to login', function () {
 // --- Integrations page ---
 
 test('integrations page includes simpro props', function () {
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $business = Business::factory()->create(['user_id' => $user->id]);
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'simpro',
-        'access_token'      => 'test-token',
-        'meta'              => ['company_url' => 'mycompany.simprocloud.com'],
+        'business_id' => $business->id,
+        'provider' => 'simpro',
+        'access_token' => 'test-token',
+        'meta' => ['company_url' => 'mycompany.simprocloud.com'],
         'auto_send_reviews' => false,
     ]);
 
@@ -162,7 +162,7 @@ test('integrations page includes simpro props', function () {
 });
 
 test('integrations page shows simpro as disconnected when no token', function () {
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $business = Business::factory()->create(['user_id' => $user->id]);
 
     $this->actingAs($user)

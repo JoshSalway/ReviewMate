@@ -28,21 +28,21 @@ class XeroController extends Controller
         }
 
         $business = Auth::user()->currentBusiness();
-        $service  = new XeroService($business);
-        $tokens   = $service->exchangeCodeForToken($request->code);
+        $service = new XeroService($business);
+        $tokens = $service->exchangeCodeForToken($request->code);
 
         BusinessIntegration::updateOrCreate(
             ['business_id' => $business->id, 'provider' => 'xero'],
             [
-                'access_token'     => $tokens['access_token'],
-                'refresh_token'    => $tokens['refresh_token'],
+                'access_token' => $tokens['access_token'],
+                'refresh_token' => $tokens['refresh_token'],
                 'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 1800),
             ]
         );
 
         // Reload so XeroService can use the new token, then fetch tenant ID
         $business->load('integrations');
-        $tenants  = (new XeroService($business))->getTenants();
+        $tenants = (new XeroService($business))->getTenants();
         $tenantId = $tenants[0]['tenantId'] ?? null;
 
         $business->integration('xero')?->mergeMeta(['tenant_id' => $tenantId]);
@@ -59,9 +59,9 @@ class XeroController extends Controller
 
     public function webhook(Request $request, Business $business)
     {
-        $payload   = $request->getContent();
+        $payload = $request->getContent();
         $signature = $request->header('x-xero-signature');
-        $expected  = base64_encode(hash_hmac('sha256', $payload, config('services.xero.webhook_key'), true));
+        $expected = base64_encode(hash_hmac('sha256', $payload, config('services.xero.webhook_key'), true));
 
         if (! hash_equals($expected, $signature ?? '')) {
             return response()->json(['status' => 'invalid signature'], 401);
@@ -70,7 +70,7 @@ class XeroController extends Controller
         foreach ($request->input('events', []) as $event) {
             if (($event['eventType'] ?? '') === 'UPDATE' && ($event['resourceUrl'] ?? '') !== '') {
                 preg_match('/Invoices\/([^\/\?]+)/', $event['resourceUrl'], $matches);
-                $invoiceId   = $matches[1] ?? null;
+                $invoiceId = $matches[1] ?? null;
                 $integration = $business->integration('xero');
 
                 if ($invoiceId && $integration?->auto_send_reviews) {

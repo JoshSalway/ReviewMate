@@ -83,6 +83,7 @@ class Business extends Model
     public function isGoogleConnected(): bool
     {
         $google = $this->integration('google');
+
         return $google?->isConnected() && filled($google->getMeta('location_id'));
     }
 
@@ -132,6 +133,7 @@ class Business extends Model
         if ($this->relationLoaded('integrations')) {
             return $this->integrations->firstWhere('provider', $provider);
         }
+
         return $this->integrations()->where('provider', $provider)->first();
     }
 
@@ -147,7 +149,7 @@ class Business extends Model
         }
 
         // Fallback: Google search for the business by name
-        return 'https://www.google.com/search?q=' . urlencode($this->name . ' reviews');
+        return 'https://www.google.com/search?q='.urlencode($this->name.' reviews');
     }
 
     public function facebookReviewUrl(): ?string
@@ -156,7 +158,7 @@ class Business extends Model
             return null;
         }
 
-        return rtrim($this->facebook_page_url, '/') . '/reviews';
+        return rtrim($this->facebook_page_url, '/').'/reviews';
     }
 
     public function hasFacebookReviews(): bool

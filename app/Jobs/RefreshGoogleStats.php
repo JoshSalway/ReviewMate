@@ -33,8 +33,8 @@ class RefreshGoogleStats implements ShouldQueue
                 ['business_id' => $this->business->id, 'provider' => 'google']
             );
             $integration->mergeMeta([
-                'rating'           => $stats['rating'],
-                'review_count'     => $stats['review_count'],
+                'rating' => $stats['rating'],
+                'review_count' => $stats['review_count'],
                 'stats_updated_at' => now()->toDateTimeString(),
             ]);
         }

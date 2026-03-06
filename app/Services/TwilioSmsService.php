@@ -43,12 +43,12 @@ class TwilioSmsService implements SmsProvider
         $googleUrl = $business->googleReviewUrl();
 
         if ($business->hasFacebookReviews()) {
-            $fbUrl   = $business->facebookReviewUrl();
+            $fbUrl = $business->facebookReviewUrl();
             $message = "Hi {$customer->name}, {$business->name} would love a review! "
-                . "Google: {$googleUrl} | Facebook: {$fbUrl}";
+                ."Google: {$googleUrl} | Facebook: {$fbUrl}";
         } else {
             $message = "Hi {$customer->name}, {$business->name} would love a Google review! "
-                . "It only takes a minute: {$googleUrl}";
+                ."It only takes a minute: {$googleUrl}";
         }
 
         $this->send($customer->phone, $message);
@@ -63,12 +63,12 @@ class TwilioSmsService implements SmsProvider
         $googleUrl = $business->googleReviewUrl();
 
         if ($business->hasFacebookReviews()) {
-            $fbUrl   = $business->facebookReviewUrl();
+            $fbUrl = $business->facebookReviewUrl();
             $message = "Hi {$customer->name}, just a friendly reminder from {$business->name} — "
-                . "we'd love your review! Google: {$googleUrl} | Facebook: {$fbUrl}";
+                ."we'd love your review! Google: {$googleUrl} | Facebook: {$fbUrl}";
         } else {
             $message = "Hi {$customer->name}, just a friendly reminder from {$business->name} — "
-                . "we'd really appreciate your Google review: {$googleUrl}";
+                ."we'd really appreciate your Google review: {$googleUrl}";
         }
 
         $this->send($customer->phone, $message);

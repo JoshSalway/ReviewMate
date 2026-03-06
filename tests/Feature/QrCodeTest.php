@@ -59,7 +59,7 @@ test('qr-code page shows google search fallback url when no place id is set', fu
     ]);
     $this->actingAs($user);
 
-    $expectedUrl = 'https://www.google.com/search?q=' . urlencode('Test Plumbing Co reviews');
+    $expectedUrl = 'https://www.google.com/search?q='.urlencode('Test Plumbing Co reviews');
 
     $this->get('/qr-code')
         ->assertOk()

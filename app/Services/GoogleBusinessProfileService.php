@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Business;
-use App\Models\BusinessIntegration;
 use Illuminate\Support\Facades\Http;
 
 class GoogleBusinessProfileService
@@ -120,7 +119,7 @@ class GoogleBusinessProfileService
         $locationName = $locations[0]['name'] ?? null;
 
         $integration?->mergeMeta([
-            'account_id'  => $accountName,
+            'account_id' => $accountName,
             'location_id' => $locationName,
         ]);
     }
@@ -151,7 +150,7 @@ class GoogleBusinessProfileService
         $data = $response->json();
 
         $integration?->update([
-            'access_token'     => $data['access_token'],
+            'access_token' => $data['access_token'],
             'token_expires_at' => now()->addSeconds($data['expires_in'] - 60)->toDateTimeString(),
         ]);
     }

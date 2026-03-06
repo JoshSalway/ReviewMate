@@ -1,13 +1,12 @@
-import { useState, useRef, useCallback } from 'react';
 import { Head } from '@inertiajs/react';
-import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
 import { Download, Copy, Check, QrCode } from 'lucide-react';
-import AppLayout from '@/layouts/app-layout';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { QRCodeSVG, QRCodeCanvas } from 'qrcode.react';
+import { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
+import AppLayout from '@/layouts/app-layout';
 import { qrCode } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
 

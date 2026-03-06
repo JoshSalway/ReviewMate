@@ -1,11 +1,11 @@
 import { Head, router } from '@inertiajs/react';
+import { CheckCircle, Crown } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { billing as billingRoute } from '@/routes/settings';
 import { subscribe as subscribeRoute, portal as portalRoute } from '@/routes/settings/billing';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { CheckCircle, Crown, Zap } from 'lucide-react';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [

@@ -25,13 +25,13 @@ return new class extends Migration
             ->get()
             ->each(function ($business) {
                 DB::table('cliniko_integrations')->insert([
-                    'business_id'       => $business->id,
-                    'api_key'           => $business->cliniko_api_key,
-                    'shard'             => $business->cliniko_shard,
+                    'business_id' => $business->id,
+                    'api_key' => $business->cliniko_api_key,
+                    'shard' => $business->cliniko_shard,
                     'auto_send_reviews' => $business->cliniko_auto_send_reviews ?? true,
-                    'last_polled_at'    => $business->cliniko_last_polled_at,
-                    'created_at'        => now(),
-                    'updated_at'        => now(),
+                    'last_polled_at' => $business->cliniko_last_polled_at,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             });
 

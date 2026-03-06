@@ -3,8 +3,8 @@
 use App\Jobs\SyncGoogleReviews;
 use App\Mail\NewReviewAlertMail;
 use App\Models\Business;
-use App\Models\Customer;
 use App\Models\BusinessIntegration;
+use App\Models\Customer;
 use App\Models\Review;
 use App\Models\ReviewRequest;
 use App\Models\User;
@@ -18,10 +18,10 @@ beforeEach(function () {
         'user_id' => $this->user->id,
     ]);
     BusinessIntegration::create([
-        'business_id'  => $this->business->id,
-        'provider'     => 'google',
+        'business_id' => $this->business->id,
+        'provider' => 'google',
         'access_token' => 'fake-token',
-        'meta'         => ['location_id' => 'accounts/123/locations/456'],
+        'meta' => ['location_id' => 'accounts/123/locations/456'],
     ]);
 });
 

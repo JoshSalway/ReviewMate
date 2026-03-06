@@ -20,13 +20,13 @@ class BusinessIntegration extends Model
     ];
 
     protected $casts = [
-        'access_token'      => 'encrypted',
-        'refresh_token'     => 'encrypted',
-        'api_key'           => 'encrypted',
-        'token_expires_at'  => 'datetime',
-        'last_polled_at'    => 'datetime',
+        'access_token' => 'encrypted',
+        'refresh_token' => 'encrypted',
+        'api_key' => 'encrypted',
+        'token_expires_at' => 'datetime',
+        'last_polled_at' => 'datetime',
         'auto_send_reviews' => 'boolean',
-        'meta'              => 'array',
+        'meta' => 'array',
     ];
 
     public function business(): BelongsTo

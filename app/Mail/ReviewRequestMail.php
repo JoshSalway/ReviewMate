@@ -83,14 +83,14 @@ class ReviewRequestMail extends Mailable implements ShouldQueue
         return new Content(
             markdown: 'emails.review-request',
             with: [
-                'customerName'      => $this->customer->name,
-                'businessName'      => $this->business->name,
-                'ownerName'         => $this->business->owner_name ?? $this->business->user->name,
-                'reviewLink'        => $this->reviewLink,
-                'unsubscribeUrl'    => $this->unsubscribeUrl ?? url('/'),
-                'body'              => $this->renderedBody,
+                'customerName' => $this->customer->name,
+                'businessName' => $this->business->name,
+                'ownerName' => $this->business->owner_name ?? $this->business->user->name,
+                'reviewLink' => $this->reviewLink,
+                'unsubscribeUrl' => $this->unsubscribeUrl ?? url('/'),
+                'body' => $this->renderedBody,
                 'facebookReviewUrl' => $this->facebookReviewUrl,
-                'confirmUrl'        => $this->confirmUrl,
+                'confirmUrl' => $this->confirmUrl,
             ],
         );
     }

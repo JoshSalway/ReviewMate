@@ -6,7 +6,6 @@ use App\Models\BusinessIntegration;
 use App\Models\Review;
 use App\Models\ReviewRequest;
 use App\Models\User;
-use App\Services\GooglePlacesService;
 use Illuminate\Support\Facades\Http;
 
 test('RefreshGoogleStats job updates business rating and review count when api returns data', function () {
@@ -94,10 +93,10 @@ test('dashboard passes google stats props to inertia', function () {
     ]);
     BusinessIntegration::create([
         'business_id' => $business->id,
-        'provider'    => 'google',
-        'meta'        => [
-            'rating'           => 4.7,
-            'review_count'     => 142,
+        'provider' => 'google',
+        'meta' => [
+            'rating' => 4.7,
+            'review_count' => 142,
             'stats_updated_at' => now()->subHour()->toDateTimeString(),
         ],
     ]);

@@ -2,8 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Mail\ReviewRequestMail;
 use App\Models\Business;
 use App\Models\Customer;
+use App\Models\ReviewRequest;
 use App\Services\ServiceM8Service;
 use App\Services\SmsService;
 use Illuminate\Bus\Queueable;
@@ -13,8 +15,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ReviewRequestMail;
-use App\Models\ReviewRequest;
 
 class ProcessServiceM8JobCompletion implements ShouldQueue
 {
@@ -34,6 +34,7 @@ class ProcessServiceM8JobCompletion implements ShouldQueue
 
         if (empty($job)) {
             Log::warning('ServiceM8: job not found', ['uuid' => $this->jobUuid, 'business_id' => $this->business->id]);
+
             return;
         }
 
@@ -42,18 +43,20 @@ class ProcessServiceM8JobCompletion implements ShouldQueue
 
         if (! $jobContact || empty($jobContact['contact_uuid'])) {
             Log::info('ServiceM8: no contact found for job', ['uuid' => $this->jobUuid]);
+
             return;
         }
 
         // Fetch full contact details
         $contact = $service->getContact($jobContact['contact_uuid']);
 
-        $name  = trim(($contact['first'] ?? '') . ' ' . ($contact['last'] ?? ''));
+        $name = trim(($contact['first'] ?? '').' '.($contact['last'] ?? ''));
         $email = $contact['email'] ?? null;
         $phone = $contact['mobile'] ?? $contact['phone'] ?? null;
 
         if (! $email && ! $phone) {
             Log::info('ServiceM8: contact has no email or phone', ['contact_uuid' => $jobContact['contact_uuid']]);
+
             return;
         }
 
@@ -61,10 +64,10 @@ class ProcessServiceM8JobCompletion implements ShouldQueue
         $customer = Customer::firstOrCreate(
             [
                 'business_id' => $this->business->id,
-                'email'       => $email,
+                'email' => $email,
             ],
             [
-                'name'  => $name ?: 'Customer',
+                'name' => $name ?: 'Customer',
                 'phone' => $phone,
             ]
         );
@@ -81,6 +84,7 @@ class ProcessServiceM8JobCompletion implements ShouldQueue
 
         if ($recentRequest) {
             Log::info('ServiceM8: skipping — recent request exists', ['customer_id' => $customer->id]);
+
             return;
         }
 
@@ -91,10 +95,10 @@ class ProcessServiceM8JobCompletion implements ShouldQueue
         $reviewRequest = ReviewRequest::create([
             'business_id' => $this->business->id,
             'customer_id' => $customer->id,
-            'status'      => 'sent',
-            'channel'     => $channel,
-            'source'      => 'servicem8',
-            'sent_at'     => now(),
+            'status' => 'sent',
+            'channel' => $channel,
+            'source' => 'servicem8',
+            'sent_at' => now(),
         ]);
 
         // Send via SMS if phone and SMS is configured

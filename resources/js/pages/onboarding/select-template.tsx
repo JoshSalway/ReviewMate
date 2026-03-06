@@ -1,8 +1,8 @@
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
-import { selectTemplate as selectTemplateRoute } from '@/routes/onboarding';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { selectTemplate as selectTemplateRoute } from '@/routes/onboarding';
 
 interface DefaultTemplate {
     type: string;

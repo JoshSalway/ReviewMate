@@ -17,15 +17,15 @@ class ClinikoController extends Controller
             'api_key' => 'required|string|min:10',
         ]);
 
-        $apiKey   = $request->api_key;
-        $shard    = ClinikoService::detectShard($apiKey);
+        $apiKey = $request->api_key;
+        $shard = ClinikoService::detectShard($apiKey);
         $business = Auth::user()->currentBusiness();
 
         // Build a temporary integration to test the connection without persisting
         $tempIntegration = new BusinessIntegration([
             'provider' => 'cliniko',
-            'api_key'  => $apiKey,
-            'meta'     => ['shard' => $shard],
+            'api_key' => $apiKey,
+            'meta' => ['shard' => $shard],
         ]);
         $business->setRelation('integrations', collect([$tempIntegration]));
         $service = new ClinikoService($business);

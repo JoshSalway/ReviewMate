@@ -29,17 +29,17 @@ return new class extends Migration
             ->get()
             ->each(function ($business) {
                 DB::table('google_integrations')->insert([
-                    'business_id'      => $business->id,
-                    'access_token'     => $business->google_access_token,
-                    'refresh_token'    => $business->google_refresh_token,
+                    'business_id' => $business->id,
+                    'access_token' => $business->google_access_token,
+                    'refresh_token' => $business->google_refresh_token,
                     'token_expires_at' => $business->google_token_expires_at,
-                    'account_id'       => $business->google_account_id,
-                    'location_id'      => $business->google_location_id,
-                    'rating'           => $business->google_rating,
-                    'review_count'     => $business->google_review_count,
+                    'account_id' => $business->google_account_id,
+                    'location_id' => $business->google_location_id,
+                    'rating' => $business->google_rating,
+                    'review_count' => $business->google_review_count,
                     'stats_updated_at' => $business->google_stats_updated_at,
-                    'created_at'       => now(),
-                    'updated_at'       => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             });
 

@@ -1,16 +1,16 @@
 <?php
 
 use App\Jobs\IssueReferralReward;
+use App\Jobs\SyncGoogleReviews;
 use App\Listeners\ApplyReferralOnRegistration;
 use App\Mail\ReferralInviteMail;
 use App\Models\Business;
-use App\Models\Customer;
 use App\Models\BusinessIntegration;
+use App\Models\Customer;
 use App\Models\Referral;
 use App\Models\Review;
 use App\Models\ReviewRequest;
 use App\Models\User;
-use App\Jobs\SyncGoogleReviews;
 use App\Services\GoogleBusinessProfileService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Mail;
@@ -27,10 +27,10 @@ beforeEach(function () {
         'user_id' => $this->user->id,
     ]);
     BusinessIntegration::create([
-        'business_id'  => $this->business->id,
-        'provider'     => 'google',
+        'business_id' => $this->business->id,
+        'provider' => 'google',
         'access_token' => 'fake-token',
-        'meta'         => ['location_id' => 'accounts/123/locations/456'],
+        'meta' => ['location_id' => 'accounts/123/locations/456'],
     ]);
 });
 

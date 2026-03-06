@@ -74,12 +74,12 @@ class FollowUpMail extends Mailable implements ShouldQueue
         return new Content(
             markdown: 'emails.follow-up',
             with: [
-                'customerName'      => $this->customer->name,
-                'businessName'      => $this->business->name,
-                'ownerName'         => $this->business->owner_name ?? $this->business->user->name,
-                'reviewLink'        => $this->reviewLink,
-                'unsubscribeUrl'    => $this->unsubscribeUrl ?? url('/'),
-                'body'              => $this->renderedBody,
+                'customerName' => $this->customer->name,
+                'businessName' => $this->business->name,
+                'ownerName' => $this->business->owner_name ?? $this->business->user->name,
+                'reviewLink' => $this->reviewLink,
+                'unsubscribeUrl' => $this->unsubscribeUrl ?? url('/'),
+                'body' => $this->renderedBody,
                 'facebookReviewUrl' => $this->facebookReviewUrl,
             ],
         );

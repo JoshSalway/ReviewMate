@@ -22,6 +22,7 @@ class ClinikoService
     protected function baseUrl(): string
     {
         $shard = $this->integration()?->getMeta('shard') ?? 'au1';
+
         return "https://api.{$shard}.cliniko.com/v1";
     }
 
@@ -30,9 +31,9 @@ class ClinikoService
         $response = Http::withBasicAuth($this->integration()?->api_key, '')
             ->withHeaders([
                 'User-Agent' => 'ReviewMate (reviewmate.com.au)',
-                'Accept'     => 'application/json',
+                'Accept' => 'application/json',
             ])
-            ->get($this->baseUrl() . $path, $query);
+            ->get($this->baseUrl().$path, $query);
 
         return $response->json() ?? [];
     }
@@ -45,18 +46,18 @@ class ClinikoService
     public function getCompletedAppointmentsSince(CarbonInterface $since): array
     {
         $appointments = [];
-        $page         = 1;
+        $page = 1;
 
         do {
             $data = $this->request('/appointments', [
-                'q'        => "appointment_start>={$since->toIso8601String()}",
+                'q' => "appointment_start>={$since->toIso8601String()}",
                 'per_page' => 100,
-                'page'     => $page,
-                'sort'     => 'appointment_start',
-                'order'    => 'asc',
+                'page' => $page,
+                'sort' => 'appointment_start',
+                'order' => 'asc',
             ]);
 
-            $batch        = $data['appointments'] ?? [];
+            $batch = $data['appointments'] ?? [];
             $appointments = array_merge($appointments, $batch);
             $page++;
 
@@ -73,12 +74,14 @@ class ClinikoService
     public function getPatient(string $patientId): ?array
     {
         $data = $this->request("/patients/{$patientId}");
+
         return $data ?: null;
     }
 
     public function testConnection(): bool
     {
         $data = $this->request('/practitioners', ['per_page' => 1]);
+
         return isset($data['practitioners']);
     }
 
@@ -91,6 +94,7 @@ class ClinikoService
         if (preg_match('/==([a-z]{2}\d)$/', $apiKey, $matches)) {
             return $matches[1]; // e.g., 'au1', 'au2'
         }
+
         return 'au1'; // default Australian shard
     }
 }

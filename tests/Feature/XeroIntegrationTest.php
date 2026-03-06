@@ -19,10 +19,10 @@ test('xero webhook queues job for paid invoice UPDATE event', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'xero',
-        'access_token'      => 'test-token',
-        'meta'              => ['tenant_id' => 'test-tenant'],
+        'business_id' => $business->id,
+        'provider' => 'xero',
+        'access_token' => 'test-token',
+        'meta' => ['tenant_id' => 'test-tenant'],
         'auto_send_reviews' => true,
     ]);
 
@@ -63,10 +63,10 @@ test('xero webhook skips dispatching when auto send is disabled', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'xero',
-        'access_token'      => 'test-token',
-        'meta'              => ['tenant_id' => 'test-tenant'],
+        'business_id' => $business->id,
+        'provider' => 'xero',
+        'access_token' => 'test-token',
+        'meta' => ['tenant_id' => 'test-tenant'],
         'auto_send_reviews' => false,
     ]);
 
@@ -93,10 +93,10 @@ test('xero webhook ignores non-UPDATE events', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'       => $business->id,
-        'provider'          => 'xero',
-        'access_token'      => 'test-token',
-        'meta'              => ['tenant_id' => 'test-tenant'],
+        'business_id' => $business->id,
+        'provider' => 'xero',
+        'access_token' => 'test-token',
+        'meta' => ['tenant_id' => 'test-tenant'],
         'auto_send_reviews' => true,
     ]);
 
@@ -139,10 +139,10 @@ test('ProcessXeroInvoicePaid creates customer and queues email when invoice is P
 
     $business = Business::factory()->onboarded()->create();
     BusinessIntegration::create([
-        'business_id'  => $business->id,
-        'provider'     => 'xero',
+        'business_id' => $business->id,
+        'provider' => 'xero',
         'access_token' => 'test-token',
-        'meta'         => ['tenant_id' => 'test-tenant'],
+        'meta' => ['tenant_id' => 'test-tenant'],
     ]);
 
     Http::fake([
@@ -186,10 +186,10 @@ test('ProcessXeroInvoicePaid skips non-PAID invoices', function () {
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'  => $business->id,
-        'provider'     => 'xero',
+        'business_id' => $business->id,
+        'provider' => 'xero',
         'access_token' => 'test-token',
-        'meta'         => ['tenant_id' => 'test-tenant'],
+        'meta' => ['tenant_id' => 'test-tenant'],
     ]);
 
     Http::fake([
@@ -214,10 +214,10 @@ test('ProcessXeroInvoicePaid skips customer with recent review request', functio
 
     $business = Business::factory()->onboarded()->create();
     BusinessIntegration::create([
-        'business_id'  => $business->id,
-        'provider'     => 'xero',
+        'business_id' => $business->id,
+        'provider' => 'xero',
         'access_token' => 'test-token',
-        'meta'         => ['tenant_id' => 'test-tenant'],
+        'meta' => ['tenant_id' => 'test-tenant'],
     ]);
 
     $customer = Customer::factory()->create([
@@ -261,10 +261,10 @@ test('ProcessXeroInvoicePaid skips contact with no email and no phone', function
 
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'  => $business->id,
-        'provider'     => 'xero',
+        'business_id' => $business->id,
+        'provider' => 'xero',
         'access_token' => 'test-token',
-        'meta'         => ['tenant_id' => 'test-tenant'],
+        'meta' => ['tenant_id' => 'test-tenant'],
     ]);
 
     Http::fake([
@@ -307,10 +307,10 @@ test('XeroService isConnected returns false when tokens are missing', function (
 test('XeroService isConnected returns true when tokens are present', function () {
     $business = Business::factory()->create();
     BusinessIntegration::create([
-        'business_id'  => $business->id,
-        'provider'     => 'xero',
+        'business_id' => $business->id,
+        'provider' => 'xero',
         'access_token' => 'some-token',
-        'meta'         => ['tenant_id' => 'some-tenant-id'],
+        'meta' => ['tenant_id' => 'some-tenant-id'],
     ]);
 
     $service = new XeroService($business);

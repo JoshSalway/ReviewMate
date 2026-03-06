@@ -24,12 +24,12 @@ return new class extends Migration
             ->get()
             ->each(function ($business) {
                 DB::table('halaxy_integrations')->insert([
-                    'business_id'       => $business->id,
-                    'api_key'           => $business->halaxy_api_key,
+                    'business_id' => $business->id,
+                    'api_key' => $business->halaxy_api_key,
                     'auto_send_reviews' => $business->halaxy_auto_send_reviews ?? true,
-                    'last_polled_at'    => $business->halaxy_last_polled_at,
-                    'created_at'        => now(),
-                    'updated_at'        => now(),
+                    'last_polled_at' => $business->halaxy_last_polled_at,
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             });
 

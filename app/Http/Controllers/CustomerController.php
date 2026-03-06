@@ -253,7 +253,7 @@ class CustomerController extends Controller
 
         return Inertia::render('unsubscribed', [
             'businessName' => $customer->business?->name,
-            'confirmUrl'   => $confirmUrl,
+            'confirmUrl' => $confirmUrl,
         ]);
     }
 

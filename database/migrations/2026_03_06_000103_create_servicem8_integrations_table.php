@@ -25,13 +25,13 @@ return new class extends Migration
             ->get()
             ->each(function ($business) {
                 DB::table('servicem8_integrations')->insert([
-                    'business_id'       => $business->id,
-                    'access_token'      => $business->servicem8_access_token,
-                    'refresh_token'     => $business->servicem8_refresh_token,
-                    'token_expires_at'  => $business->servicem8_token_expires_at,
+                    'business_id' => $business->id,
+                    'access_token' => $business->servicem8_access_token,
+                    'refresh_token' => $business->servicem8_refresh_token,
+                    'token_expires_at' => $business->servicem8_token_expires_at,
                     'auto_send_reviews' => $business->servicem8_auto_send_reviews ?? true,
-                    'created_at'        => now(),
-                    'updated_at'        => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             });
 

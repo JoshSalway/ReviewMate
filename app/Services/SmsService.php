@@ -11,9 +11,9 @@ class SmsService
         $driver = config('services.sms.driver', 'clicksend');
 
         return match ($driver) {
-            'twilio'    => new TwilioSmsService(),
-            'clicksend' => new ClickSendSmsService(),
-            default     => new ClickSendSmsService(),
+            'twilio' => new TwilioSmsService,
+            'clicksend' => new ClickSendSmsService,
+            default => new ClickSendSmsService,
         };
     }
 
@@ -22,9 +22,9 @@ class SmsService
         $driver = config('services.sms.driver', 'clicksend');
 
         return match ($driver) {
-            'twilio'    => TwilioSmsService::isConfigured(),
+            'twilio' => TwilioSmsService::isConfigured(),
             'clicksend' => ClickSendSmsService::isConfigured(),
-            default     => false,
+            default => false,
         };
     }
 }

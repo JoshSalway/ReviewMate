@@ -34,7 +34,7 @@ test('user can create a reply template', function () {
         'name' => 'Thank You Template',
         'body' => 'Thank you so much for your kind words!',
     ])->assertRedirect()
-      ->assertSessionHas('success');
+        ->assertSessionHas('success');
 
     $this->assertDatabaseHas('reply_templates', [
         'business_id' => $this->business->id,
@@ -73,7 +73,7 @@ test('user can update their reply template', function () {
         'name' => 'New Name',
         'body' => 'New body text',
     ])->assertRedirect()
-      ->assertSessionHas('success');
+        ->assertSessionHas('success');
 
     expect($template->fresh()->name)->toBe('New Name');
     expect($template->fresh()->body)->toBe('New body text');

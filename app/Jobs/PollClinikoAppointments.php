@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Mail\ReviewRequestMail;
 use App\Models\Business;
 use App\Models\Customer;
 use App\Models\ReviewRequest;
@@ -14,7 +15,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ReviewRequestMail;
 
 class PollClinikoAppointments implements ShouldQueue
 {
@@ -30,7 +30,7 @@ class PollClinikoAppointments implements ShouldQueue
             return;
         }
 
-        $since   = $integration->last_polled_at ?? now()->subDay();
+        $since = $integration->last_polled_at ?? now()->subDay();
         $service = new ClinikoService($this->business);
 
         $appointments = $service->getCompletedAppointmentsSince($since);
@@ -53,12 +53,13 @@ class PollClinikoAppointments implements ShouldQueue
                 continue;
             }
 
-            $name  = trim(($patient['first_name'] ?? '') . ' ' . ($patient['last_name'] ?? ''));
+            $name = trim(($patient['first_name'] ?? '').' '.($patient['last_name'] ?? ''));
             $email = $patient['email'] ?? null;
             $phone = $patient['patient_phone_numbers'][0]['number'] ?? null;
 
             if (! $email && ! $phone) {
                 Log::info('Cliniko: patient has no email or phone', ['patient_id' => $patientId]);
+
                 continue;
             }
 
@@ -75,6 +76,7 @@ class PollClinikoAppointments implements ShouldQueue
             // Skip if already sent within 90 days
             if ($customer->reviewRequests()->where('created_at', '>=', now()->subDays(90))->exists()) {
                 Log::info('Cliniko: skipping — recent request exists', ['customer_id' => $customer->id]);
+
                 continue;
             }
 
@@ -84,10 +86,10 @@ class PollClinikoAppointments implements ShouldQueue
             $reviewRequest = ReviewRequest::create([
                 'business_id' => $this->business->id,
                 'customer_id' => $customer->id,
-                'status'      => 'sent',
-                'channel'     => $channel,
-                'source'      => 'cliniko',
-                'sent_at'     => now(),
+                'status' => 'sent',
+                'channel' => $channel,
+                'source' => 'cliniko',
+                'sent_at' => now(),
             ]);
 
             // Send via SMS if phone and SMS is configured

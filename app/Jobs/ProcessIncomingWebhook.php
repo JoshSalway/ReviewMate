@@ -25,9 +25,9 @@ class ProcessIncomingWebhook implements ShouldQueue
 
     public function handle(): void
     {
-        $email   = $this->data['email'] ?? null;
-        $phone   = $this->data['phone'] ?? null;
-        $name    = $this->data['name'] ?? 'Customer';
+        $email = $this->data['email'] ?? null;
+        $phone = $this->data['phone'] ?? null;
+        $name = $this->data['name'] ?? 'Customer';
 
         $customer = Customer::firstOrCreate(
             ['business_id' => $this->business->id, 'email' => $email],
@@ -55,10 +55,10 @@ class ProcessIncomingWebhook implements ShouldQueue
         $reviewRequest = ReviewRequest::create([
             'business_id' => $this->business->id,
             'customer_id' => $customer->id,
-            'channel'     => $channel,
-            'status'      => 'sent',
-            'source'      => 'webhook',
-            'sent_at'     => now(),
+            'channel' => $channel,
+            'status' => 'sent',
+            'source' => 'webhook',
+            'sent_at' => now(),
         ]);
 
         // Send via SMS if phone and SMS is configured

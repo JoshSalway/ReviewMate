@@ -91,12 +91,12 @@ test('connect-google passes isGoogleConnected false when not connected', functio
 test('connect-google passes discovered locations when google is connected', function () {
     $business = Business::factory()->create(['user_id' => $this->user->id]);
     BusinessIntegration::create([
-        'business_id'      => $business->id,
-        'provider'         => 'google',
-        'access_token'     => 'fake-token',
-        'refresh_token'    => 'fake-refresh',
+        'business_id' => $business->id,
+        'provider' => 'google',
+        'access_token' => 'fake-token',
+        'refresh_token' => 'fake-refresh',
         'token_expires_at' => now()->addHour(),
-        'meta'             => ['account_id' => 'accounts/123', 'location_id' => 'accounts/123/locations/456'],
+        'meta' => ['account_id' => 'accounts/123', 'location_id' => 'accounts/123/locations/456'],
     ]);
 
     $service = Mockery::mock(GoogleBusinessProfileService::class);
@@ -117,12 +117,12 @@ test('connect-google passes discovered locations when google is connected', func
 test('connect-google falls back to empty locations when google api fails', function () {
     $business = Business::factory()->create(['user_id' => $this->user->id]);
     BusinessIntegration::create([
-        'business_id'      => $business->id,
-        'provider'         => 'google',
-        'access_token'     => 'fake-token',
-        'refresh_token'    => 'fake-refresh',
+        'business_id' => $business->id,
+        'provider' => 'google',
+        'access_token' => 'fake-token',
+        'refresh_token' => 'fake-refresh',
         'token_expires_at' => now()->addHour(),
-        'meta'             => ['account_id' => 'accounts/123', 'location_id' => 'accounts/123/locations/456'],
+        'meta' => ['account_id' => 'accounts/123', 'location_id' => 'accounts/123/locations/456'],
     ]);
 
     $service = Mockery::mock(GoogleBusinessProfileService::class);

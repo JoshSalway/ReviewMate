@@ -18,7 +18,7 @@ class ServiceM8Controller extends Controller
     public function connect(Request $request): RedirectResponse
     {
         $business = Auth::user()->currentBusiness();
-        $state    = Str::random(40);
+        $state = Str::random(40);
 
         session(['servicem8_oauth_state' => $state]);
 
@@ -32,13 +32,13 @@ class ServiceM8Controller extends Controller
         }
 
         $business = Auth::user()->currentBusiness();
-        $tokens   = (new ServiceM8Service($business))->exchangeCodeForToken($request->code);
+        $tokens = (new ServiceM8Service($business))->exchangeCodeForToken($request->code);
 
         BusinessIntegration::updateOrCreate(
             ['business_id' => $business->id, 'provider' => 'servicem8'],
             [
-                'access_token'     => $tokens['access_token'] ?? null,
-                'refresh_token'    => $tokens['refresh_token'] ?? null,
+                'access_token' => $tokens['access_token'] ?? null,
+                'refresh_token' => $tokens['refresh_token'] ?? null,
                 'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 3600),
             ]
         );
@@ -65,7 +65,17 @@ class ServiceM8Controller extends Controller
 
     public function webhook(Request $request, Business $business): JsonResponse
     {
-        $payload    = $request->all();
+        // Verify ServiceM8 webhook signature (HMAC-SHA256 over the raw body)
+        $secret = config('services.servicem8.webhook_secret');
+        if ($secret) {
+            $signature = $request->header('x-servicem8-signature');
+            $expected = hash_hmac('sha256', $request->getContent(), $secret);
+            if (! hash_equals($expected, $signature ?? '')) {
+                return response()->json(['error' => 'Invalid signature'], 401);
+            }
+        }
+
+        $payload = $request->all();
         $entryPoint = $payload['entry_point'] ?? '';
 
         if ($entryPoint !== 'JobCompletion') {

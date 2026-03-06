@@ -31,8 +31,8 @@ class HousecallProController extends Controller
         }
 
         $business = Auth::user()->currentBusiness();
-        $service  = new HousecallProService($business);
-        $tokens   = $service->exchangeCodeForToken($request->code);
+        $service = new HousecallProService($business);
+        $tokens = $service->exchangeCodeForToken($request->code);
         $service->storeTokens($tokens);
 
         return redirect()->route('settings.integrations')
@@ -64,7 +64,17 @@ class HousecallProController extends Controller
      */
     public function webhook(Request $request, Business $business): JsonResponse
     {
-        $payload   = $request->all();
+        // Verify Housecall Pro webhook signature (HMAC-SHA256 over the raw body)
+        $secret = config('services.housecallpro.webhook_secret');
+        if ($secret) {
+            $signature = $request->header('x-housecallpro-signature');
+            $expected = hash_hmac('sha256', $request->getContent(), $secret);
+            if (! hash_equals($expected, $signature ?? '')) {
+                return response()->json(['error' => 'Invalid signature'], 401);
+            }
+        }
+
+        $payload = $request->all();
         $eventType = $payload['event_action'] ?? $payload['event'] ?? '';
 
         if ($eventType !== 'job.completed') {

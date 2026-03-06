@@ -22,10 +22,10 @@ class SimproController extends Controller
         ]);
 
         $companyUrl = $request->company_url;
-        $state      = Str::random(40);
+        $state = Str::random(40);
 
         session([
-            'simpro_oauth_state'       => $state,
+            'simpro_oauth_state' => $state,
             'simpro_oauth_company_url' => $companyUrl,
         ]);
 
@@ -47,15 +47,15 @@ class SimproController extends Controller
         }
 
         $business = Auth::user()->currentBusiness();
-        $tokens   = (new SimproService($business))->exchangeCodeForToken($request->code, $companyUrl);
+        $tokens = (new SimproService($business))->exchangeCodeForToken($request->code, $companyUrl);
 
         BusinessIntegration::updateOrCreate(
             ['business_id' => $business->id, 'provider' => 'simpro'],
             [
-                'access_token'     => $tokens['access_token'] ?? null,
-                'refresh_token'    => $tokens['refresh_token'] ?? null,
+                'access_token' => $tokens['access_token'] ?? null,
+                'refresh_token' => $tokens['refresh_token'] ?? null,
                 'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 3600),
-                'meta'             => ['company_url' => $companyUrl],
+                'meta' => ['company_url' => $companyUrl],
             ]
         );
 
@@ -81,16 +81,26 @@ class SimproController extends Controller
 
     public function webhook(Request $request, Business $business): JsonResponse
     {
+        // Verify Simpro webhook signature (HMAC-SHA256 over the raw body)
+        $secret = config('services.simpro.webhook_secret');
+        if ($secret) {
+            $signature = $request->header('x-simpro-signature');
+            $expected = hash_hmac('sha256', $request->getContent(), $secret);
+            if (! hash_equals($expected, $signature ?? '')) {
+                return response()->json(['error' => 'Invalid signature'], 401);
+            }
+        }
+
         $payload = $request->all();
-        $event   = $payload['event'] ?? '';
+        $event = $payload['event'] ?? '';
 
         if ($event !== 'job.status.changed') {
             return response()->json(['status' => 'ignored']);
         }
 
-        $data   = $payload['data'] ?? [];
+        $data = $payload['data'] ?? [];
         $status = $data['status'] ?? '';
-        $jobId  = $data['jobId'] ?? null;
+        $jobId = $data['jobId'] ?? null;
 
         if ($status !== 'Complete') {
             return response()->json(['status' => 'ignored']);

@@ -34,6 +34,7 @@ class ProcessSimproJobComplete implements ShouldQueue
 
         if (empty($job)) {
             Log::warning('Simpro: job not found', ['job_id' => $this->jobId, 'business_id' => $this->business->id]);
+
             return;
         }
 
@@ -42,6 +43,7 @@ class ProcessSimproJobComplete implements ShouldQueue
 
         if (! $customerId) {
             Log::info('Simpro: no customer on job', ['job_id' => $this->jobId]);
+
             return;
         }
 
@@ -50,15 +52,17 @@ class ProcessSimproJobComplete implements ShouldQueue
 
         if (! $customer) {
             Log::warning('Simpro: customer not found', ['customer_id' => $customerId, 'business_id' => $this->business->id]);
+
             return;
         }
 
-        $name  = trim(($customer['GivenName'] ?? '') . ' ' . ($customer['FamilyName'] ?? ''));
+        $name = trim(($customer['GivenName'] ?? '').' '.($customer['FamilyName'] ?? ''));
         $email = $customer['Email'] ?? null;
         $phone = $customer['Mobile'] ?? $customer['Phone'] ?? null;
 
         if (! $email && ! $phone) {
             Log::info('Simpro: customer has no email or phone', ['customer_id' => $customerId]);
+
             return;
         }
 
@@ -66,10 +70,10 @@ class ProcessSimproJobComplete implements ShouldQueue
         $reviewCustomer = Customer::firstOrCreate(
             [
                 'business_id' => $this->business->id,
-                'email'       => $email,
+                'email' => $email,
             ],
             [
-                'name'  => $name ?: 'Customer',
+                'name' => $name ?: 'Customer',
                 'phone' => $phone,
             ]
         );
@@ -86,6 +90,7 @@ class ProcessSimproJobComplete implements ShouldQueue
 
         if ($recentRequest) {
             Log::info('Simpro: skipping — recent request exists', ['customer_id' => $reviewCustomer->id]);
+
             return;
         }
 
@@ -96,10 +101,10 @@ class ProcessSimproJobComplete implements ShouldQueue
         $reviewRequest = ReviewRequest::create([
             'business_id' => $this->business->id,
             'customer_id' => $reviewCustomer->id,
-            'status'      => 'sent',
-            'channel'     => $channel,
-            'source'      => 'simpro',
-            'sent_at'     => now(),
+            'status' => 'sent',
+            'channel' => $channel,
+            'source' => 'simpro',
+            'sent_at' => now(),
         ]);
 
         // Send via SMS if phone and SMS is configured

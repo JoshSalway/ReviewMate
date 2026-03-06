@@ -22,11 +22,11 @@ test('clicksend sends sms via rest api', function () {
 
     config([
         'services.clicksend.username' => 'test_user',
-        'services.clicksend.api_key'  => 'test_key',
-        'services.clicksend.from'     => 'ReviewMate',
+        'services.clicksend.api_key' => 'test_key',
+        'services.clicksend.from' => 'ReviewMate',
     ]);
 
-    $service = new ClickSendSmsService();
+    $service = new ClickSendSmsService;
     $service->send('+61400000000', 'Test message');
 
     Http::assertSent(function ($request) {
@@ -39,7 +39,7 @@ test('clicksend sends sms via rest api', function () {
 test('clicksend is configured when credentials present', function () {
     config([
         'services.clicksend.username' => 'user',
-        'services.clicksend.api_key'  => 'key',
+        'services.clicksend.api_key' => 'key',
     ]);
     expect(ClickSendSmsService::isConfigured())->toBeTrue();
 });
@@ -47,16 +47,16 @@ test('clicksend is configured when credentials present', function () {
 test('clicksend is not configured when credentials missing', function () {
     config([
         'services.clicksend.username' => null,
-        'services.clicksend.api_key'  => null,
+        'services.clicksend.api_key' => null,
     ]);
     expect(ClickSendSmsService::isConfigured())->toBeFalse();
 });
 
 test('sms service is not configured when no driver credentials set', function () {
     config([
-        'services.sms.driver'         => 'clicksend',
+        'services.sms.driver' => 'clicksend',
         'services.clicksend.username' => null,
-        'services.clicksend.api_key'  => null,
+        'services.clicksend.api_key' => null,
     ]);
     expect(SmsService::isConfigured())->toBeFalse();
 });

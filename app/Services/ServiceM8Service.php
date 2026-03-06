@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Http;
 class ServiceM8Service
 {
     const API_BASE = 'https://api.servicem8.com/api_1.0';
+
     const AUTH_URL = 'https://go.servicem8.com/oauth/authorize';
+
     const TOKEN_URL = 'https://go.servicem8.com/oauth/access_token';
 
     public function __construct(protected Business $business) {}
@@ -21,23 +23,23 @@ class ServiceM8Service
 
     public function getAuthorizationUrl(string $state): string
     {
-        return self::AUTH_URL . '?' . http_build_query([
+        return self::AUTH_URL.'?'.http_build_query([
             'response_type' => 'code',
-            'client_id'     => config('services.servicem8.client_id'),
-            'redirect_uri'  => route('integrations.servicem8.callback'),
-            'scope'         => 'read_jobs read_clients manage_jobs',
-            'state'         => $state,
+            'client_id' => config('services.servicem8.client_id'),
+            'redirect_uri' => route('integrations.servicem8.callback'),
+            'scope' => 'read_jobs read_clients manage_jobs',
+            'state' => $state,
         ]);
     }
 
     public function exchangeCodeForToken(string $code): array
     {
         $response = Http::asForm()->post(self::TOKEN_URL, [
-            'grant_type'    => 'authorization_code',
-            'client_id'     => config('services.servicem8.client_id'),
+            'grant_type' => 'authorization_code',
+            'client_id' => config('services.servicem8.client_id'),
             'client_secret' => config('services.servicem8.client_secret'),
-            'redirect_uri'  => route('integrations.servicem8.callback'),
-            'code'          => $code,
+            'redirect_uri' => route('integrations.servicem8.callback'),
+            'code' => $code,
         ]);
 
         return $response->json() ?? [];
@@ -48,8 +50,8 @@ class ServiceM8Service
         $integration = $this->integration();
 
         $response = Http::asForm()->post(self::TOKEN_URL, [
-            'grant_type'    => 'refresh_token',
-            'client_id'     => config('services.servicem8.client_id'),
+            'grant_type' => 'refresh_token',
+            'client_id' => config('services.servicem8.client_id'),
             'client_secret' => config('services.servicem8.client_secret'),
             'refresh_token' => $integration?->refresh_token,
         ]);
@@ -57,8 +59,8 @@ class ServiceM8Service
         $data = $response->json() ?? [];
 
         $integration?->update([
-            'access_token'     => $data['access_token'],
-            'refresh_token'    => $data['refresh_token'] ?? $integration->refresh_token,
+            'access_token' => $data['access_token'],
+            'refresh_token' => $data['refresh_token'] ?? $integration->refresh_token,
             'token_expires_at' => now()->addSeconds($data['expires_in'] ?? 3600),
         ]);
     }
@@ -73,7 +75,7 @@ class ServiceM8Service
         }
 
         $response = Http::withToken($this->integration()?->access_token)
-            ->$method(self::API_BASE . $path, $data);
+            ->$method(self::API_BASE.$path, $data);
 
         return $response->json() ?? [];
     }

@@ -1,10 +1,9 @@
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
-import { businessType as businessTypeRoute } from '@/routes/onboarding';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
+import { businessType as businessTypeRoute } from '@/routes/onboarding';
 
 const businessTypes = [
     { value: 'tradie', label: 'Tradie', emoji: '🔧', description: 'Plumber, electrician, builder' },

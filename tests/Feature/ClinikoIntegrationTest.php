@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 
 beforeEach(function () {
-    $this->user     = User::factory()->create();
+    $this->user = User::factory()->create();
     $this->business = Business::factory()->onboarded()->create(['user_id' => $this->user->id]);
     $this->actingAs($this->user);
 });
@@ -69,10 +69,10 @@ test('cliniko connection requires api_key field', function () {
 
 test('cliniko disconnect clears integration fields', function () {
     BusinessIntegration::create([
-        'business_id'    => $this->business->id,
-        'provider'       => 'cliniko',
-        'api_key'        => 'test-key',
-        'meta'           => ['shard' => 'au1'],
+        'business_id' => $this->business->id,
+        'provider' => 'cliniko',
+        'api_key' => 'test-key',
+        'meta' => ['shard' => 'au1'],
         'last_polled_at' => now(),
     ]);
 
@@ -84,9 +84,9 @@ test('cliniko disconnect clears integration fields', function () {
 
 test('cliniko toggle auto send flips the setting', function () {
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'cliniko',
-        'api_key'           => 'test-key',
+        'business_id' => $this->business->id,
+        'provider' => 'cliniko',
+        'api_key' => 'test-key',
         'auto_send_reviews' => true,
     ]);
 
@@ -118,9 +118,9 @@ test('poll job skips business with auto send disabled', function () {
     Mail::fake();
 
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'cliniko',
-        'api_key'           => 'some-key==au1',
+        'business_id' => $this->business->id,
+        'provider' => 'cliniko',
+        'api_key' => 'some-key==au1',
         'auto_send_reviews' => false,
     ]);
 
@@ -140,18 +140,18 @@ test('poll job skips patients already sent a review within 90 days', function ()
             'appointments' => [
                 [
                     'appointment_start' => $past->toIso8601String(),
-                    'appointment_end'   => $past->addHour()->toIso8601String(),
-                    'cancelled'         => false,
-                    'patient'           => [
+                    'appointment_end' => $past->addHour()->toIso8601String(),
+                    'cancelled' => false,
+                    'patient' => [
                         'links' => ['self' => 'https://api.au1.cliniko.com/v1/patients/123'],
                     ],
                 ],
             ],
         ], 200),
         'api.au1.cliniko.com/v1/patients/123' => Http::response([
-            'first_name'           => 'Jane',
-            'last_name'            => 'Smith',
-            'email'                => 'jane@example.com',
+            'first_name' => 'Jane',
+            'last_name' => 'Smith',
+            'email' => 'jane@example.com',
             'patient_phone_numbers' => [],
         ], 200),
     ]);
@@ -159,20 +159,20 @@ test('poll job skips patients already sent a review within 90 days', function ()
     // Pre-existing customer with recent request
     $customer = Customer::factory()->create([
         'business_id' => $this->business->id,
-        'email'       => 'jane@example.com',
+        'email' => 'jane@example.com',
     ]);
 
     ReviewRequest::factory()->create([
         'business_id' => $this->business->id,
         'customer_id' => $customer->id,
-        'created_at'  => now()->subDays(30), // within 90-day window
+        'created_at' => now()->subDays(30), // within 90-day window
     ]);
 
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'cliniko',
-        'api_key'           => 'some-key==au1',
-        'meta'              => ['shard' => 'au1'],
+        'business_id' => $this->business->id,
+        'provider' => 'cliniko',
+        'api_key' => 'some-key==au1',
+        'meta' => ['shard' => 'au1'],
         'auto_send_reviews' => true,
     ]);
 
@@ -194,29 +194,29 @@ test('poll job creates review request and updates last polled at', function () {
             'appointments' => [
                 [
                     'appointment_start' => $past->toIso8601String(),
-                    'appointment_end'   => $past->addHour()->toIso8601String(),
-                    'cancelled'         => false,
-                    'patient'           => [
+                    'appointment_end' => $past->addHour()->toIso8601String(),
+                    'cancelled' => false,
+                    'patient' => [
                         'links' => ['self' => 'https://api.au1.cliniko.com/v1/patients/456'],
                     ],
                 ],
             ],
         ], 200),
         'api.au1.cliniko.com/v1/patients/456' => Http::response([
-            'first_name'           => 'John',
-            'last_name'            => 'Doe',
-            'email'                => 'john@example.com',
+            'first_name' => 'John',
+            'last_name' => 'Doe',
+            'email' => 'john@example.com',
             'patient_phone_numbers' => [],
         ], 200),
     ]);
 
     $integration = BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'cliniko',
-        'api_key'           => 'some-key==au1',
-        'meta'              => ['shard' => 'au1'],
+        'business_id' => $this->business->id,
+        'provider' => 'cliniko',
+        'api_key' => 'some-key==au1',
+        'meta' => ['shard' => 'au1'],
         'auto_send_reviews' => true,
-        'last_polled_at'    => now()->subDay(),
+        'last_polled_at' => now()->subDay(),
     ]);
 
     $job = new PollClinikoAppointments($this->business);
@@ -224,9 +224,9 @@ test('poll job creates review request and updates last polled at', function () {
 
     $this->assertDatabaseHas('review_requests', [
         'business_id' => $this->business->id,
-        'source'      => 'cliniko',
-        'status'      => 'sent',
-        'channel'     => 'email',
+        'source' => 'cliniko',
+        'status' => 'sent',
+        'channel' => 'email',
     ]);
 
     $integration->refresh();
@@ -237,9 +237,9 @@ test('poll job creates review request and updates last polled at', function () {
 
 test('integrations page includes cliniko props', function () {
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'cliniko',
-        'api_key'           => 'test-key',
+        'business_id' => $this->business->id,
+        'provider' => 'cliniko',
+        'api_key' => 'test-key',
         'auto_send_reviews' => false,
     ]);
 

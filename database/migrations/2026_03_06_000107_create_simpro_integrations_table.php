@@ -26,14 +26,14 @@ return new class extends Migration
             ->get()
             ->each(function ($business) {
                 DB::table('simpro_integrations')->insert([
-                    'business_id'       => $business->id,
-                    'access_token'      => $business->simpro_access_token,
-                    'refresh_token'     => $business->simpro_refresh_token,
-                    'token_expires_at'  => $business->simpro_token_expires_at,
-                    'company_url'       => $business->simpro_company_url,
+                    'business_id' => $business->id,
+                    'access_token' => $business->simpro_access_token,
+                    'refresh_token' => $business->simpro_refresh_token,
+                    'token_expires_at' => $business->simpro_token_expires_at,
+                    'company_url' => $business->simpro_company_url,
                     'auto_send_reviews' => $business->simpro_auto_send_reviews ?? true,
-                    'created_at'        => now(),
-                    'updated_at'        => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             });
 

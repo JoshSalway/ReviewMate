@@ -18,8 +18,8 @@ beforeEach(function () {
     ]);
     BusinessIntegration::create([
         'business_id' => $this->business->id,
-        'provider'    => 'google',
-        'meta'        => ['rating' => 4.8, 'review_count' => 42],
+        'provider' => 'google',
+        'meta' => ['rating' => 4.8, 'review_count' => 42],
     ]);
 });
 

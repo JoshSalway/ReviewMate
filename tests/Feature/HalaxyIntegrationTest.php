@@ -8,10 +8,9 @@ use App\Models\ReviewRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Queue;
 
 beforeEach(function () {
-    $this->user     = User::factory()->create();
+    $this->user = User::factory()->create();
     $this->business = Business::factory()->onboarded()->create(['user_id' => $this->user->id]);
     $this->actingAs($this->user);
 });
@@ -56,9 +55,9 @@ test('halaxy connection requires api_key field', function () {
 
 test('halaxy disconnect clears integration fields', function () {
     BusinessIntegration::create([
-        'business_id'    => $this->business->id,
-        'provider'       => 'halaxy',
-        'api_key'        => 'test-key',
+        'business_id' => $this->business->id,
+        'provider' => 'halaxy',
+        'api_key' => 'test-key',
         'last_polled_at' => now(),
     ]);
 
@@ -72,9 +71,9 @@ test('halaxy disconnect clears integration fields', function () {
 
 test('halaxy toggle auto send flips the setting', function () {
     $integration = BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'halaxy',
-        'api_key'           => 'test-key',
+        'business_id' => $this->business->id,
+        'provider' => 'halaxy',
+        'api_key' => 'test-key',
         'auto_send_reviews' => true,
     ]);
 
@@ -104,9 +103,9 @@ test('poll job skips business with auto send disabled', function () {
     Mail::fake();
 
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'halaxy',
-        'api_key'           => 'some-key',
+        'business_id' => $this->business->id,
+        'provider' => 'halaxy',
+        'api_key' => 'some-key',
         'auto_send_reviews' => false,
     ]);
 
@@ -123,39 +122,39 @@ test('poll job skips patients already sent a review within 90 days', function ()
         'api.halaxy.com/v1/appointments*' => Http::response([
             'data' => [
                 [
-                    'id'         => 'appt_123',
+                    'id' => 'appt_123',
                     'patient_id' => 'pat_456',
-                    'status'     => 'COMPLETED',
+                    'status' => 'COMPLETED',
                     'start_time' => now()->subHours(3)->toIso8601String(),
-                    'end_time'   => now()->subHours(2)->toIso8601String(),
+                    'end_time' => now()->subHours(2)->toIso8601String(),
                 ],
             ],
         ], 200),
         'api.halaxy.com/v1/patients/pat_456' => Http::response([
-            'id'         => 'pat_456',
+            'id' => 'pat_456',
             'first_name' => 'Jane',
-            'last_name'  => 'Smith',
-            'email'      => 'jane@example.com',
-            'mobile'     => null,
+            'last_name' => 'Smith',
+            'email' => 'jane@example.com',
+            'mobile' => null,
         ], 200),
     ]);
 
     // Pre-existing customer with recent request
     $customer = Customer::factory()->create([
         'business_id' => $this->business->id,
-        'email'       => 'jane@example.com',
+        'email' => 'jane@example.com',
     ]);
 
     ReviewRequest::factory()->create([
         'business_id' => $this->business->id,
         'customer_id' => $customer->id,
-        'created_at'  => now()->subDays(30), // within 90-day window
+        'created_at' => now()->subDays(30), // within 90-day window
     ]);
 
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'halaxy',
-        'api_key'           => 'some-key',
+        'business_id' => $this->business->id,
+        'provider' => 'halaxy',
+        'api_key' => 'some-key',
         'auto_send_reviews' => true,
     ]);
 
@@ -174,29 +173,29 @@ test('poll job creates review request and updates last polled at', function () {
         'api.halaxy.com/v1/appointments*' => Http::response([
             'data' => [
                 [
-                    'id'         => 'appt_789',
+                    'id' => 'appt_789',
                     'patient_id' => 'pat_999',
-                    'status'     => 'COMPLETED',
+                    'status' => 'COMPLETED',
                     'start_time' => now()->subHours(3)->toIso8601String(),
-                    'end_time'   => now()->subHours(2)->toIso8601String(),
+                    'end_time' => now()->subHours(2)->toIso8601String(),
                 ],
             ],
         ], 200),
         'api.halaxy.com/v1/patients/pat_999' => Http::response([
-            'id'         => 'pat_999',
+            'id' => 'pat_999',
             'first_name' => 'John',
-            'last_name'  => 'Doe',
-            'email'      => 'john@example.com',
-            'mobile'     => null,
+            'last_name' => 'Doe',
+            'email' => 'john@example.com',
+            'mobile' => null,
         ], 200),
     ]);
 
     $integration = BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'halaxy',
-        'api_key'           => 'some-key',
+        'business_id' => $this->business->id,
+        'provider' => 'halaxy',
+        'api_key' => 'some-key',
         'auto_send_reviews' => true,
-        'last_polled_at'    => now()->subDay(),
+        'last_polled_at' => now()->subDay(),
     ]);
 
     $job = new PollHalaxyAppointments($this->business);
@@ -204,9 +203,9 @@ test('poll job creates review request and updates last polled at', function () {
 
     $this->assertDatabaseHas('review_requests', [
         'business_id' => $this->business->id,
-        'source'      => 'halaxy',
-        'status'      => 'sent',
-        'channel'     => 'email',
+        'source' => 'halaxy',
+        'status' => 'sent',
+        'channel' => 'email',
     ]);
 
     $integration->refresh();
@@ -217,9 +216,9 @@ test('poll job creates review request and updates last polled at', function () {
 
 test('integrations page includes halaxy props', function () {
     BusinessIntegration::create([
-        'business_id'       => $this->business->id,
-        'provider'          => 'halaxy',
-        'api_key'           => 'test-key',
+        'business_id' => $this->business->id,
+        'provider' => 'halaxy',
+        'api_key' => 'test-key',
         'auto_send_reviews' => false,
     ]);
 

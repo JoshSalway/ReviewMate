@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 
 beforeEach(function () {
-    $this->user     = User::factory()->create();
+    $this->user = User::factory()->create();
     $this->business = Business::factory()->onboarded()->create([
-        'user_id'       => $this->user->id,
+        'user_id' => $this->user->id,
         'webhook_token' => Str::random(40),
     ]);
     $this->actingAs($this->user);
@@ -23,7 +23,7 @@ test('valid token with email queues job', function () {
     Queue::fake();
 
     $response = $this->postJson("/webhooks/incoming/{$this->business->webhook_token}", [
-        'name'  => 'Jane Smith',
+        'name' => 'Jane Smith',
         'email' => 'jane@example.com',
     ]);
 
@@ -40,7 +40,7 @@ test('valid token with phone queues job', function () {
     Queue::fake();
 
     $response = $this->postJson("/webhooks/incoming/{$this->business->webhook_token}", [
-        'name'  => 'Bob Jones',
+        'name' => 'Bob Jones',
         'phone' => '0412345678',
     ]);
 
@@ -70,7 +70,7 @@ test('missing both email and phone returns 422', function () {
     Queue::fake();
 
     $response = $this->postJson("/webhooks/incoming/{$this->business->webhook_token}", [
-        'name'    => 'No Contact',
+        'name' => 'No Contact',
         'trigger' => 'job_completed',
     ]);
 
@@ -84,8 +84,8 @@ test('optional trigger field is accepted', function () {
     Queue::fake();
 
     $response = $this->postJson("/webhooks/incoming/{$this->business->webhook_token}", [
-        'name'    => 'Jane Smith',
-        'email'   => 'jane@example.com',
+        'name' => 'Jane Smith',
+        'email' => 'jane@example.com',
         'trigger' => 'job_completed',
     ]);
 
@@ -102,21 +102,21 @@ test('90-day dedup prevents review request when recent request exists', function
     // Create customer with a recent review request
     $customer = Customer::factory()->create([
         'business_id' => $this->business->id,
-        'email'       => 'jane@example.com',
+        'email' => 'jane@example.com',
     ]);
 
     ReviewRequest::factory()->create([
         'business_id' => $this->business->id,
         'customer_id' => $customer->id,
-        'created_at'  => now()->subDays(10),
-        'status'      => 'sent',
+        'created_at' => now()->subDays(10),
+        'status' => 'sent',
     ]);
 
     $initialCount = ReviewRequest::where('business_id', $this->business->id)->count();
 
     // Dispatch the job synchronously
     $job = new \App\Jobs\ProcessIncomingWebhook($this->business, [
-        'name'  => 'Jane Smith',
+        'name' => 'Jane Smith',
         'email' => 'jane@example.com',
     ]);
     $job->handle();
@@ -151,7 +151,7 @@ test('regenerate requires authentication', function () {
 // --- Business model auto-generates token ---
 
 test('webhook token is auto-generated on business creation', function () {
-    $user     = User::factory()->create();
+    $user = User::factory()->create();
     $business = Business::factory()->create(['user_id' => $user->id]);
 
     expect($business->webhook_token)->not->toBeNull();

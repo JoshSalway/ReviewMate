@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Mail\ReviewRequestMail;
 use App\Models\Business;
 use App\Models\Customer;
 use App\Models\ReviewRequest;
@@ -14,7 +15,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ReviewRequestMail;
 
 class ProcessTimelyAppointmentCompleted implements ShouldQueue
 {
@@ -32,29 +32,32 @@ class ProcessTimelyAppointmentCompleted implements ShouldQueue
 
         if (! $client) {
             // Fall back to fetching from API
-            $clientId  = $this->appointmentData['client_id'] ?? null;
+            $clientId = $this->appointmentData['client_id'] ?? null;
             $accountId = $this->business->integration('timely')?->getMeta('account_id');
 
             if (! $clientId || ! $accountId) {
                 Log::info('Timely: missing client_id or account_id in webhook payload');
+
                 return;
             }
 
             $service = new TimelyService($this->business);
-            $client  = $service->getClient((int) $accountId, (int) $clientId);
+            $client = $service->getClient((int) $accountId, (int) $clientId);
         }
 
         if (! $client) {
             Log::info('Timely: could not fetch client data');
+
             return;
         }
 
-        $name  = trim(($client['first_name'] ?? '') . ' ' . ($client['last_name'] ?? ''));
+        $name = trim(($client['first_name'] ?? '').' '.($client['last_name'] ?? ''));
         $email = $client['email'] ?? null;
         $phone = $client['mobile_phone'] ?? $client['phone'] ?? null;
 
         if (! $email && ! $phone) {
             Log::info('Timely: client has no email or phone');
+
             return;
         }
 
@@ -71,6 +74,7 @@ class ProcessTimelyAppointmentCompleted implements ShouldQueue
         // Skip if already sent within 90 days
         if ($customer->reviewRequests()->where('created_at', '>=', now()->subDays(90))->exists()) {
             Log::info('Timely: skipping — recent request exists', ['customer_id' => $customer->id]);
+
             return;
         }
 
@@ -80,10 +84,10 @@ class ProcessTimelyAppointmentCompleted implements ShouldQueue
         $reviewRequest = ReviewRequest::create([
             'business_id' => $this->business->id,
             'customer_id' => $customer->id,
-            'status'      => 'sent',
-            'channel'     => $channel,
-            'source'      => 'timely',
-            'sent_at'     => now(),
+            'status' => 'sent',
+            'channel' => $channel,
+            'source' => 'timely',
+            'sent_at' => now(),
         ]);
 
         // Send via SMS if phone and SMS is configured

@@ -1,12 +1,12 @@
 import { Head, router, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import AppLayout from '@/layouts/app-layout';
-import { index as quickSendIndex, send as quickSendSend } from '@/routes/quick-send';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
+import AppLayout from '@/layouts/app-layout';
+import { index as quickSendIndex, send as quickSendSend } from '@/routes/quick-send';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -46,7 +46,7 @@ const channelBadgeClass: Record<Channel, string> = {
     both: 'bg-teal-100 text-teal-700 hover:bg-teal-100',
 };
 
-export default function QuickSend({ business, recentlySent }: Props) {
+export default function QuickSend({ recentlySent }: Props) {
     const { flash } = usePage<{ flash: { success?: string } }>().props;
     const [form, setForm] = useState({ name: '', email: '', channel: 'email' as Channel });
     const [processing, setProcessing] = useState(false);
@@ -54,6 +54,7 @@ export default function QuickSend({ business, recentlySent }: Props) {
 
     useEffect(() => {
         if (flash?.success) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setShowSuccess(true);
             setForm({ name: '', email: '', channel: 'email' });
             const timer = setTimeout(() => setShowSuccess(false), 4000);

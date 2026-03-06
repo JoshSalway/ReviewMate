@@ -30,7 +30,7 @@ class PollHalaxyAppointments implements ShouldQueue
             return;
         }
 
-        $since   = $integration->last_polled_at ?? now()->subDay();
+        $since = $integration->last_polled_at ?? now()->subDay();
         $service = new HalaxyService($this->business);
 
         $appointments = $service->getCompletedAppointmentsSince($since);
@@ -48,12 +48,13 @@ class PollHalaxyAppointments implements ShouldQueue
                 continue;
             }
 
-            $name  = trim(($patient['first_name'] ?? '') . ' ' . ($patient['last_name'] ?? ''));
+            $name = trim(($patient['first_name'] ?? '').' '.($patient['last_name'] ?? ''));
             $email = $patient['email'] ?? null;
             $phone = $patient['mobile'] ?? null;
 
             if (! $email && ! $phone) {
                 Log::info('Halaxy: patient has no email or phone', ['patient_id' => $patientId]);
+
                 continue;
             }
 
@@ -70,6 +71,7 @@ class PollHalaxyAppointments implements ShouldQueue
             // Skip if already sent within 90 days
             if ($customer->reviewRequests()->where('created_at', '>=', now()->subDays(90))->exists()) {
                 Log::info('Halaxy: skipping — recent request exists', ['customer_id' => $customer->id]);
+
                 continue;
             }
 
@@ -79,10 +81,10 @@ class PollHalaxyAppointments implements ShouldQueue
             $reviewRequest = ReviewRequest::create([
                 'business_id' => $this->business->id,
                 'customer_id' => $customer->id,
-                'status'      => 'sent',
-                'channel'     => $channel,
-                'source'      => 'halaxy',
-                'sent_at'     => now(),
+                'status' => 'sent',
+                'channel' => $channel,
+                'source' => 'halaxy',
+                'sent_at' => now(),
             ]);
 
             // Send via SMS if phone and SMS is configured

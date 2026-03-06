@@ -3,12 +3,11 @@
 use App\Models\Business;
 use App\Models\BusinessIntegration;
 use App\Models\Customer;
-use App\Models\Review;
 use App\Models\ReplyTemplate;
+use App\Models\Review;
 use App\Models\ReviewRequest;
 use App\Models\User;
 use App\Services\GoogleBusinessProfileService;
-use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     $this->user = User::factory()->create();

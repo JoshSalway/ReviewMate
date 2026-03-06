@@ -1,17 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
-import AppLayout from '@/layouts/app-layout';
-import { replyTemplates as replyTemplatesRoute } from '@/routes/settings';
-import {
-    store as storeTemplate,
-    update as updateTemplate,
-    destroy as destroyTemplate,
-} from '@/routes/settings/reply-templates';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -19,6 +9,16 @@ import {
     DialogTitle,
     DialogFooter,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/app-layout';
+import { replyTemplates as replyTemplatesRoute } from '@/routes/settings';
+import {
+    store as storeTemplate,
+    update as updateTemplate,
+    destroy as destroyTemplate,
+} from '@/routes/settings/reply-templates';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [

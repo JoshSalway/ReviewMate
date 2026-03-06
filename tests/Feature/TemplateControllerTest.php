@@ -46,7 +46,7 @@ test('user can update an email template', function () {
         'subject' => 'New Subject',
         'body' => 'Updated body content for the template.',
     ])->assertRedirect()
-      ->assertSessionHas('success');
+        ->assertSessionHas('success');
 
     expect($template->fresh()->subject)->toBe('New Subject');
     expect($template->fresh()->body)->toBe('Updated body content for the template.');

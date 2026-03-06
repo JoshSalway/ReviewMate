@@ -28,10 +28,11 @@ class ProcessJobberJobCompletion implements ShouldQueue
     public function handle(): void
     {
         $service = new JobberService($this->business);
-        $job     = $service->getJob($this->jobId);
+        $job = $service->getJob($this->jobId);
 
         if (empty($job)) {
             Log::warning('Jobber: job not found', ['jobId' => $this->jobId, 'business_id' => $this->business->id]);
+
             return;
         }
 
@@ -41,12 +42,12 @@ class ProcessJobberJobCompletion implements ShouldQueue
         }
 
         $client = $job['client'] ?? [];
-        $name   = $client['name'] ?? null;
-        $email  = $client['email'] ?? null;
+        $name = $client['name'] ?? null;
+        $email = $client['email'] ?? null;
 
         // Find primary phone or fall back to first
         $phones = $client['phones'] ?? [];
-        $phone  = null;
+        $phone = null;
         foreach ($phones as $p) {
             if ($p['primary'] ?? false) {
                 $phone = $p['number'];
@@ -59,6 +60,7 @@ class ProcessJobberJobCompletion implements ShouldQueue
 
         if (! $email && ! $phone) {
             Log::info('Jobber: client has no email or phone', ['jobId' => $this->jobId]);
+
             return;
         }
 
@@ -77,6 +79,7 @@ class ProcessJobberJobCompletion implements ShouldQueue
 
         if ($recentRequest) {
             Log::info('Jobber: skipping — recent request exists', ['customer_id' => $customer->id]);
+
             return;
         }
 
@@ -85,10 +88,10 @@ class ProcessJobberJobCompletion implements ShouldQueue
         $reviewRequest = ReviewRequest::create([
             'business_id' => $this->business->id,
             'customer_id' => $customer->id,
-            'status'      => 'sent',
-            'channel'     => $channel,
-            'source'      => 'jobber',
-            'sent_at'     => now(),
+            'status' => 'sent',
+            'channel' => $channel,
+            'source' => 'jobber',
+            'sent_at' => now(),
         ]);
 
         if ($phone && SmsService::isConfigured()) {

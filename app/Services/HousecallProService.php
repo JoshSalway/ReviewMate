@@ -8,9 +8,11 @@ use Illuminate\Support\Facades\Http;
 
 class HousecallProService
 {
-    const AUTH_URL  = 'https://pro.housecallpro.com/oauth/authorize';
+    const AUTH_URL = 'https://pro.housecallpro.com/oauth/authorize';
+
     const TOKEN_URL = 'https://pro.housecallpro.com/oauth/token';
-    const API_BASE  = 'https://api.housecallpro.com';
+
+    const API_BASE = 'https://api.housecallpro.com';
 
     public function __construct(protected Business $business) {}
 
@@ -21,22 +23,22 @@ class HousecallProService
 
     public function getAuthorizationUrl(string $state): string
     {
-        return self::AUTH_URL . '?' . http_build_query([
+        return self::AUTH_URL.'?'.http_build_query([
             'response_type' => 'code',
-            'client_id'     => config('services.housecallpro.client_id'),
-            'redirect_uri'  => route('integrations.housecallpro.callback'),
-            'state'         => $state,
+            'client_id' => config('services.housecallpro.client_id'),
+            'redirect_uri' => route('integrations.housecallpro.callback'),
+            'state' => $state,
         ]);
     }
 
     public function exchangeCodeForToken(string $code): array
     {
         $response = Http::asForm()->post(self::TOKEN_URL, [
-            'grant_type'    => 'authorization_code',
-            'client_id'     => config('services.housecallpro.client_id'),
+            'grant_type' => 'authorization_code',
+            'client_id' => config('services.housecallpro.client_id'),
             'client_secret' => config('services.housecallpro.client_secret'),
-            'redirect_uri'  => route('integrations.housecallpro.callback'),
-            'code'          => $code,
+            'redirect_uri' => route('integrations.housecallpro.callback'),
+            'code' => $code,
         ]);
 
         return $response->json() ?? [];
@@ -47,8 +49,8 @@ class HousecallProService
         return BusinessIntegration::updateOrCreate(
             ['business_id' => $this->business->id, 'provider' => 'housecallpro'],
             [
-                'access_token'     => $tokens['access_token'] ?? null,
-                'refresh_token'    => $tokens['refresh_token'] ?? null,
+                'access_token' => $tokens['access_token'] ?? null,
+                'refresh_token' => $tokens['refresh_token'] ?? null,
                 'token_expires_at' => now()->addSeconds($tokens['expires_in'] ?? 3600),
             ]
         );
@@ -59,8 +61,8 @@ class HousecallProService
         $integration = $this->integration();
 
         $response = Http::asForm()->post(self::TOKEN_URL, [
-            'grant_type'    => 'refresh_token',
-            'client_id'     => config('services.housecallpro.client_id'),
+            'grant_type' => 'refresh_token',
+            'client_id' => config('services.housecallpro.client_id'),
             'client_secret' => config('services.housecallpro.client_secret'),
             'refresh_token' => $integration->refresh_token,
         ]);
@@ -68,8 +70,8 @@ class HousecallProService
         $data = $response->json() ?? [];
 
         $integration->update([
-            'access_token'     => $data['access_token'],
-            'refresh_token'    => $data['refresh_token'] ?? $integration->refresh_token,
+            'access_token' => $data['access_token'],
+            'refresh_token' => $data['refresh_token'] ?? $integration->refresh_token,
             'token_expires_at' => now()->addSeconds($data['expires_in'] ?? 3600),
         ]);
     }
@@ -85,7 +87,7 @@ class HousecallProService
         }
 
         $response = Http::withToken($integration->access_token)
-            ->$method(self::API_BASE . $path, $data);
+            ->$method(self::API_BASE.$path, $data);
 
         return $response->json() ?? [];
     }

@@ -26,14 +26,14 @@ return new class extends Migration
             ->get()
             ->each(function ($business) {
                 DB::table('xero_integrations')->insert([
-                    'business_id'       => $business->id,
-                    'access_token'      => $business->xero_access_token,
-                    'refresh_token'     => $business->xero_refresh_token,
-                    'token_expires_at'  => $business->xero_token_expires_at,
-                    'tenant_id'         => $business->xero_tenant_id,
+                    'business_id' => $business->id,
+                    'access_token' => $business->xero_access_token,
+                    'refresh_token' => $business->xero_refresh_token,
+                    'token_expires_at' => $business->xero_token_expires_at,
+                    'tenant_id' => $business->xero_tenant_id,
                     'auto_send_reviews' => $business->xero_auto_send_reviews ?? true,
-                    'created_at'        => now(),
-                    'updated_at'        => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
             });
 

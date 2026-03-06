@@ -22,7 +22,7 @@ class HalaxyController extends Controller
         // Build a temporary integration to test the connection without persisting
         $tempIntegration = new BusinessIntegration([
             'provider' => 'halaxy',
-            'api_key'  => $request->api_key,
+            'api_key' => $request->api_key,
         ]);
         $business->setRelation('integrations', collect([$tempIntegration]));
         $service = new HalaxyService($business);

@@ -1,13 +1,13 @@
 import { Head, router } from '@inertiajs/react';
+import { MessageSquare, CheckCircle, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
-import AppLayout from '@/layouts/app-layout';
-import { index as reviewsIndex, reply as replyRoute, replySuggestions as replySuggestionsRoute } from '@/routes/reviews';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/app-layout';
+import { index as reviewsIndex, reply as replyRoute, replySuggestions as replySuggestionsRoute } from '@/routes/reviews';
 import type { BreadcrumbItem } from '@/types';
-import { MessageSquare, CheckCircle, AlertCircle } from 'lucide-react';
 
 interface Review {
     id: number;

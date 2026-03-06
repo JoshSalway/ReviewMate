@@ -44,7 +44,7 @@ test('user can update notification preferences', function () {
         'weekly_digest' => false,
         'new_review_alert' => true,
     ])->assertRedirect()
-      ->assertSessionHas('success');
+        ->assertSessionHas('success');
 
     expect($this->user->fresh()->notificationPreference('weekly_digest'))->toBeFalse();
     expect($this->user->fresh()->notificationPreference('new_review_alert'))->toBeTrue();

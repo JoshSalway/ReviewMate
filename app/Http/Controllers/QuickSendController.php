@@ -75,7 +75,7 @@ class QuickSendController extends Controller
             $customer = $business->customers()->create([
                 'email' => $validated['email'] ?? null,
                 'phone' => $validated['phone'] ?? null,
-                'name'  => $validated['name'],
+                'name' => $validated['name'],
             ]);
         }
 

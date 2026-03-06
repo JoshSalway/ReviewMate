@@ -35,37 +35,40 @@ class ProcessHousecallProJobCompletion implements ShouldQueue
             $jobId = $this->jobData['id'] ?? null;
             if (! $jobId) {
                 Log::warning('HousecallPro: no job id in payload', ['business_id' => $this->business->id]);
+
                 return;
             }
 
-            $service  = new HousecallProService($this->business);
-            $job      = $service->getJob($jobId);
+            $service = new HousecallProService($this->business);
+            $job = $service->getJob($jobId);
             $customer_data = $job['customer'] ?? null;
         }
 
         if (! $customer_data) {
             Log::info('HousecallPro: no customer data in job', ['business_id' => $this->business->id]);
+
             return;
         }
 
         $firstName = $customer_data['first_name'] ?? '';
-        $lastName  = $customer_data['last_name'] ?? '';
-        $name      = trim("$firstName $lastName") ?: null;
-        $email     = $customer_data['email'] ?? null;
-        $phone     = $customer_data['mobile_number'] ?? $customer_data['home_number'] ?? null;
+        $lastName = $customer_data['last_name'] ?? '';
+        $name = trim("$firstName $lastName") ?: null;
+        $email = $customer_data['email'] ?? null;
+        $phone = $customer_data['mobile_number'] ?? $customer_data['home_number'] ?? null;
 
         if (! $email && ! $phone) {
             Log::info('HousecallPro: customer has no email or phone', ['business_id' => $this->business->id]);
+
             return;
         }
 
         $customer = Customer::firstOrCreate(
             [
                 'business_id' => $this->business->id,
-                'email'       => $email,
+                'email' => $email,
             ],
             [
-                'name'  => $name ?: 'Customer',
+                'name' => $name ?: 'Customer',
                 'phone' => $phone,
             ]
         );
@@ -80,6 +83,7 @@ class ProcessHousecallProJobCompletion implements ShouldQueue
 
         if ($recentRequest) {
             Log::info('HousecallPro: skipping — recent request exists', ['customer_id' => $customer->id]);
+
             return;
         }
 
@@ -88,10 +92,10 @@ class ProcessHousecallProJobCompletion implements ShouldQueue
         $reviewRequest = ReviewRequest::create([
             'business_id' => $this->business->id,
             'customer_id' => $customer->id,
-            'status'      => 'sent',
-            'channel'     => $channel,
-            'source'      => 'housecallpro',
-            'sent_at'     => now(),
+            'status' => 'sent',
+            'channel' => $channel,
+            'source' => 'housecallpro',
+            'sent_at' => now(),
         ]);
 
         if ($phone && SmsService::isConfigured()) {
