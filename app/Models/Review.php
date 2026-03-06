@@ -23,11 +23,13 @@ class Review extends Model
         'google_review_name',
         'google_reply',
         'google_reply_posted_at',
+        'auto_replied_at',
     ];
 
     protected $casts = [
         'reviewed_at' => 'datetime',
         'google_reply_posted_at' => 'datetime',
+        'auto_replied_at' => 'datetime',
     ];
 
     public function needsReply(): bool

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\AutoReplySettingsController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\BusinessSettingsController;
@@ -142,6 +143,11 @@ Route::middleware([
     // Widget Settings
     Route::get('settings/widget', [WidgetSettingsController::class, 'index'])->name('settings.widget');
     Route::put('settings/widget', [WidgetSettingsController::class, 'update'])->name('settings.widget.update');
+
+    // Auto-reply Settings
+    Route::get('settings/auto-reply', [AutoReplySettingsController::class, 'index'])->name('settings.auto-reply');
+    Route::put('settings/auto-reply', [AutoReplySettingsController::class, 'update'])->name('settings.auto-reply.update');
+    Route::post('settings/auto-reply/preview', [AutoReplySettingsController::class, 'preview'])->name('settings.auto-reply.preview');
 
     // Referrals
     Route::get('referrals', [ReferralController::class, 'index'])->name('referrals.index');

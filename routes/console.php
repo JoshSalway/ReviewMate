@@ -1,5 +1,6 @@
 <?php
 
+use App\Jobs\AutoReplyReviews;
 use App\Jobs\PollClinikoAppointments;
 use App\Jobs\PollHalaxyAppointments;
 use App\Jobs\RefreshGoogleStats;
@@ -50,3 +51,10 @@ Schedule::call(function () {
     Business::whereNotNull('google_place_id')
         ->each(fn ($b) => RefreshGoogleStats::dispatch($b));
 })->dailyAt('06:00')->name('refresh-google-stats');
+
+// Auto-reply to Google reviews daily at 18:00 AEST (08:00 UTC)
+Schedule::call(function () {
+    Business::where('auto_reply_enabled', true)
+        ->with(['integrations', 'user'])
+        ->each(fn ($business) => AutoReplyReviews::dispatch($business));
+})->dailyAt('08:00')->timezone('UTC')->name('auto-reply-reviews');

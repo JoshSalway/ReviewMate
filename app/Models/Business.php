@@ -37,12 +37,20 @@ class Business extends Model
         'webhook_token',
         // Review platforms
         'facebook_page_url',
+        // Auto-reply settings
+        'auto_reply_enabled',
+        'auto_reply_min_rating',
+        'auto_reply_tone',
+        'auto_reply_length',
+        'auto_reply_signature',
+        'auto_reply_custom_instructions',
     ];
 
     protected $casts = [
         'onboarding_completed_at' => 'datetime',
         'follow_up_enabled' => 'boolean',
         'widget_enabled' => 'boolean',
+        'auto_reply_enabled' => 'boolean',
     ];
 
     protected static function booted(): void
