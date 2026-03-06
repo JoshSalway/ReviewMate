@@ -2,6 +2,7 @@
 
 use App\Jobs\SendFollowUpRequests;
 use App\Jobs\SyncGoogleReviews;
+use App\Mail\PrivateFeedbackMail;
 use App\Models\Business;
 use App\Models\BusinessIntegration;
 use App\Models\Customer;
@@ -167,6 +168,95 @@ it('SendFollowUpRequests skips self_confirmed requests', function () {
     (new SendFollowUpRequests)->handle();
 
     Mail::assertNothingQueued();
+});
+
+it('track renders the landing page instead of redirecting', function () {
+    $request = ReviewRequest::factory()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $this->customer->id,
+        'status' => 'sent',
+    ]);
+
+    $this->get("/r/{$request->tracking_token}")
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('reviews/landing')
+            ->where('token', $request->tracking_token)
+            ->has('businessName')
+            ->has('googleReviewUrl')
+        );
+
+    expect($request->fresh()->status)->toBe('opened');
+});
+
+it('submitFeedback saves private rating and feedback and notifies owner', function () {
+    $request = ReviewRequest::factory()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $this->customer->id,
+        'status' => 'opened',
+    ]);
+
+    $this->post("/r/{$request->tracking_token}/feedback", [
+        'rating' => 2,
+        'feedback' => 'The technician was late and left a mess.',
+    ])->assertRedirect("/reviewed/{$request->tracking_token}");
+
+    expect($request->fresh()->private_rating)->toBe(2);
+    expect($request->fresh()->private_feedback)->toBe('The technician was late and left a mess.');
+    expect($request->fresh()->status)->toBe('feedback_received');
+    expect($request->fresh()->feedback_received_at)->not->toBeNull();
+
+    Mail::assertQueued(PrivateFeedbackMail::class, fn ($mail) =>
+        $mail->hasTo($this->user->email)
+    );
+});
+
+it('submitFeedback for happy rating records it and still notifies owner', function () {
+    $request = ReviewRequest::factory()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $this->customer->id,
+        'status' => 'opened',
+    ]);
+
+    $this->post("/r/{$request->tracking_token}/feedback", [
+        'rating' => 5,
+        'feedback' => null,
+    ])->assertRedirect("/reviewed/{$request->tracking_token}");
+
+    expect($request->fresh()->private_rating)->toBe(5);
+    expect($request->fresh()->status)->toBe('feedback_received');
+
+    Mail::assertQueued(PrivateFeedbackMail::class);
+});
+
+it('submitFeedback requires a rating between 1 and 5', function () {
+    $request = ReviewRequest::factory()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $this->customer->id,
+    ]);
+
+    $this->post("/r/{$request->tracking_token}/feedback", ['rating' => 0])
+        ->assertSessionHasErrors('rating');
+
+    $this->post("/r/{$request->tracking_token}/feedback", ['rating' => 6])
+        ->assertSessionHasErrors('rating');
+});
+
+it('submitFeedback is idempotent — does not overwrite if already submitted', function () {
+    $request = ReviewRequest::factory()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $this->customer->id,
+        'status' => 'reviewed',
+    ]);
+
+    $this->post("/r/{$request->tracking_token}/feedback", [
+        'rating' => 1,
+        'feedback' => 'Should not overwrite',
+    ]);
+
+    // Status stays 'reviewed', not overwritten to 'feedback_received'
+    expect($request->fresh()->status)->toBe('reviewed');
+    expect($request->fresh()->private_rating)->toBeNull();
 });
 
 it('SendFollowUpRequests skips unverified_claim requests', function () {

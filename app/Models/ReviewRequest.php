@@ -22,6 +22,9 @@ class ReviewRequest extends Model
         'reviewed_at',
         'followed_up_at',
         'tracking_token',
+        'private_rating',
+        'private_feedback',
+        'feedback_received_at',
     ];
 
     protected static function booted(): void
@@ -36,6 +39,7 @@ class ReviewRequest extends Model
         'opened_at' => 'datetime',
         'reviewed_at' => 'datetime',
         'followed_up_at' => 'datetime',
+        'feedback_received_at' => 'datetime',
     ];
 
     public function business(): BelongsTo
@@ -85,6 +89,16 @@ class ReviewRequest extends Model
     {
         $this->update([
             'status' => 'unverified_claim',
+        ]);
+    }
+
+    public function markAsFeedbackReceived(int $rating, ?string $feedback): void
+    {
+        $this->update([
+            'status' => 'feedback_received',
+            'private_rating' => $rating,
+            'private_feedback' => $feedback,
+            'feedback_received_at' => now(),
         ]);
     }
 }

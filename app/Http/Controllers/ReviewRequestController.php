@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PrivateFeedbackMail;
 use App\Mail\ReviewRequestMail;
 use App\Models\ReviewRequest;
 use App\Services\SmsService;
@@ -100,18 +101,52 @@ class ReviewRequestController extends Controller
         return back()->with('success', "Review request sent to {$customer->name}.");
     }
 
-    public function track(string $token): RedirectResponse
+    public function track(string $token): Response
     {
-        $reviewRequest = ReviewRequest::where('tracking_token', $token)->firstOrFail();
+        $reviewRequest = ReviewRequest::where('tracking_token', $token)
+            ->with(['business', 'customer'])
+            ->firstOrFail();
 
         if ($reviewRequest->status === 'sent') {
             $reviewRequest->markAsOpened();
         }
 
-        $destination = $reviewRequest->business->googleReviewUrl()
-            ?? 'https://search.google.com/local/writereview';
+        return Inertia::render('reviews/landing', [
+            'token' => $token,
+            'businessName' => $reviewRequest->business->name,
+            'googleReviewUrl' => $reviewRequest->business->googleReviewUrl(),
+        ]);
+    }
 
-        return redirect()->away($destination);
+    public function submitFeedback(Request $request, string $token): RedirectResponse
+    {
+        $reviewRequest = ReviewRequest::where('tracking_token', $token)
+            ->with(['business', 'customer', 'business.user'])
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+            'feedback' => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        // Only record if not already submitted
+        if (! in_array($reviewRequest->status, ['feedback_received', 'reviewed', 'self_confirmed'])) {
+            $reviewRequest->markAsFeedbackReceived($validated['rating'], $validated['feedback'] ?? null);
+        }
+
+        // Notify the business owner
+        $owner = $reviewRequest->business->user;
+        if ($owner) {
+            Mail::to($owner->email, $owner->name)
+                ->queue(new PrivateFeedbackMail(
+                    $owner,
+                    $reviewRequest->business,
+                    $reviewRequest->customer,
+                    $reviewRequest,
+                ));
+        }
+
+        return redirect()->route('reviewed.confirm', ['token' => $token]);
     }
 
     public function confirmReview(string $token): Response

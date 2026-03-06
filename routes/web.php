@@ -57,6 +57,7 @@ Route::get('/docs/openapi.yaml', function () {
     return response()->file($path, ['Content-Type' => 'application/yaml']);
 })->name('api.openapi');
 Route::get('/r/{token}', [ReviewRequestController::class, 'track'])->middleware('throttle:60,1')->name('review-requests.track');
+Route::post('/r/{token}/feedback', [ReviewRequestController::class, 'submitFeedback'])->middleware('throttle:10,1')->name('review-requests.feedback');
 Route::get('/r/ref/{token}', [ReferralController::class, 'track'])->middleware('throttle:60,1')->name('referrals.track');
 Route::get('/reviewed/{token}', [ReviewRequestController::class, 'confirmReview'])->middleware('throttle:30,1')->name('reviewed.confirm');
 Route::get('/unsubscribe/{token}', [CustomerController::class, 'unsubscribe'])->middleware('throttle:30,1')->name('customers.unsubscribe');

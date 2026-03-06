@@ -11,14 +11,16 @@ beforeEach(function () {
     $this->customer = Customer::factory()->create(['business_id' => $this->business->id]);
 });
 
-test('tracking link marks request as opened and redirects', function () {
+test('tracking link marks request as opened and shows landing page', function () {
     $request = ReviewRequest::factory()->create([
         'business_id' => $this->business->id,
         'customer_id' => $this->customer->id,
         'status' => 'sent',
     ]);
 
-    $this->get("/r/{$request->tracking_token}")->assertRedirect();
+    $this->get("/r/{$request->tracking_token}")
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->component('reviews/landing'));
 
     $request->refresh();
     expect($request->status)->toBe('opened');
@@ -33,7 +35,7 @@ test('tracking link does not downgrade already opened request', function () {
         'opened_at' => $openedAt,
     ]);
 
-    $this->get("/r/{$request->tracking_token}")->assertRedirect();
+    $this->get("/r/{$request->tracking_token}")->assertOk();
 
     $request->refresh();
     expect($request->status)->toBe('opened');
