@@ -156,21 +156,21 @@ function ComparisonCell({ value }: { value: boolean | string }) {
     if (typeof value === 'boolean') {
         return value ? <CheckIcon /> : <XIcon />;
     }
-    return <span className="text-sm font-medium text-gray-700">{value}</span>;
+    return <span className="text-sm font-medium text-foreground">{value}</span>;
 }
 
 function FaqItem({ question, answer }: { question: string; answer: string }) {
     const [open, setOpen] = useState(false);
 
     return (
-        <div className="border-b border-gray-100 py-5">
+        <div className="border-b border-border py-5">
             <button
                 className="flex w-full items-center justify-between text-left"
                 onClick={() => setOpen(!open)}
             >
-                <span className="text-base font-medium text-gray-900">{question}</span>
+                <span className="text-base font-medium text-foreground">{question}</span>
                 <svg
-                    className={`h-5 w-5 text-gray-400 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+                    className={`h-5 w-5 text-muted-foreground shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -179,7 +179,7 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                 </svg>
             </button>
-            {open && <p className="mt-3 text-sm text-gray-500 leading-relaxed">{answer}</p>}
+            {open && <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{answer}</p>}
         </div>
     );
 }
@@ -219,7 +219,7 @@ function HeroWaitlistForm() {
                     placeholder="Your name"
                     value={data.name}
                     onChange={(e) => setData('name', e.target.value)}
-                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-lg border border-border px-4 py-2.5 text-sm text-foreground placeholder-gray-400 shadow-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
                 />
                 {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
             </div>
@@ -229,7 +229,7 @@ function HeroWaitlistForm() {
                     placeholder="Work email"
                     value={data.email}
                     onChange={(e) => setData('email', e.target.value)}
-                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 shadow-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+                    className="w-full rounded-lg border border-border px-4 py-2.5 text-sm text-foreground placeholder-gray-400 shadow-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
                 />
                 {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
             </div>
@@ -254,7 +254,7 @@ export default function Welcome({ count }: Props) {
         <>
             <Head title="ReviewMate — More 5-star Google reviews, automatically" />
 
-            <div className="min-h-screen bg-white text-gray-900 antialiased">
+            <div className="min-h-screen bg-background text-foreground antialiased">
 
                 {/* Nav */}
                 <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
@@ -268,7 +268,7 @@ export default function Welcome({ count }: Props) {
                     </div>
                     <a
                         href="/login"
-                        className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900 transition-colors"
+                        className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:border-border hover:text-foreground transition-colors"
                     >
                         Sign in
                     </a>
@@ -288,7 +288,7 @@ export default function Welcome({ count }: Props) {
                         <span className="text-teal-600">On autopilot.</span>
                     </h1>
 
-                    <p className="mx-auto mt-6 max-w-xl text-lg text-gray-500 leading-relaxed">
+                    <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
                         ReviewMate automatically asks your customers for reviews, follows up, and helps you respond with AI — so you spend less time chasing and more time running your business.
                     </p>
 
@@ -297,32 +297,32 @@ export default function Welcome({ count }: Props) {
                     </div>
 
                     {count !== undefined && count > 0 && (
-                        <p className="mt-2 text-sm text-gray-400">
+                        <p className="mt-2 text-sm text-muted-foreground">
                             {count.toLocaleString()} {count === 1 ? 'business' : 'businesses'} already on the list
                         </p>
                     )}
 
                     <HeroWaitlistForm />
 
-                    <p className="mt-3 text-xs text-gray-400">We'll email you when your spot is ready. No spam, ever.</p>
+                    <p className="mt-3 text-xs text-muted-foreground">We'll email you when your spot is ready. No spam, ever.</p>
                 </section>
 
                 {/* Social proof / testimonials */}
-                <section className="bg-gray-50 py-16">
+                <section className="bg-muted/50 py-16">
                     <div className="mx-auto max-w-6xl px-6">
                         <div className="mb-10 text-center">
-                            <p className="text-sm font-semibold uppercase tracking-widest text-gray-400">What customers say</p>
+                            <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">What customers say</p>
                         </div>
                         <div className="grid gap-6 md:grid-cols-3">
                             {testimonials.map((t) => (
-                                <div key={t.author} className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                                <div key={t.author} className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                                     <div className="mb-4 flex gap-0.5">
                                         {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
                                     </div>
-                                    <p className="text-sm text-gray-700 leading-relaxed">"{t.quote}"</p>
+                                    <p className="text-sm text-foreground leading-relaxed">"{t.quote}"</p>
                                     <div className="mt-4">
-                                        <p className="text-sm font-semibold text-gray-900">{t.author}</p>
-                                        <p className="text-xs text-gray-400">{t.role}</p>
+                                        <p className="text-sm font-semibold text-foreground">{t.author}</p>
+                                        <p className="text-xs text-muted-foreground">{t.role}</p>
                                     </div>
                                 </div>
                             ))}
@@ -335,17 +335,17 @@ export default function Welcome({ count }: Props) {
                     <div className="mx-auto max-w-6xl px-6">
                         <div className="mb-14 text-center">
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">How it works</h2>
-                            <p className="mt-3 text-gray-500">Set up in under 10 minutes. Results in days.</p>
+                            <p className="mt-3 text-muted-foreground">Set up in under 10 minutes. Results in days.</p>
                         </div>
                         <div className="grid gap-10 md:grid-cols-3">
                             {steps.map((step, i) => (
                                 <div key={step.number} className="relative">
                                     {i < steps.length - 1 && (
-                                        <div className="absolute top-8 left-full hidden w-full border-t-2 border-dashed border-gray-200 md:block" style={{ width: 'calc(100% - 2rem)', left: 'calc(100% + 1rem)' }} />
+                                        <div className="absolute top-8 left-full hidden w-full border-t-2 border-dashed border-border md:block" style={{ width: 'calc(100% - 2rem)', left: 'calc(100% + 1rem)' }} />
                                     )}
                                     <div className="mb-4 text-6xl font-black text-teal-50 select-none leading-none">{step.number}</div>
-                                    <h3 className="mb-2 text-lg font-semibold text-gray-900">{step.title}</h3>
-                                    <p className="text-sm text-gray-500 leading-relaxed">{step.description}</p>
+                                    <h3 className="mb-2 text-lg font-semibold text-foreground">{step.title}</h3>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
                                 </div>
                             ))}
                         </div>
@@ -353,22 +353,22 @@ export default function Welcome({ count }: Props) {
                 </section>
 
                 {/* Features grid */}
-                <section className="bg-gray-50 py-20">
+                <section className="bg-muted/50 py-20">
                     <div className="mx-auto max-w-6xl px-6">
                         <div className="mb-14 text-center">
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Everything you need</h2>
-                            <p className="mt-3 text-gray-500 max-w-lg mx-auto">
+                            <p className="mt-3 text-muted-foreground max-w-lg mx-auto">
                                 One tool to get more reviews, manage them, and turn them into a competitive advantage.
                             </p>
                         </div>
                         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                             {features.map((feature) => (
-                                <div key={feature.title} className="group rounded-2xl border border-gray-100 bg-white p-6 hover:border-teal-100 hover:shadow-md transition-all">
+                                <div key={feature.title} className="group rounded-2xl border border-border bg-card p-6 hover:border-teal-100 hover:shadow-md transition-all">
                                     <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-teal-50 text-teal-600 group-hover:bg-teal-100 transition-colors">
                                         {feature.icon}
                                     </div>
-                                    <h3 className="mb-2 text-base font-semibold text-gray-900">{feature.title}</h3>
-                                    <p className="text-sm text-gray-500 leading-relaxed">{feature.description}</p>
+                                    <h3 className="mb-2 text-base font-semibold text-foreground">{feature.title}</h3>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
                                 </div>
                             ))}
                         </div>
@@ -380,23 +380,23 @@ export default function Welcome({ count }: Props) {
                     <div className="mx-auto max-w-5xl px-6">
                         <div className="mb-12 text-center">
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">How we compare</h2>
-                            <p className="mt-3 text-gray-500">5–10x cheaper than the alternatives, with features they don't have.</p>
+                            <p className="mt-3 text-muted-foreground">5–10x cheaper than the alternatives, with features they don't have.</p>
                         </div>
-                        <div className="overflow-x-auto rounded-2xl border border-gray-100 shadow-sm">
+                        <div className="overflow-x-auto rounded-2xl border border-border shadow-sm">
                             <table className="w-full text-left">
                                 <thead>
-                                    <tr className="border-b border-gray-100 bg-gray-50">
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-600">Feature</th>
+                                    <tr className="border-b border-border bg-muted">
+                                        <th className="px-6 py-4 text-sm font-semibold text-muted-foreground">Feature</th>
                                         <th className="px-6 py-4 text-sm font-bold text-teal-700">ReviewMate</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-500">NiceJob</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-500">Birdeye</th>
-                                        <th className="px-6 py-4 text-sm font-semibold text-gray-500">Podium</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-muted-foreground">NiceJob</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-muted-foreground">Birdeye</th>
+                                        <th className="px-6 py-4 text-sm font-semibold text-muted-foreground">Podium</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {comparisonRows.map((row, idx) => (
-                                        <tr key={row.feature} className={`border-b border-gray-50 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                                            <td className="px-6 py-4 text-sm text-gray-600">{row.feature}</td>
+                                        <tr key={row.feature} className={`border-b border-border ${idx % 2 === 0 ? 'bg-card' : 'bg-muted/50'}`}>
+                                            <td className="px-6 py-4 text-sm text-muted-foreground">{row.feature}</td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center">
                                                     <ComparisonCell value={row.reviewmate} />
@@ -426,48 +426,48 @@ export default function Welcome({ count }: Props) {
                 </section>
 
                 {/* Pricing */}
-                <section className="bg-gray-50 py-20">
+                <section className="bg-muted/50 py-20">
                     <div className="mx-auto max-w-6xl px-6">
                         <div className="mb-12 text-center">
                             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Simple, honest pricing</h2>
-                            <p className="mt-3 text-gray-500">No setup fees. No lock-in. Cancel any time.</p>
+                            <p className="mt-3 text-muted-foreground">No setup fees. No lock-in. Cancel any time.</p>
                         </div>
                         <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-3">
-                            <div className="rounded-2xl border border-gray-200 bg-white p-7">
-                                <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-gray-400">Free</p>
-                                <p className="mb-5 text-4xl font-extrabold text-gray-900">$0</p>
-                                <ul className="space-y-2.5 text-sm text-gray-600">
+                            <div className="rounded-2xl border border-border bg-card p-7">
+                                <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Free</p>
+                                <p className="mb-5 text-4xl font-extrabold text-foreground">$0</p>
+                                <ul className="space-y-2.5 text-sm text-muted-foreground">
                                     {['1 business location', 'Up to 50 customers', '10 requests / month', 'AI reply suggestions', 'Review dashboard'].map((f) => (
                                         <li key={f} className="flex items-center gap-2"><CheckIcon />{f}</li>
                                     ))}
                                 </ul>
                             </div>
 
-                            <div className="relative rounded-2xl border-2 border-teal-500 bg-white p-7 shadow-xl">
+                            <div className="relative rounded-2xl border-2 border-teal-500 bg-card p-7 shadow-xl">
                                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                                     <span className="rounded-full bg-teal-500 px-3 py-1 text-xs font-bold text-white shadow">Most popular</span>
                                 </div>
                                 <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-teal-600">Starter</p>
                                 <div className="mb-1 flex items-end gap-1">
-                                    <span className="text-4xl font-extrabold text-gray-900">$49</span>
-                                    <span className="mb-1 text-sm text-gray-400">/month</span>
+                                    <span className="text-4xl font-extrabold text-foreground">$49</span>
+                                    <span className="mb-1 text-sm text-muted-foreground">/month</span>
                                 </div>
-                                <p className="mb-5 text-xs text-gray-400">per location</p>
-                                <ul className="space-y-2.5 text-sm text-gray-600">
+                                <p className="mb-5 text-xs text-muted-foreground">per location</p>
+                                <ul className="space-y-2.5 text-sm text-muted-foreground">
                                     {['1 business location', 'Unlimited customers', 'Unlimited requests', 'Automated follow-ups', 'Email & SMS sending', 'Weekly digest emails', 'Reply templates'].map((f) => (
                                         <li key={f} className="flex items-center gap-2"><CheckIcon />{f}</li>
                                     ))}
                                 </ul>
                             </div>
 
-                            <div className="rounded-2xl border border-gray-200 bg-white p-7">
-                                <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-gray-400">Pro</p>
+                            <div className="rounded-2xl border border-border bg-card p-7">
+                                <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Pro</p>
                                 <div className="mb-1 flex items-end gap-1">
-                                    <span className="text-4xl font-extrabold text-gray-900">$99</span>
-                                    <span className="mb-1 text-sm text-gray-400">/month</span>
+                                    <span className="text-4xl font-extrabold text-foreground">$99</span>
+                                    <span className="mb-1 text-sm text-muted-foreground">/month</span>
                                 </div>
-                                <p className="mb-5 text-xs text-gray-400">up to 5 locations</p>
-                                <ul className="space-y-2.5 text-sm text-gray-600">
+                                <p className="mb-5 text-xs text-muted-foreground">up to 5 locations</p>
+                                <ul className="space-y-2.5 text-sm text-muted-foreground">
                                     {['Up to 5 locations', 'Everything in Starter', 'Multi-location analytics', 'Priority support'].map((f) => (
                                         <li key={f} className="flex items-center gap-2"><CheckIcon />{f}</li>
                                     ))}
@@ -482,7 +482,7 @@ export default function Welcome({ count }: Props) {
                             >
                                 Join the waitlist
                             </a>
-                            <p className="mt-2 text-xs text-gray-400">We'll notify you when your spot is ready.</p>
+                            <p className="mt-2 text-xs text-muted-foreground">We'll notify you when your spot is ready.</p>
                         </div>
                     </div>
                 </section>
@@ -522,7 +522,7 @@ export default function Welcome({ count }: Props) {
                 </section>
 
                 {/* Footer */}
-                <footer className="border-t border-gray-100 py-8">
+                <footer className="border-t border-border py-8">
                     <div className="mx-auto max-w-6xl px-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
                         <div className="flex items-center gap-2">
                             <div className="flex h-5 w-5 items-center justify-center rounded bg-teal-600">
@@ -530,11 +530,11 @@ export default function Welcome({ count }: Props) {
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                 </svg>
                             </div>
-                            <span className="text-sm font-semibold text-gray-700">ReviewMate</span>
+                            <span className="text-sm font-semibold text-foreground">ReviewMate</span>
                         </div>
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
-                            <a href="/terms" className="hover:text-gray-600 transition-colors">Terms</a>
-                            <a href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</a>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <a href="/terms" className="hover:text-muted-foreground transition-colors">Terms</a>
+                            <a href="/privacy" className="hover:text-muted-foreground transition-colors">Privacy</a>
                             <span>&copy; {new Date().getFullYear()} ReviewMate. Built for Australian small businesses.</span>
                         </div>
                     </div>

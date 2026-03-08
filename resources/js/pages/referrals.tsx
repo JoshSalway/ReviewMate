@@ -52,8 +52,8 @@ export default function Referrals({ referralLink, stats, rewardsEarned, shareMes
             <Head title="Referrals" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Referral Program</h1>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <h1 className="text-2xl font-bold text-foreground">Referral Program</h1>
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Share ReviewMate with other business owners — they get 1 month free, you get 1 month free.
                     </p>
                 </div>
@@ -64,8 +64,8 @@ export default function Referrals({ referralLink, stats, rewardsEarned, shareMes
                         <Card>
                             <CardContent className="pt-6">
                                 <div className="text-center">
-                                    <div className="text-3xl font-bold text-gray-900">{stats.total}</div>
-                                    <div className="mt-1 text-sm text-gray-500">Links shared</div>
+                                    <div className="text-3xl font-bold text-foreground">{stats.total}</div>
+                                    <div className="mt-1 text-sm text-muted-foreground">Links shared</div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -73,7 +73,7 @@ export default function Referrals({ referralLink, stats, rewardsEarned, shareMes
                             <CardContent className="pt-6">
                                 <div className="text-center">
                                     <div className="text-3xl font-bold text-teal-600">{stats.signed_up}</div>
-                                    <div className="mt-1 text-sm text-gray-500">Signed up</div>
+                                    <div className="mt-1 text-sm text-muted-foreground">Signed up</div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -81,7 +81,7 @@ export default function Referrals({ referralLink, stats, rewardsEarned, shareMes
                             <CardContent className="pt-6">
                                 <div className="text-center">
                                     <div className="text-3xl font-bold text-green-600">{rewardsEarned}</div>
-                                    <div className="mt-1 text-sm text-gray-500">Months earned</div>
+                                    <div className="mt-1 text-sm text-muted-foreground">Months earned</div>
                                 </div>
                             </CardContent>
                         </Card>
@@ -96,7 +96,7 @@ export default function Referrals({ referralLink, stats, rewardsEarned, shareMes
                             {referralLink ? (
                                 <>
                                     <div className="flex items-center gap-2">
-                                        <code className="flex-1 rounded-md border border-gray-200 bg-gray-50 p-3 font-mono text-sm text-gray-800 break-all">
+                                        <code className="flex-1 rounded-md border border-border bg-muted p-3 font-mono text-sm text-foreground break-all">
                                             {referralLink}
                                         </code>
                                         <Button
@@ -129,7 +129,7 @@ export default function Referrals({ referralLink, stats, rewardsEarned, shareMes
                                     </div>
                                 </>
                             ) : (
-                                <p className="text-sm text-gray-500 italic">
+                                <p className="text-sm text-muted-foreground italic">
                                     Complete your business setup to get your referral link.
                                 </p>
                             )}
@@ -142,7 +142,7 @@ export default function Referrals({ referralLink, stats, rewardsEarned, shareMes
                             <CardTitle className="text-base font-semibold">How it works</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <ol className="space-y-3 text-sm text-gray-600 list-decimal list-inside">
+                            <ol className="space-y-3 text-sm text-muted-foreground list-decimal list-inside">
                                 <li>Share your unique referral link with a fellow business owner</li>
                                 <li>They sign up using your link and get <strong>1 month free</strong> automatically</li>
                                 <li>When they convert to a paid plan, you get <strong>1 month free</strong> added to your account</li>
@@ -158,7 +158,7 @@ export default function Referrals({ referralLink, stats, rewardsEarned, shareMes
 
                             <div className="mt-3 flex items-center gap-2">
                                 <Badge className="bg-teal-50 text-teal-700 hover:bg-teal-50 text-xs">Pro Plan Feature</Badge>
-                                <span className="text-xs text-gray-500">Automated customer referral invites require a Pro plan</span>
+                                <span className="text-xs text-muted-foreground">Automated customer referral invites require a Pro plan</span>
                             </div>
                         </CardContent>
                     </Card>

@@ -180,16 +180,16 @@ export default function Docs() {
         const lines = content.split('\n');
         return lines.map((line, i) => {
             if (line.startsWith('**') && line.endsWith('**')) {
-                return <p key={i} className="mt-4 font-semibold text-gray-900">{line.slice(2, -2)}</p>;
+                return <p key={i} className="mt-4 font-semibold text-foreground">{line.slice(2, -2)}</p>;
             }
             if (line.startsWith('1. ') || line.startsWith('2. ') || line.startsWith('3. ') || line.startsWith('4. ') || line.startsWith('5. ')) {
-                return <p key={i} className="ml-4 text-sm text-gray-600">{line}</p>;
+                return <p key={i} className="ml-4 text-sm text-muted-foreground">{line}</p>;
             }
             if (line.startsWith('```')) {
                 return null;
             }
             if (line.startsWith('{')) {
-                return <pre key={i} className="mt-2 rounded-lg bg-gray-100 p-4 text-xs text-gray-700 overflow-x-auto">{line}</pre>;
+                return <pre key={i} className="mt-2 rounded-lg bg-muted p-4 text-xs text-foreground overflow-x-auto">{line}</pre>;
             }
             if (line === '') {
                 return <div key={i} className="h-2" />;
@@ -197,7 +197,7 @@ export default function Docs() {
             // Handle inline bold
             const parts = line.split(/\*\*([^*]+)\*\*/g);
             return (
-                <p key={i} className="text-sm text-gray-600 leading-relaxed">
+                <p key={i} className="text-sm text-muted-foreground leading-relaxed">
                     {parts.map((part, j) => j % 2 === 1 ? <strong key={j}>{part}</strong> : part)}
                 </p>
             );
@@ -208,10 +208,10 @@ export default function Docs() {
         <>
             <Head title="Documentation — ReviewMate" />
 
-            <div className="min-h-screen bg-white text-gray-900 antialiased">
+            <div className="min-h-screen bg-background text-foreground antialiased">
 
                 {/* Nav */}
-                <nav className="border-b border-gray-100 bg-white">
+                <nav className="border-b border-border bg-card">
                     <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
                         <Link href="/" className="flex items-center gap-2">
                             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-600">
@@ -222,8 +222,8 @@ export default function Docs() {
                             <span className="text-lg font-bold tracking-tight">ReviewMate</span>
                         </Link>
                         <div className="flex items-center gap-3">
-                            <span className="text-sm text-gray-400">Documentation</span>
-                            <Link href="/login" className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900 transition-colors">
+                            <span className="text-sm text-muted-foreground">Documentation</span>
+                            <Link href="/login" className="rounded-lg border border-border px-3 py-1.5 text-sm font-medium text-muted-foreground hover:border-border hover:text-foreground transition-colors">
                                 Sign in
                             </Link>
                         </div>
@@ -238,7 +238,7 @@ export default function Docs() {
                             <nav className="sticky top-6 space-y-6">
                                 {sections.map((section) => (
                                     <div key={section.id}>
-                                        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-gray-400">{section.title}</p>
+                                        <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">{section.title}</p>
                                         <ul className="space-y-1">
                                             {section.articles.map((article, idx) => (
                                                 <li key={article.title}>
@@ -246,7 +246,7 @@ export default function Docs() {
                                                         onClick={() => { setActiveSection(section.id); setActiveArticle(idx); }}
                                                         className={`w-full rounded-lg px-3 py-1.5 text-left text-sm transition-colors ${activeSection === section.id && activeArticle === idx
                                                             ? 'bg-teal-50 font-medium text-teal-700'
-                                                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                                            : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                                                         }`}
                                                     >
                                                         {article.title}
@@ -261,13 +261,13 @@ export default function Docs() {
 
                         {/* Content */}
                         <main className="min-w-0 flex-1">
-                            <h1 className="mb-6 text-2xl font-bold text-gray-900">{currentArticle.title}</h1>
+                            <h1 className="mb-6 text-2xl font-bold text-foreground">{currentArticle.title}</h1>
                             <div className="prose-sm space-y-1 max-w-2xl">
                                 {renderContent(currentArticle.content)}
                             </div>
 
                             {/* Article nav */}
-                            <div className="mt-12 flex justify-between border-t border-gray-100 pt-6">
+                            <div className="mt-12 flex justify-between border-t border-border pt-6">
                                 {activeArticle > 0 || sections.indexOf(currentSection) > 0 ? (
                                     <button
                                         onClick={() => {

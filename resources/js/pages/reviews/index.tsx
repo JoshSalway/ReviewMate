@@ -320,14 +320,14 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                         <div className="space-y-4">
                             {replied.data.map((review) => (
                                 <Card key={review.id}>
-                                    <CardHeader className="border-b bg-gray-50">
+                                    <CardHeader className="border-b bg-muted">
                                         <div className="flex items-center gap-3">
                                             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-600 text-sm font-bold text-white">
                                                 {review.reviewer_name.charAt(0).toUpperCase()}
                                             </div>
                                             <div>
-                                                <div className="font-semibold text-gray-900">{review.reviewer_name}</div>
-                                                <div className="text-xs text-gray-500">
+                                                <div className="font-semibold text-foreground">{review.reviewer_name}</div>
+                                                <div className="text-xs text-muted-foreground">
                                                     {review.reviewed_at
                                                         ? new Date(review.reviewed_at).toLocaleDateString('en-AU', {
                                                             day: 'numeric',
@@ -424,14 +424,14 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                         <div className="space-y-4">
                             {allReviews.data.map((review) => (
                                 <Card key={review.id}>
-                                    <CardHeader className="border-b bg-gray-50">
+                                    <CardHeader className="border-b bg-muted">
                                         <div className="flex items-center gap-3">
                                             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-600 text-sm font-bold text-white">
                                                 {review.reviewer_name.charAt(0).toUpperCase()}
                                             </div>
                                             <div>
-                                                <div className="font-semibold text-gray-900">{review.reviewer_name}</div>
-                                                <div className="text-xs text-gray-500">
+                                                <div className="font-semibold text-foreground">{review.reviewer_name}</div>
+                                                <div className="text-xs text-muted-foreground">
                                                     {review.reviewed_at
                                                         ? new Date(review.reviewed_at).toLocaleDateString('en-AU', {
                                                             day: 'numeric',

@@ -96,7 +96,7 @@ export default function Pricing() {
         <>
             <Head title="Pricing — ReviewMate" />
 
-            <div className="min-h-screen bg-white text-gray-900 antialiased">
+            <div className="min-h-screen bg-background text-foreground antialiased">
 
                 {/* Nav */}
                 <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
@@ -109,8 +109,8 @@ export default function Pricing() {
                         <span className="text-lg font-bold tracking-tight">ReviewMate</span>
                     </Link>
                     <div className="flex items-center gap-4">
-                        <Link href="/features" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">Features</Link>
-                        <Link href="/login" className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900 transition-colors">
+                        <Link href="/features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</Link>
+                        <Link href="/login" className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:border-border hover:text-foreground transition-colors">
                             Sign in
                         </Link>
                     </div>
@@ -121,7 +121,7 @@ export default function Pricing() {
                     <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
                         Simple, honest pricing
                     </h1>
-                    <p className="mt-4 text-lg text-gray-500">
+                    <p className="mt-4 text-lg text-muted-foreground">
                         No setup fees. No lock-in contracts. Start free, upgrade when you need to.
                     </p>
                 </section>
@@ -133,8 +133,8 @@ export default function Pricing() {
                             <div
                                 key={plan.name}
                                 className={`rounded-2xl p-7 ${plan.highlighted
-                                    ? 'relative border-2 border-teal-500 bg-white shadow-xl'
-                                    : 'border border-gray-200 bg-white'
+                                    ? 'relative border-2 border-teal-500 bg-card shadow-xl'
+                                    : 'border border-border bg-card'
                                 }`}
                             >
                                 {plan.highlighted && (
@@ -142,26 +142,26 @@ export default function Pricing() {
                                         <span className="rounded-full bg-teal-500 px-3 py-1 text-xs font-bold text-white shadow">Most popular</span>
                                     </div>
                                 )}
-                                <p className={`mb-1 text-xs font-semibold uppercase tracking-widest ${plan.highlighted ? 'text-teal-600' : 'text-gray-400'}`}>
+                                <p className={`mb-1 text-xs font-semibold uppercase tracking-widest ${plan.highlighted ? 'text-teal-600' : 'text-muted-foreground'}`}>
                                     {plan.name}
                                 </p>
                                 <div className="mb-1 flex items-end gap-1">
-                                    <span className="text-4xl font-extrabold text-gray-900">{plan.price}</span>
-                                    {plan.period && <span className="mb-1 text-sm text-gray-400">{plan.period}</span>}
+                                    <span className="text-4xl font-extrabold text-foreground">{plan.price}</span>
+                                    {plan.period && <span className="mb-1 text-sm text-muted-foreground">{plan.period}</span>}
                                 </div>
-                                <p className="mb-5 text-sm text-gray-500">{plan.description}</p>
+                                <p className="mb-5 text-sm text-muted-foreground">{plan.description}</p>
                                 <Link
                                     href="/login"
                                     className={`mb-6 block w-full rounded-xl py-2.5 text-center text-sm font-semibold transition-colors ${plan.highlighted
                                         ? 'bg-teal-600 text-white hover:bg-teal-700'
-                                        : 'border border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                                        : 'border border-border text-foreground hover:border-border hover:bg-muted/50'
                                     }`}
                                 >
                                     {plan.cta}
                                 </Link>
                                 <ul className="space-y-2.5">
                                     {plan.features.map((f) => (
-                                        <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
+                                        <li key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
                                             <CheckIcon />
                                             {f}
                                         </li>
@@ -173,14 +173,14 @@ export default function Pricing() {
                 </section>
 
                 {/* FAQ */}
-                <section className="bg-gray-50 py-20">
+                <section className="bg-muted/50 py-20">
                     <div className="mx-auto max-w-3xl px-6">
                         <h2 className="mb-10 text-center text-2xl font-bold tracking-tight sm:text-3xl">Pricing FAQ</h2>
-                        <div className="divide-y divide-gray-100">
+                        <div className="divide-y divide-border">
                             {faqs.map((faq) => (
                                 <div key={faq.question} className="py-5">
-                                    <p className="font-semibold text-gray-900">{faq.question}</p>
-                                    <p className="mt-2 text-sm text-gray-500 leading-relaxed">{faq.answer}</p>
+                                    <p className="font-semibold text-foreground">{faq.question}</p>
+                                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{faq.answer}</p>
                                 </div>
                             ))}
                         </div>
@@ -189,7 +189,7 @@ export default function Pricing() {
 
                 {/* CTA */}
                 <section className="py-16 text-center">
-                    <p className="text-gray-600 mb-4">Ready to get more reviews on autopilot?</p>
+                    <p className="text-muted-foreground mb-4">Ready to get more reviews on autopilot?</p>
                     <Link
                         href="/login"
                         className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 transition-colors"
@@ -199,12 +199,12 @@ export default function Pricing() {
                 </section>
 
                 {/* Footer */}
-                <footer className="border-t border-gray-100 py-8">
+                <footer className="border-t border-border py-8">
                     <div className="mx-auto max-w-6xl px-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-                        <span className="text-sm font-semibold text-gray-700">ReviewMate</span>
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
-                            <Link href="/terms" className="hover:text-gray-600 transition-colors">Terms</Link>
-                            <Link href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</Link>
+                        <span className="text-sm font-semibold text-foreground">ReviewMate</span>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <Link href="/terms" className="hover:text-muted-foreground transition-colors">Terms</Link>
+                            <Link href="/privacy" className="hover:text-muted-foreground transition-colors">Privacy</Link>
                             <span>&copy; {new Date().getFullYear()} ReviewMate</span>
                         </div>
                     </div>

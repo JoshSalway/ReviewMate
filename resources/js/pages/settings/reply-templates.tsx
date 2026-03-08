@@ -86,8 +86,8 @@ export default function ReplyTemplates({ templates }: Props) {
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6 max-w-3xl">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Reply Templates</h1>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <h1 className="text-2xl font-bold text-foreground">Reply Templates</h1>
+                        <p className="mt-1 text-sm text-muted-foreground">
                             Save reusable reply snippets. Use them on any review to pre-fill your response.
                         </p>
                     </div>
@@ -99,13 +99,13 @@ export default function ReplyTemplates({ templates }: Props) {
                 {templates.length === 0 ? (
                     <Card>
                         <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-                            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-                                <svg className="h-7 w-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+                                <svg className="h-7 w-7 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
                                 </svg>
                             </div>
-                            <h3 className="mb-1 text-base font-semibold text-gray-900">No templates yet</h3>
-                            <p className="mb-4 text-sm text-gray-500">Create your first reply template to save time responding to reviews.</p>
+                            <h3 className="mb-1 text-base font-semibold text-foreground">No templates yet</h3>
+                            <p className="mb-4 text-sm text-muted-foreground">Create your first reply template to save time responding to reviews.</p>
                             <Button className="bg-teal-600 hover:bg-teal-700 text-white" onClick={openCreate}>
                                 Create Template
                             </Button>
@@ -117,7 +117,7 @@ export default function ReplyTemplates({ templates }: Props) {
                             <Card key={t.id}>
                                 <CardHeader className="pb-2">
                                     <div className="flex items-center justify-between">
-                                        <CardTitle className="text-sm font-semibold text-gray-900">{t.name}</CardTitle>
+                                        <CardTitle className="text-sm font-semibold text-foreground">{t.name}</CardTitle>
                                         <div className="flex items-center gap-2">
                                             <Button
                                                 size="sm"
@@ -158,7 +158,7 @@ export default function ReplyTemplates({ templates }: Props) {
                                     </div>
                                 </CardHeader>
                                 <CardContent>
-                                    <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{t.body}</p>
+                                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">{t.body}</p>
                                 </CardContent>
                             </Card>
                         ))}

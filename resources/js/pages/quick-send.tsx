@@ -79,8 +79,8 @@ export default function QuickSend({ recentlySent }: Props) {
             <Head title="Quick Send" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Quick Send</h1>
-                    <p className="mt-1 text-sm text-gray-500">Send a review request to a customer instantly</p>
+                    <h1 className="text-2xl font-bold text-foreground">Quick Send</h1>
+                    <p className="mt-1 text-sm text-muted-foreground">Send a review request to a customer instantly</p>
                 </div>
 
                 {showSuccess && (
@@ -131,13 +131,13 @@ export default function QuickSend({ recentlySent }: Props) {
                                             className={`rounded-lg border-2 p-3 text-center transition ${
                                                 form.channel === option.value
                                                     ? 'border-teal-600 bg-teal-50'
-                                                    : 'border-gray-200 hover:border-gray-300'
+                                                    : 'border-border hover:border-border'
                                             }`}
                                         >
-                                            <div className={`text-sm font-medium ${form.channel === option.value ? 'text-teal-700' : 'text-gray-700'}`}>
+                                            <div className={`text-sm font-medium ${form.channel === option.value ? 'text-teal-700' : 'text-foreground'}`}>
                                                 {option.label}
                                             </div>
-                                            <div className="mt-0.5 text-xs text-gray-400">{option.description}</div>
+                                            <div className="mt-0.5 text-xs text-muted-foreground">{option.description}</div>
                                         </button>
                                     ))}
                                 </div>
@@ -161,24 +161,24 @@ export default function QuickSend({ recentlySent }: Props) {
                         <CardContent>
                             {recentlySent.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center py-8 text-center">
-                                    <svg className="mb-3 h-10 w-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <svg className="mb-3 h-10 w-10 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                                     </svg>
-                                    <p className="text-sm text-gray-400">No requests sent yet</p>
+                                    <p className="text-sm text-muted-foreground">No requests sent yet</p>
                                 </div>
                             ) : (
                                 <div className="space-y-3">
                                     {recentlySent.map((item) => (
-                                        <div key={item.id} className="flex items-center justify-between rounded-lg border border-gray-100 p-3">
+                                        <div key={item.id} className="flex items-center justify-between rounded-lg border border-border p-3">
                                             <div className="min-w-0">
-                                                <div className="font-medium text-gray-900">{item.customer_name}</div>
-                                                <div className="text-sm text-gray-500">{item.customer_email}</div>
+                                                <div className="font-medium text-foreground">{item.customer_name}</div>
+                                                <div className="text-sm text-muted-foreground">{item.customer_email}</div>
                                             </div>
                                             <div className="ml-3 flex flex-col items-end gap-1">
                                                 <Badge className={`text-xs capitalize ${channelBadgeClass[item.channel]}`}>
                                                     {item.channel}
                                                 </Badge>
-                                                <span className="text-xs text-gray-400">
+                                                <span className="text-xs text-muted-foreground">
                                                     {new Date(item.sent_at).toLocaleDateString()}
                                                 </span>
                                             </div>

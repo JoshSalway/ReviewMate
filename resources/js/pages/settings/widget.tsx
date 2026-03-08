@@ -68,8 +68,8 @@ export default function WidgetSettings({ business, embedCode, previewUrl }: Prop
             <Head title="Widget Settings" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Review Widget</h1>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <h1 className="text-2xl font-bold text-foreground">Review Widget</h1>
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Embed your Google reviews on your website with one line of code.
                     </p>
                 </div>
@@ -81,13 +81,13 @@ export default function WidgetSettings({ business, embedCode, previewUrl }: Prop
                             <CardTitle className="text-base font-semibold">Embed Code</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-muted-foreground">
                                 Paste this single line of code anywhere on your website where you want the review widget to appear.
                             </p>
                             {embedCode ? (
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
-                                        <code className="flex-1 rounded-md border border-gray-200 bg-gray-50 p-3 font-mono text-xs text-gray-800 break-all">
+                                        <code className="flex-1 rounded-md border border-border bg-muted p-3 font-mono text-xs text-foreground break-all">
                                             {embedCode}
                                         </code>
                                         <Button
@@ -100,7 +100,7 @@ export default function WidgetSettings({ business, embedCode, previewUrl }: Prop
                                         </Button>
                                     </div>
                                     {previewUrl && (
-                                        <p className="text-xs text-gray-500">
+                                        <p className="text-xs text-muted-foreground">
                                             API preview:{' '}
                                             <a
                                                 href={previewUrl}
@@ -114,7 +114,7 @@ export default function WidgetSettings({ business, embedCode, previewUrl }: Prop
                                     )}
                                 </div>
                             ) : (
-                                <p className="text-sm text-gray-500 italic">
+                                <p className="text-sm text-muted-foreground italic">
                                     Complete business setup to generate your embed code.
                                 </p>
                             )}
@@ -130,7 +130,7 @@ export default function WidgetSettings({ business, embedCode, previewUrl }: Prop
                             <div className="flex items-center justify-between">
                                 <div>
                                     <Label htmlFor="widget-enabled" className="font-medium">Enable widget</Label>
-                                    <p className="text-xs text-gray-500 mt-0.5">Allow the public API to serve your reviews</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">Allow the public API to serve your reviews</p>
                                 </div>
                                 <Switch
                                     id="widget-enabled"
@@ -212,7 +212,7 @@ export default function WidgetSettings({ business, embedCode, previewUrl }: Prop
                             <CardTitle className="text-base font-semibold">How it works</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <ol className="space-y-2 text-sm text-gray-600 list-decimal list-inside">
+                            <ol className="space-y-2 text-sm text-muted-foreground list-decimal list-inside">
                                 <li>Paste the embed code into your website's HTML</li>
                                 <li>The widget automatically loads your latest Google reviews</li>
                                 <li>It updates in real-time as new reviews come in — no maintenance needed</li>
@@ -220,7 +220,7 @@ export default function WidgetSettings({ business, embedCode, previewUrl }: Prop
                             </ol>
                             <div className="mt-4 flex items-center gap-2">
                                 <Badge className="bg-teal-50 text-teal-700 hover:bg-teal-50 text-xs">Free on all plans</Badge>
-                                <span className="text-xs text-gray-500">The widget is available to all ReviewMate users</span>
+                                <span className="text-xs text-muted-foreground">The widget is available to all ReviewMate users</span>
                             </div>
                         </CardContent>
                     </Card>

@@ -95,8 +95,8 @@ export default function BusinessSettings({ business, isProPlan }: Props) {
             <Head title="Business Settings" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Business Settings</h1>
-                    <p className="mt-1 text-sm text-gray-500">Manage your business details and Google Business connection</p>
+                    <h1 className="text-2xl font-bold text-foreground">Business Settings</h1>
+                    <p className="mt-1 text-sm text-muted-foreground">Manage your business details and Google Business connection</p>
                 </div>
 
                 <div className="max-w-2xl space-y-6">
@@ -154,7 +154,7 @@ export default function BusinessSettings({ business, isProPlan }: Props) {
                                         <SelectItem value="UTC">UTC</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <p className="text-xs text-gray-500">Used to schedule follow-ups and auto-replies at the right local time.</p>
+                                <p className="text-xs text-muted-foreground">Used to schedule follow-ups and auto-replies at the right local time.</p>
                             </div>
 
                             <div className="grid gap-4 sm:grid-cols-2">
@@ -199,7 +199,7 @@ export default function BusinessSettings({ business, isProPlan }: Props) {
                                 {business.is_google_connected ? (
                                     <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Connected</Badge>
                                 ) : (
-                                    <Badge className="bg-gray-100 text-gray-500 hover:bg-gray-100">Not connected</Badge>
+                                    <Badge className="bg-muted text-muted-foreground hover:bg-muted">Not connected</Badge>
                                 )}
                             </div>
                         </CardHeader>
@@ -223,7 +223,7 @@ export default function BusinessSettings({ business, isProPlan }: Props) {
                                 </div>
                             ) : (
                                 <div className="space-y-3">
-                                    <p className="text-sm text-gray-500">
+                                    <p className="text-sm text-muted-foreground">
                                         Connect your Google Business Profile to automatically sync reviews and post replies directly from ReviewMate.
                                     </p>
                                     <a href={googleConnect().url}>
@@ -255,7 +255,7 @@ export default function BusinessSettings({ business, isProPlan }: Props) {
                                         className="font-mono text-sm"
                                     />
                                     {form.google_place_id && (
-                                        <p className="text-xs text-gray-500">
+                                        <p className="text-xs text-muted-foreground">
                                             Review link:{' '}
                                             <a
                                                 href={`https://search.google.com/local/writereview?placeid=${form.google_place_id}`}
@@ -273,7 +273,7 @@ export default function BusinessSettings({ business, isProPlan }: Props) {
                             <div className="border-t pt-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="facebook-page-url">Facebook Page URL</Label>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs text-muted-foreground">
                                         Optional. When set, review requests will include a link to your Facebook Reviews page
                                         alongside Google.
                                     </p>
@@ -285,7 +285,7 @@ export default function BusinessSettings({ business, isProPlan }: Props) {
                                         placeholder="e.g. https://www.facebook.com/yourbusiness"
                                     />
                                     {form.facebook_page_url && (
-                                        <p className="text-xs text-gray-500">
+                                        <p className="text-xs text-muted-foreground">
                                             Facebook review link:{' '}
                                             <a
                                                 href={`${form.facebook_page_url.replace(/\/$/, '')}/reviews`}
@@ -314,7 +314,7 @@ export default function BusinessSettings({ business, isProPlan }: Props) {
                         </CardHeader>
                         <CardContent className="space-y-5">
                             {!isProPlan ? (
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-muted-foreground">
                                     Upgrade to Pro to automatically send a follow-up reminder to customers who haven't reviewed yet.
                                 </p>
                             ) : (
@@ -322,7 +322,7 @@ export default function BusinessSettings({ business, isProPlan }: Props) {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <Label htmlFor="follow-up-enabled" className="font-medium">Send follow-up reminder</Label>
-                                            <p className="text-xs text-gray-500 mt-0.5">Automatically remind customers who haven't reviewed yet</p>
+                                            <p className="text-xs text-muted-foreground mt-0.5">Automatically remind customers who haven't reviewed yet</p>
                                         </div>
                                         <Switch
                                             id="follow-up-enabled"

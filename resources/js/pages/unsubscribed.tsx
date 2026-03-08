@@ -9,21 +9,21 @@ export default function Unsubscribed({ businessName, confirmUrl }: Props) {
     return (
         <>
             <Head title="Unsubscribed" />
-            <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+            <div className="flex min-h-screen items-center justify-center bg-background p-4">
                 <div className="max-w-md text-center">
                     <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
                         <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                     </div>
-                    <h1 className="mb-2 text-2xl font-bold text-gray-900">You're unsubscribed</h1>
-                    <p className="text-gray-500">
+                    <h1 className="mb-2 text-2xl font-bold text-foreground">You're unsubscribed</h1>
+                    <p className="text-muted-foreground">
                         You won't receive any more review request emails{businessName ? ` from ${businessName}` : ''}.
                     </p>
 
                     {confirmUrl && (
-                        <div className="mt-8 rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-                            <p className="mb-4 text-sm font-medium text-gray-700">
+                        <div className="mt-8 rounded-lg border border-border bg-card p-6 shadow-sm">
+                            <p className="mb-4 text-sm font-medium text-foreground">
                                 Before you go — did you get a chance to leave{businessName ? ` ${businessName}` : ' them'} a review?
                             </p>
                             <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">

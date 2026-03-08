@@ -35,7 +35,7 @@ export default function Waitlist({ count }: Props) {
         <>
             <Head title="Join the Waitlist — ReviewMate" />
 
-            <div className="min-h-screen bg-white text-gray-900 antialiased">
+            <div className="min-h-screen bg-background text-foreground antialiased">
 
                 {/* Nav */}
                 <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
@@ -49,7 +49,7 @@ export default function Waitlist({ count }: Props) {
                     </a>
                     <a
                         href="/login"
-                        className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900 transition-colors"
+                        className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:border-border hover:text-foreground transition-colors"
                     >
                         Sign in
                     </a>
@@ -69,13 +69,13 @@ export default function Waitlist({ count }: Props) {
                         <span className="text-teal-600">Get early access.</span>
                     </h1>
 
-                    <p className="mx-auto mt-5 max-w-lg text-lg text-gray-500 leading-relaxed">
+                    <p className="mx-auto mt-5 max-w-lg text-lg text-muted-foreground leading-relaxed">
                         Automated review requests, AI reply suggestions, and Google reputation management for Australian small businesses.
                         Join the waitlist and we'll notify you when your spot is ready.
                     </p>
 
                     {count > 0 && (
-                        <p className="mt-3 text-sm text-gray-400">
+                        <p className="mt-3 text-sm text-muted-foreground">
                             {count.toLocaleString()} {count === 1 ? 'business' : 'businesses'} already on the list
                         </p>
                     )}
@@ -92,21 +92,21 @@ export default function Waitlist({ count }: Props) {
                                     </svg>
                                 </div>
                             </div>
-                            <h2 className="text-xl font-bold text-gray-900">You're on the list!</h2>
-                            <p className="mt-2 text-sm text-gray-500 leading-relaxed">
+                            <h2 className="text-xl font-bold text-foreground">You're on the list!</h2>
+                            <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                                 We'll send you an email as soon as your spot is ready. Keep an eye on your inbox.
                             </p>
                         </div>
                     ) : (
                         <form
                             onSubmit={handleSubmit}
-                            className="rounded-2xl border border-gray-100 bg-white px-8 py-8 shadow-sm"
+                            className="rounded-2xl border border-border bg-card px-8 py-8 shadow-sm"
                         >
-                            <h2 className="mb-6 text-xl font-bold text-gray-900">Reserve your spot</h2>
+                            <h2 className="mb-6 text-xl font-bold text-foreground">Reserve your spot</h2>
 
                             <div className="space-y-4">
                                 <div>
-                                    <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-gray-700">
+                                    <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-foreground">
                                         Your name
                                     </label>
                                     <input
@@ -116,7 +116,7 @@ export default function Waitlist({ count }: Props) {
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
                                         placeholder="Sarah Johnson"
-                                        className="w-full rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+                                        className="w-full rounded-lg border border-border px-3.5 py-2.5 text-sm text-foreground placeholder-gray-400 focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
                                     />
                                     {errors.name && (
                                         <p className="mt-1 text-xs text-red-500">{errors.name}</p>
@@ -124,7 +124,7 @@ export default function Waitlist({ count }: Props) {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-gray-700">
+                                    <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">
                                         Work email
                                     </label>
                                     <input
@@ -134,7 +134,7 @@ export default function Waitlist({ count }: Props) {
                                         value={data.email}
                                         onChange={(e) => setData('email', e.target.value)}
                                         placeholder="sarah@mybusiness.com.au"
-                                        className="w-full rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+                                        className="w-full rounded-lg border border-border px-3.5 py-2.5 text-sm text-foreground placeholder-gray-400 focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
                                     />
                                     {errors.email && (
                                         <p className="mt-1 text-xs text-red-500">{errors.email}</p>
@@ -142,14 +142,14 @@ export default function Waitlist({ count }: Props) {
                                 </div>
 
                                 <div>
-                                    <label htmlFor="business_type" className="mb-1.5 block text-sm font-medium text-gray-700">
-                                        Business type <span className="text-gray-400">(optional)</span>
+                                    <label htmlFor="business_type" className="mb-1.5 block text-sm font-medium text-foreground">
+                                        Business type <span className="text-muted-foreground">(optional)</span>
                                     </label>
                                     <select
                                         id="business_type"
                                         value={data.business_type}
                                         onChange={(e) => setData('business_type', e.target.value)}
-                                        className="w-full rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-900 focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
+                                        className="w-full rounded-lg border border-border px-3.5 py-2.5 text-sm text-foreground focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
                                     >
                                         {businessTypes.map((bt) => (
                                             <option key={bt.value} value={bt.value}>{bt.label}</option>
@@ -169,7 +169,7 @@ export default function Waitlist({ count }: Props) {
                                 {processing ? 'Joining…' : 'Join the waitlist'}
                             </button>
 
-                            <p className="mt-3 text-center text-xs text-gray-400">
+                            <p className="mt-3 text-center text-xs text-muted-foreground">
                                 We'll only email you when your spot is ready. No spam.
                             </p>
                         </form>
@@ -177,9 +177,9 @@ export default function Waitlist({ count }: Props) {
                 </section>
 
                 {/* Mini features */}
-                <section className="border-t border-gray-100 bg-gray-50 py-16">
+                <section className="border-t border-border bg-muted/50 py-16">
                     <div className="mx-auto max-w-5xl px-6">
-                        <p className="mb-10 text-center text-sm font-semibold uppercase tracking-widest text-gray-400">What you'll get</p>
+                        <p className="mb-10 text-center text-sm font-semibold uppercase tracking-widest text-muted-foreground">What you'll get</p>
                         <div className="grid gap-6 sm:grid-cols-3">
                             {[
                                 {
@@ -195,10 +195,10 @@ export default function Waitlist({ count }: Props) {
                                     desc: 'All your reviews in one place. Track your rating, reply rate, and request conversions.',
                                 },
                             ].map((f) => (
-                                <div key={f.title} className="rounded-xl border border-gray-100 bg-white p-5">
+                                <div key={f.title} className="rounded-xl border border-border bg-card p-5">
                                     <div className="mb-2 h-2 w-8 rounded-full bg-teal-500" />
-                                    <h3 className="mb-1 text-sm font-semibold text-gray-900">{f.title}</h3>
-                                    <p className="text-sm text-gray-500 leading-relaxed">{f.desc}</p>
+                                    <h3 className="mb-1 text-sm font-semibold text-foreground">{f.title}</h3>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
                                 </div>
                             ))}
                         </div>
@@ -206,12 +206,12 @@ export default function Waitlist({ count }: Props) {
                 </section>
 
                 {/* Footer */}
-                <footer className="border-t border-gray-100 py-8">
+                <footer className="border-t border-border py-8">
                     <div className="mx-auto max-w-5xl px-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-                        <span className="text-sm font-semibold text-gray-700">ReviewMate</span>
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
-                            <a href="/terms" className="hover:text-gray-600 transition-colors">Terms</a>
-                            <a href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</a>
+                        <span className="text-sm font-semibold text-foreground">ReviewMate</span>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <a href="/terms" className="hover:text-muted-foreground transition-colors">Terms</a>
+                            <a href="/privacy" className="hover:text-muted-foreground transition-colors">Privacy</a>
                             <span>&copy; {new Date().getFullYear()} ReviewMate. Built for Australian small businesses.</span>
                         </div>
                     </div>

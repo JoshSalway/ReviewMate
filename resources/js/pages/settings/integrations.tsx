@@ -44,7 +44,7 @@ function ConnectedBadge({ connected }: { connected: boolean }) {
     return connected ? (
         <Badge className="bg-green-100 text-green-700 hover:bg-green-100">Connected</Badge>
     ) : (
-        <Badge className="bg-gray-100 text-gray-500 hover:bg-gray-100">Not connected</Badge>
+        <Badge className="bg-muted text-muted-foreground hover:bg-muted">Not connected</Badge>
     );
 }
 
@@ -83,12 +83,12 @@ function AutoSendToggle({
     onToggle: () => void;
 }) {
     return (
-        <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div className="flex items-center justify-between rounded-lg border border-border bg-muted p-4">
             <div>
                 <Label htmlFor={id} className="text-sm font-medium">
                     {label}
                 </Label>
-                <p className="mt-0.5 text-xs text-gray-500">{description}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
             </div>
             <Switch id={id} checked={checked} onCheckedChange={onToggle} />
         </div>
@@ -268,8 +268,8 @@ export default function Integrations({
             <Head title="Integrations" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6 max-w-2xl">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Integrations</h1>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <h1 className="text-2xl font-bold text-foreground">Integrations</h1>
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Connect ReviewMate to your other business tools to automatically send review requests.
                     </p>
                 </div>
@@ -293,7 +293,7 @@ export default function Integrations({
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                             Automatically send Google review requests to customers when a job is marked as complete in ServiceM8.
                             No manual effort required — ReviewMate handles it for you.
                         </p>
@@ -359,7 +359,7 @@ export default function Integrations({
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                             Automatically send a review request when a Xero invoice is marked as paid. Works for any
                             business that invoices customers through Xero.
                         </p>
@@ -424,7 +424,7 @@ export default function Integrations({
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                             ReviewMate polls Cliniko daily for completed appointments (physios, chiros, psychologists, etc.)
                             and automatically sends review requests to patients. Uses your personal Cliniko API key.
                         </p>
@@ -453,7 +453,7 @@ export default function Integrations({
                                     <Label htmlFor="cliniko-api-key" className="text-sm font-medium">
                                         Cliniko API key
                                     </Label>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs text-muted-foreground">
                                         Find your API key in Cliniko under <strong>My Info &rarr; Cliniko API</strong>.
                                     </p>
                                     <Input
@@ -499,7 +499,7 @@ export default function Integrations({
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                             Automatically send a review request when an appointment is completed in Timely. Uses native
                             webhooks for instant delivery — no polling required.
                         </p>
@@ -564,7 +564,7 @@ export default function Integrations({
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                             Automatically send Google review requests to customers when a job is marked complete in Simpro.
                             Ideal for larger trade businesses with 5–50 staff. Uses OAuth for a secure connection.
                         </p>
@@ -606,7 +606,7 @@ export default function Integrations({
                                     <Label htmlFor="simpro-company-url" className="text-sm font-medium">
                                         Simpro company URL
                                     </Label>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs text-muted-foreground">
                                         Enter your Simpro subdomain, e.g. <strong>mycompany.simprocloud.com</strong>
                                     </p>
                                     <Input
@@ -649,7 +649,7 @@ export default function Integrations({
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                             ReviewMate polls Halaxy daily for completed appointments (GPs, psychiatrists, psychologists,
                             physiotherapists, and more) and automatically sends review requests to patients.
                             Uses your personal Halaxy API key.
@@ -679,7 +679,7 @@ export default function Integrations({
                                     <Label htmlFor="halaxy-api-key" className="text-sm font-medium">
                                         Halaxy API key
                                     </Label>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs text-muted-foreground">
                                         Find your API key in Halaxy under <strong>Settings &rarr; Integrations &rarr; API</strong>.
                                     </p>
                                     <Input
@@ -711,8 +711,8 @@ export default function Integrations({
                     <CardHeader>
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
-                                    <span className="text-sm font-bold text-gray-700">{'{}'}</span>
+                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                                    <span className="text-sm font-bold text-foreground">{'{}'}</span>
                                 </div>
                                 <div>
                                     <CardTitle className="text-base">Custom Webhook</CardTitle>
@@ -724,7 +724,7 @@ export default function Integrations({
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                             Works with Fergus, Tradify, Mindbody, and 5,000+ other apps. Any tool that can make an HTTP
                             POST request can trigger a review request — no native integration required.
                         </p>
@@ -752,9 +752,9 @@ export default function Integrations({
                                     </div>
                                 </div>
 
-                                <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
-                                    <p className="mb-2 text-xs font-medium text-gray-700">Example request (Zapier / Make / n8n / direct):</p>
-                                    <pre className="overflow-x-auto rounded bg-gray-900 px-3 py-2 font-mono text-xs text-gray-100">{`POST ${incomingWebhookUrl}
+                                <div className="rounded-lg border border-border bg-muted p-4">
+                                    <p className="mb-2 text-xs font-medium text-foreground">Example request (Zapier / Make / n8n / direct):</p>
+                                    <pre className="overflow-x-auto rounded bg-neutral-900 px-3 py-2 font-mono text-xs text-neutral-100">{`POST ${incomingWebhookUrl}
 Content-Type: application/json
 
 {
@@ -767,7 +767,7 @@ Content-Type: application/json
 
                                 <Button
                                     variant="outline"
-                                    className="border-gray-200 text-gray-600 hover:bg-gray-50"
+                                    className="border-border text-muted-foreground hover:bg-muted/50"
                                     onClick={() =>
                                         router.post(
                                             '/settings/integrations/webhook/regenerate',
@@ -780,7 +780,7 @@ Content-Type: application/json
                                 </Button>
                             </div>
                         ) : (
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-muted-foreground">
                                 No webhook token generated yet. Complete your business setup to activate this feature.
                             </p>
                         )}
@@ -806,7 +806,7 @@ Content-Type: application/json
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                             Automatically send a Google review request when a job is marked complete in Jobber.
                             Works for landscapers, cleaners, HVAC, plumbers, and any field service business using Jobber.
                         </p>
@@ -871,7 +871,7 @@ Content-Type: application/json
                         </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-muted-foreground">
                             Automatically send a Google review request when a job is marked complete in Housecall Pro.
                             Works for plumbers, electricians, HVAC techs, carpet cleaners, and any home service business.
                         </p>

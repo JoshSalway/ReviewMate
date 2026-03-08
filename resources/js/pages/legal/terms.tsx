@@ -17,7 +17,7 @@ export default function Terms() {
     return (
         <>
             <Head title="Terms of Service — ReviewMate" />
-            <div className="min-h-screen bg-white text-gray-900 antialiased">
+            <div className="min-h-screen bg-background text-foreground antialiased">
 
                 {/* Nav */}
                 <nav className="mx-auto flex max-w-4xl items-center justify-between px-6 py-5">
@@ -26,7 +26,7 @@ export default function Terms() {
                     </Link>
                     <Link
                         href="/privacy"
-                        className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                     >
                         Privacy Policy
                     </Link>
@@ -34,12 +34,12 @@ export default function Terms() {
 
                 {/* Content */}
                 <main className="mx-auto max-w-3xl px-6 pb-24 pt-10">
-                    <div className="mb-10 border-b border-gray-100 pb-8">
-                        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">Terms of Service</h1>
-                        <p className="mt-3 text-sm text-gray-400">Last updated: 4 March 2026</p>
+                    <div className="mb-10 border-b border-border pb-8">
+                        <h1 className="text-4xl font-extrabold tracking-tight text-foreground">Terms of Service</h1>
+                        <p className="mt-3 text-sm text-muted-foreground">Last updated: 4 March 2026</p>
                     </div>
 
-                    <div className="prose prose-gray max-w-none space-y-10 text-[15px] leading-relaxed text-gray-700">
+                    <div className="prose prose-gray max-w-none space-y-10 text-[15px] leading-relaxed text-foreground">
 
                         <section>
                             <p>
@@ -48,28 +48,28 @@ export default function Terms() {
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">1. The Service</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">1. The Service</h2>
                             <p>
                                 ReviewMate is a software-as-a-service (SaaS) platform that helps Australian small businesses collect and manage Google reviews. Core features include automated review request emails and SMS, Google Business Profile integration, AI-generated reply suggestions, and customer management tools.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">2. Eligibility</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">2. Eligibility</h2>
                             <p>
                                 You must be at least 18 years old and operate a legitimate business to use ReviewMate. By creating an account you represent that you have the legal authority to bind yourself (and, if applicable, your organisation) to these Terms.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">3. Accounts</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">3. Accounts</h2>
                             <p>
                                 You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account. Notify us immediately at <a href="mailto:hello@reviewmate.com.au" className="text-teal-600 underline">hello@reviewmate.com.au</a> if you suspect unauthorised access. We are not liable for loss or damage arising from your failure to protect your credentials.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">4. Subscriptions and Billing</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">4. Subscriptions and Billing</h2>
                             <p className="mb-3">
                                 ReviewMate offers a free tier and paid plans billed on a monthly recurring basis. Billing is processed by <strong>Stripe</strong>, a third-party payment processor. By subscribing you also agree to <a href="https://stripe.com/au/legal/ssa" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">Stripe's terms of service</a>. We do not store your full card details on our servers.
                             </p>
@@ -83,7 +83,7 @@ export default function Terms() {
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">5. Acceptable Use</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">5. Acceptable Use</h2>
                             <p className="mb-3">You agree to use ReviewMate only for lawful purposes and in accordance with these Terms. You must not:</p>
                             <ul className="list-disc space-y-1.5 pl-5">
                                 <li>Send review requests to individuals who have not had a genuine transaction or interaction with your business.</li>
@@ -100,14 +100,14 @@ export default function Terms() {
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">6. Customer Data</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">6. Customer Data</h2>
                             <p>
                                 When you upload customer information (names, email addresses, phone numbers) to ReviewMate, you represent and warrant that you have a lawful basis to share that data with us and to contact those individuals. You retain ownership of your customer data. We process it solely to provide the service as described in our <Link href="/privacy" className="text-teal-600 underline">Privacy Policy</Link>.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">7. Third-Party Services</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">7. Third-Party Services</h2>
                             <p className="mb-3">
                                 ReviewMate integrates with the following third-party services to deliver its features. Your use of ReviewMate is also subject to these providers' terms:
                             </p>
@@ -125,28 +125,28 @@ export default function Terms() {
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">8. AI-Generated Content</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">8. AI-Generated Content</h2>
                             <p>
                                 ReviewMate uses Anthropic's Claude AI to generate suggested replies to Google reviews. These suggestions are provided as a starting point only. You are responsible for reviewing, editing, and approving any reply before it is posted to Google. We make no warranty as to the accuracy, appropriateness, or completeness of AI-generated content.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">9. Intellectual Property</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">9. Intellectual Property</h2>
                             <p>
                                 ReviewMate and its original content, features, and functionality are owned by us and protected by applicable intellectual property laws. You may not copy, modify, distribute, or reverse-engineer any part of the platform. You retain all rights to your own content (customer data, business information, custom templates) uploaded to ReviewMate.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">10. Disclaimer of Warranties</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">10. Disclaimer of Warranties</h2>
                             <p>
                                 ReviewMate is provided on an "as is" and "as available" basis without any warranty of any kind, express or implied, including warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not warrant that the service will be uninterrupted, error-free, or that results obtained from its use will be accurate or reliable.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">11. Limitation of Liability</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">11. Limitation of Liability</h2>
                             <p>
                                 To the maximum extent permitted by Australian law, ReviewMate and its officers, directors, employees, and contractors will not be liable for any indirect, incidental, special, consequential, or punitive damages — including loss of profits, data, goodwill, or business — arising from your use of or inability to use the service.
                             </p>
@@ -159,28 +159,28 @@ export default function Terms() {
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">12. Termination</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">12. Termination</h2>
                             <p>
                                 You may close your account at any time by contacting us at <a href="mailto:hello@reviewmate.com.au" className="text-teal-600 underline">hello@reviewmate.com.au</a>. We may suspend or terminate your account immediately if you breach these Terms or if we reasonably believe you are using ReviewMate in a harmful or illegal manner. Upon termination, your data will be retained for 30 days before permanent deletion, giving you time to export what you need.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">13. Changes to These Terms</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">13. Changes to These Terms</h2>
                             <p>
                                 We may update these Terms from time to time. We will notify you of material changes by email to your registered address at least 14 days before the changes take effect. Your continued use of ReviewMate after that date constitutes acceptance of the updated Terms.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">14. Governing Law</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">14. Governing Law</h2>
                             <p>
                                 These Terms are governed by the laws of Queensland, Australia. Any disputes arising under these Terms will be subject to the exclusive jurisdiction of the courts of Queensland, Australia.
                             </p>
                         </section>
 
                         <section>
-                            <h2 className="mb-3 text-xl font-bold text-gray-900">15. Contact</h2>
+                            <h2 className="mb-3 text-xl font-bold text-foreground">15. Contact</h2>
                             <p>
                                 Questions about these Terms? Email us at{' '}
                                 <a href="mailto:hello@reviewmate.com.au" className="text-teal-600 underline">
@@ -194,7 +194,7 @@ export default function Terms() {
                 </main>
 
                 {/* Footer */}
-                <footer className="border-t border-gray-100 py-8">
+                <footer className="border-t border-border py-8">
                     <div className="mx-auto max-w-6xl px-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
                         <div className="flex items-center gap-2">
                             <div className="flex h-5 w-5 items-center justify-center rounded bg-teal-600">
@@ -202,11 +202,11 @@ export default function Terms() {
                                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                 </svg>
                             </div>
-                            <span className="text-sm font-semibold text-gray-700">ReviewMate</span>
+                            <span className="text-sm font-semibold text-foreground">ReviewMate</span>
                         </div>
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
-                            <Link href="/terms" className="hover:text-gray-600 transition-colors font-medium text-gray-600">Terms</Link>
-                            <Link href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</Link>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <Link href="/terms" className="hover:text-muted-foreground transition-colors font-medium text-muted-foreground">Terms</Link>
+                            <Link href="/privacy" className="hover:text-muted-foreground transition-colors">Privacy</Link>
                             <span>&copy; {new Date().getFullYear()} ReviewMate</span>
                         </div>
                     </div>

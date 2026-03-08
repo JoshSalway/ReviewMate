@@ -158,7 +158,7 @@ export default function Analytics({ businesses, totals, can_see_all }: Props) {
                                             {totals.pending_replies > 0 ? (
                                                 <span className="text-orange-600">{totals.pending_replies}</span>
                                             ) : (
-                                                <span className="text-gray-400">—</span>
+                                                <span className="text-muted-foreground">—</span>
                                             )}
                                         </TableCell>
                                         <TableCell className="text-right">{totals.reviews_this_month}</TableCell>

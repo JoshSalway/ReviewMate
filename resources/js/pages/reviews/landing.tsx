@@ -50,19 +50,19 @@ export default function ReviewLanding({ token, businessName, googleReviewUrl }: 
         return (
             <>
                 <Head title="Thank you!" />
-                <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+                <div className="flex min-h-screen items-center justify-center bg-background p-4">
                     <div className="max-w-md w-full text-center">
                         <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-teal-100">
                             <svg className="h-10 w-10 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <h1 className="mb-3 text-2xl font-bold text-gray-900">Thank you for your feedback</h1>
-                        <p className="text-gray-500">
-                            We've passed your feedback on to <span className="font-semibold text-gray-700">{businessName}</span>. They appreciate you taking the time.
+                        <h1 className="mb-3 text-2xl font-bold text-foreground">Thank you for your feedback</h1>
+                        <p className="text-muted-foreground">
+                            We've passed your feedback on to <span className="font-semibold text-foreground">{businessName}</span>. They appreciate you taking the time.
                         </p>
                         {googleUrl && (
-                            <p className="mt-6 text-sm text-gray-400">
+                            <p className="mt-6 text-sm text-muted-foreground">
                                 Want to share your experience publicly?{' '}
                                 <a
                                     href={googleUrl}
@@ -83,20 +83,20 @@ export default function ReviewLanding({ token, businessName, googleReviewUrl }: 
     return (
         <>
             <Head title={`Rate your experience at ${businessName}`} />
-            <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+            <div className="flex min-h-screen items-center justify-center bg-background p-4">
                 <div className="w-full max-w-md">
                     {/* Card */}
-                    <div className="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-100">
+                    <div className="rounded-2xl bg-card p-8 shadow-sm ring-1 ring-border">
                         {/* Logo/brand placeholder */}
                         <div className="mb-6 text-center">
                             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-teal-600 text-xl font-bold text-white">
                                 {businessName.charAt(0).toUpperCase()}
                             </div>
-                            <h1 className="text-xl font-bold text-gray-900">{businessName}</h1>
+                            <h1 className="text-xl font-bold text-foreground">{businessName}</h1>
                         </div>
 
                         {/* Question */}
-                        <p className="mb-6 text-center text-lg font-medium text-gray-700">
+                        <p className="mb-6 text-center text-lg font-medium text-foreground">
                             How was your experience?
                         </p>
 
@@ -116,7 +116,7 @@ export default function ReviewLanding({ token, businessName, googleReviewUrl }: 
                                         className={`h-12 w-12 transition-colors ${
                                             effectiveRating !== null && star <= effectiveRating
                                                 ? 'text-yellow-400'
-                                                : 'text-gray-200'
+                                                : 'text-muted'
                                         }`}
                                         fill="currentColor"
                                         viewBox="0 0 20 20"
@@ -131,8 +131,8 @@ export default function ReviewLanding({ token, businessName, googleReviewUrl }: 
                         {isHappy && (
                             <div className="space-y-4 text-center">
                                 <div>
-                                    <p className="mb-1 font-semibold text-gray-900">Glad to hear it!</p>
-                                    <p className="text-sm text-gray-500">
+                                    <p className="mb-1 font-semibold text-foreground">Glad to hear it!</p>
+                                    <p className="text-sm text-muted-foreground">
                                         Would you mind sharing your experience on Google? It really helps us.
                                     </p>
                                 </div>
@@ -156,7 +156,7 @@ export default function ReviewLanding({ token, businessName, googleReviewUrl }: 
                                 <button
                                     type="button"
                                     onClick={() => setRating(null)}
-                                    className="text-sm text-gray-400 hover:text-gray-600 underline"
+                                    className="text-sm text-muted-foreground hover:text-foreground underline"
                                 >
                                     Change my rating
                                 </button>
@@ -167,8 +167,8 @@ export default function ReviewLanding({ token, businessName, googleReviewUrl }: 
                         {isUnhappy && (
                             <div className="space-y-4">
                                 <div className="text-center">
-                                    <p className="mb-1 font-semibold text-gray-900">We're sorry to hear that.</p>
-                                    <p className="text-sm text-gray-500">
+                                    <p className="mb-1 font-semibold text-foreground">We're sorry to hear that.</p>
+                                    <p className="text-sm text-muted-foreground">
                                         Tell us what went wrong — we'd love the chance to make it right.
                                     </p>
                                 </div>
@@ -177,7 +177,7 @@ export default function ReviewLanding({ token, businessName, googleReviewUrl }: 
                                     onChange={(e) => setFeedback(e.target.value)}
                                     placeholder="What could we have done better?"
                                     rows={4}
-                                    className="w-full rounded-xl border border-gray-200 p-4 text-sm text-gray-700 placeholder-gray-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-100"
+                                    className="w-full rounded-xl border border-border bg-background p-4 text-sm text-foreground placeholder-muted-foreground focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-100"
                                 />
                                 <button
                                     type="button"
@@ -189,13 +189,13 @@ export default function ReviewLanding({ token, businessName, googleReviewUrl }: 
                                 </button>
 
                                 {/* Compliance: Google always accessible */}
-                                <p className="text-center text-sm text-gray-400">
+                                <p className="text-center text-sm text-muted-foreground">
                                     Or if you prefer,{' '}
                                     <a
                                         href={googleUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-gray-500 underline hover:text-gray-700"
+                                        className="text-muted-foreground underline hover:text-foreground"
                                         onClick={() =>
                                             router.post(`/r/${token}/feedback`, { rating, feedback: feedback.trim() || null }, { preserveScroll: true })
                                         }
@@ -207,7 +207,7 @@ export default function ReviewLanding({ token, businessName, googleReviewUrl }: 
                                 <button
                                     type="button"
                                     onClick={() => setRating(null)}
-                                    className="w-full text-center text-sm text-gray-400 hover:text-gray-600 underline"
+                                    className="w-full text-center text-sm text-muted-foreground hover:text-foreground underline"
                                 >
                                     Change my rating
                                 </button>
@@ -216,13 +216,13 @@ export default function ReviewLanding({ token, businessName, googleReviewUrl }: 
 
                         {/* No rating yet — prompt */}
                         {rating === null && (
-                            <p className="text-center text-sm text-gray-400">
+                            <p className="text-center text-sm text-muted-foreground">
                                 Select a star rating above
                             </p>
                         )}
                     </div>
 
-                    <p className="mt-6 text-center text-xs text-gray-400">
+                    <p className="mt-6 text-center text-xs text-muted-foreground">
                         Powered by ReviewMate
                     </p>
                 </div>

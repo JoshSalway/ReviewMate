@@ -166,15 +166,15 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
 
                 <div className="flex items-start justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Auto-Reply to Reviews</h1>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <h1 className="text-2xl font-bold text-foreground">Auto-Reply to Reviews</h1>
+                        <p className="mt-1 text-sm text-muted-foreground">
                             Let AI reply to your Google reviews automatically — every night, in your voice.
                         </p>
                     </div>
                     {isProPlan ? (
                         <Badge className="bg-teal-100 text-teal-700 hover:bg-teal-100">Pro</Badge>
                     ) : (
-                        <Badge className="bg-gray-100 text-gray-500 hover:bg-gray-100">Pro feature</Badge>
+                        <Badge className="bg-muted text-muted-foreground hover:bg-muted">Pro feature</Badge>
                     )}
                 </div>
 
@@ -208,8 +208,8 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                     <CardContent className="pt-6">
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="font-semibold text-gray-900">Enable auto-reply</p>
-                                <p className="mt-0.5 text-sm text-gray-500">
+                                <p className="font-semibold text-foreground">Enable auto-reply</p>
+                                <p className="mt-0.5 text-sm text-muted-foreground">
                                     Runs nightly at {schedule.auto_reply_time} {schedule.timezone_abbr}. Replies to reviews that match your settings.
                                 </p>
                             </div>
@@ -220,7 +220,7 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                                 disabled={isLocked || !isGoogleConnected}
                                 onClick={() => setForm({ ...form, auto_reply_enabled: !form.auto_reply_enabled })}
                                 className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none disabled:opacity-40 ${
-                                    form.auto_reply_enabled ? 'bg-teal-600' : 'bg-gray-200'
+                                    form.auto_reply_enabled ? 'bg-teal-600' : 'bg-muted'
                                 }`}
                             >
                                 <span
@@ -243,39 +243,39 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                     </CardHeader>
                     <CardContent>
                         <div className="grid gap-4 sm:grid-cols-2">
-                            <div className="rounded-lg border border-gray-100 bg-gray-50 p-3">
-                                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Auto-replies</p>
-                                <p className="mt-1 text-sm font-semibold text-gray-900">
+                            <div className="rounded-lg border border-border bg-muted p-3">
+                                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Auto-replies</p>
+                                <p className="mt-1 text-sm font-semibold text-foreground">
                                     Nightly at {schedule.auto_reply_time} {schedule.timezone_abbr}
                                 </p>
-                                <p className="mt-0.5 text-xs text-gray-500">
+                                <p className="mt-0.5 text-xs text-muted-foreground">
                                     Next run: {formatLocalDate(schedule.next_run_at)}
                                 </p>
                             </div>
-                            <div className="rounded-lg border border-gray-100 bg-gray-50 p-3">
-                                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Follow-up emails</p>
-                                <p className="mt-1 text-sm font-semibold text-gray-900">
+                            <div className="rounded-lg border border-border bg-muted p-3">
+                                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Follow-up emails</p>
+                                <p className="mt-1 text-sm font-semibold text-foreground">
                                     Daily at {schedule.follow_up_time} {schedule.timezone_abbr}
                                 </p>
-                                <p className="mt-0.5 text-xs text-gray-500">
+                                <p className="mt-0.5 text-xs text-muted-foreground">
                                     Sent to customers who haven't reviewed yet
                                 </p>
                             </div>
                         </div>
                         {schedule.last_run_at ? (
-                            <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+                            <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
                                 <span className="inline-block h-2 w-2 rounded-full bg-teal-400" />
                                 Last run: {formatLocalDate(schedule.last_run_at)} —{' '}
-                                <span className="font-medium text-gray-700">
+                                <span className="font-medium text-foreground">
                                     {schedule.last_reply_count === 0
                                         ? 'No new reviews to reply to'
                                         : `Replied to ${schedule.last_reply_count} review${schedule.last_reply_count === 1 ? '' : 's'}`}
                                 </span>
                             </div>
                         ) : (
-                            <p className="mt-3 text-xs text-gray-400">Auto-reply hasn't run yet.</p>
+                            <p className="mt-3 text-xs text-muted-foreground">Auto-reply hasn't run yet.</p>
                         )}
-                        <p className="mt-2 text-xs text-gray-400">
+                        <p className="mt-2 text-xs text-muted-foreground">
                             Times shown in your business timezone ({schedule.timezone}).{' '}
                             <a href="/settings/business" className="text-teal-600 underline hover:text-teal-700">Change timezone</a>
                         </p>
@@ -288,7 +288,7 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                         <CardTitle className="text-base font-semibold">Minimum star rating</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="mb-4 text-sm text-gray-500">
+                        <p className="mb-4 text-sm text-muted-foreground">
                             Only auto-reply to reviews at or above this rating. Replies to lower-rated reviews are better handled personally.
                         </p>
                         <div className="flex gap-2">
@@ -300,14 +300,14 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                                     className={`flex h-11 w-11 items-center justify-center rounded-lg border-2 text-sm font-semibold transition ${
                                         form.auto_reply_min_rating === star
                                             ? 'border-teal-600 bg-teal-50 text-teal-700'
-                                            : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                                            : 'border-border text-muted-foreground hover:border-border'
                                     }`}
                                 >
                                     {star}★
                                 </button>
                             ))}
                         </div>
-                        <p className="mt-2 text-xs text-gray-400">
+                        <p className="mt-2 text-xs text-muted-foreground">
                             Currently: auto-reply to <strong>{form.auto_reply_min_rating}★ and above</strong>
                         </p>
                     </CardContent>
@@ -328,13 +328,13 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                                     className={`rounded-lg border-2 p-3 text-left transition ${
                                         form.auto_reply_tone === opt.value
                                             ? 'border-teal-600 bg-teal-50'
-                                            : 'border-gray-200 hover:border-gray-300'
+                                            : 'border-border hover:border-border'
                                     }`}
                                 >
-                                    <div className={`text-sm font-semibold ${form.auto_reply_tone === opt.value ? 'text-teal-700' : 'text-gray-800'}`}>
+                                    <div className={`text-sm font-semibold ${form.auto_reply_tone === opt.value ? 'text-teal-700' : 'text-foreground'}`}>
                                         {opt.label}
                                     </div>
-                                    <div className="mt-0.5 text-xs text-gray-400">{opt.description}</div>
+                                    <div className="mt-0.5 text-xs text-muted-foreground">{opt.description}</div>
                                 </button>
                             ))}
                         </div>
@@ -356,13 +356,13 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                                     className={`rounded-lg border-2 p-3 text-left transition ${
                                         form.auto_reply_length === opt.value
                                             ? 'border-teal-600 bg-teal-50'
-                                            : 'border-gray-200 hover:border-gray-300'
+                                            : 'border-border hover:border-border'
                                     }`}
                                 >
-                                    <div className={`text-sm font-semibold ${form.auto_reply_length === opt.value ? 'text-teal-700' : 'text-gray-800'}`}>
+                                    <div className={`text-sm font-semibold ${form.auto_reply_length === opt.value ? 'text-teal-700' : 'text-foreground'}`}>
                                         {opt.label}
                                     </div>
-                                    <div className="mt-0.5 text-xs text-gray-400">{opt.description}</div>
+                                    <div className="mt-0.5 text-xs text-muted-foreground">{opt.description}</div>
                                 </button>
                             ))}
                         </div>
@@ -375,7 +375,7 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                         <CardTitle className="text-base font-semibold">Sign-off / Signature</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-2">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                             How every reply ends. Leave blank to let the AI sign off naturally.
                         </p>
                         <Input
@@ -418,7 +418,7 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                             rows={4}
                             maxLength={1000}
                         />
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-muted-foreground">
                             {form.auto_reply_custom_instructions.length}/1000 characters
                         </p>
                     </CardContent>
@@ -433,7 +433,7 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                             See exactly how the AI will reply to a review with your current settings.
                         </p>
                         <div className="space-y-2">
@@ -459,7 +459,7 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                         {preview && (
                             <div className="mt-3 rounded-lg border border-teal-100 bg-teal-50 p-4">
                                 <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-teal-600">AI-generated reply</p>
-                                <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">{preview}</p>
+                                <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">{preview}</p>
                             </div>
                         )}
                     </CardContent>

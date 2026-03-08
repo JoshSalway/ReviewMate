@@ -160,7 +160,7 @@ export default function RequestsIndex({ stats, requests }: Props) {
                                                 </Badge>
                                                 <Badge variant="outline" className="text-xs capitalize">{request.channel}</Badge>
                                             </div>
-                                            <div className="mt-0.5 text-sm text-gray-500">{request.customer_email}</div>
+                                            <div className="mt-0.5 text-sm text-muted-foreground">{request.customer_email}</div>
                                         </div>
                                         <div className="ml-4 hidden items-center md:flex">
                                             <TimelineStep
@@ -181,7 +181,7 @@ export default function RequestsIndex({ stats, requests }: Props) {
                                             />
                                         </div>
                                         <div className="ml-4 text-right">
-                                            <div className="text-xs text-gray-400">{new Date(request.sent_at).toLocaleDateString()}</div>
+                                            <div className="text-xs text-muted-foreground">{new Date(request.sent_at).toLocaleDateString()}</div>
                                         </div>
                                     </div>
                                 ))}

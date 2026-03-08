@@ -91,8 +91,8 @@ function EmptyState({ businessName }: { businessName: string }) {
                 <div className="flex items-start gap-3 rounded-lg border border-teal-100 bg-teal-50 p-4">
                     <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-teal-600 text-xs font-bold text-white">1</div>
                     <div>
-                        <p className="font-medium text-gray-900">Add your customers</p>
-                        <p className="text-sm text-gray-500">Import or add customers who can leave reviews</p>
+                        <p className="font-medium text-foreground">Add your customers</p>
+                        <p className="text-sm text-muted-foreground">Import or add customers who can leave reviews</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-3 rounded-lg border border-border bg-muted p-4">

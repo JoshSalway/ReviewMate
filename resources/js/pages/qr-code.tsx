@@ -65,8 +65,8 @@ export default function QrCodePage({ business }: Props) {
             <Head title="QR Code" />
             <div className="flex flex-1 flex-col gap-6 p-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">QR Code</h1>
-                    <p className="mt-1 text-sm text-gray-500">
+                    <h1 className="text-2xl font-bold text-foreground">QR Code</h1>
+                    <p className="mt-1 text-sm text-muted-foreground">
                         Generate a QR code customers can scan to leave a review.
                     </p>
                 </div>
@@ -82,7 +82,7 @@ export default function QrCodePage({ business }: Props) {
                             <div className="space-y-1.5">
                                 <Label>Review link</Label>
                                 <div className="flex items-center gap-2">
-                                    <code className="flex-1 truncate rounded-md bg-gray-100 px-3 py-2 text-xs text-gray-700">
+                                    <code className="flex-1 truncate rounded-md bg-muted px-3 py-2 text-xs text-foreground">
                                         {url === '#' ? 'Set your Google Place ID in Business Settings' : url}
                                     </code>
                                     <Button
@@ -121,7 +121,7 @@ export default function QrCodePage({ business }: Props) {
                                             className={`flex flex-1 items-center justify-center gap-2 rounded-lg border-2 py-2.5 text-sm font-medium transition-all ${
                                                 style === s
                                                     ? 'border-teal-600 bg-teal-50 text-teal-700'
-                                                    : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                                                    : 'border-border text-muted-foreground hover:border-border'
                                             }`}
                                         >
                                             <span
@@ -134,15 +134,15 @@ export default function QrCodePage({ business }: Props) {
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3">
+                            <div className="flex items-center justify-between rounded-lg border border-border px-4 py-3">
                                 <div>
-                                    <p className="text-sm font-medium text-gray-900">Show business name</p>
-                                    <p className="text-xs text-gray-500">Display name below the QR code</p>
+                                    <p className="text-sm font-medium text-foreground">Show business name</p>
+                                    <p className="text-xs text-muted-foreground">Display name below the QR code</p>
                                 </div>
                                 <button
                                     onClick={() => setShowName(!showName)}
                                     className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                                        showName ? 'bg-teal-600' : 'bg-gray-200'
+                                        showName ? 'bg-teal-600' : 'bg-muted'
                                     }`}
                                 >
                                     <span
@@ -173,11 +173,11 @@ export default function QrCodePage({ business }: Props) {
                             <CardDescription>How your QR code will look when printed</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 bg-white p-8">
+                            <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-card p-8">
                                 {url === '#' ? (
                                     <div className="flex flex-col items-center gap-3 text-center">
-                                        <QrCode className="h-16 w-16 text-gray-300" />
-                                        <p className="text-sm text-gray-500">
+                                        <QrCode className="h-16 w-16 text-muted-foreground" />
+                                        <p className="text-sm text-muted-foreground">
                                             Set your Google Place ID in Business Settings to generate a QR code.
                                         </p>
                                     </div>
@@ -211,7 +211,7 @@ export default function QrCodePage({ business }: Props) {
                                             </p>
                                         )}
 
-                                        <p className="mt-2 text-xs text-gray-400">Scan to leave a Google review</p>
+                                        <p className="mt-2 text-xs text-muted-foreground">Scan to leave a Google review</p>
                                     </>
                                 )}
                             </div>
@@ -227,11 +227,11 @@ export default function QrCodePage({ business }: Props) {
                     <CardContent>
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             {useCaseItems.map((item) => (
-                                <div key={item.title} className="flex items-start gap-3 rounded-lg border border-gray-100 bg-gray-50 p-4">
+                                <div key={item.title} className="flex items-start gap-3 rounded-lg border border-border bg-muted p-4">
                                     <span className="text-2xl">{item.icon}</span>
                                     <div>
-                                        <p className="text-sm font-medium text-gray-900">{item.title}</p>
-                                        <p className="mt-0.5 text-xs text-gray-500">{item.description}</p>
+                                        <p className="text-sm font-medium text-foreground">{item.title}</p>
+                                        <p className="mt-0.5 text-xs text-muted-foreground">{item.description}</p>
                                     </div>
                                 </div>
                             ))}

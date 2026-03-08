@@ -23,7 +23,7 @@ interface Props {
 function FlowArrow() {
     return (
         <div className="flex justify-center py-2">
-            <ArrowDown className="h-6 w-6 text-gray-300" />
+            <ArrowDown className="h-6 w-6 text-muted-foreground" />
         </div>
     );
 }
@@ -63,10 +63,10 @@ const colorMap = {
         badge: 'bg-orange-100 text-orange-700',
     },
     gray: {
-        bg: 'bg-gray-50',
-        border: 'border-gray-200',
-        icon: 'bg-gray-500',
-        badge: 'bg-gray-100 text-gray-700',
+        bg: 'bg-muted',
+        border: 'border-border',
+        icon: 'bg-muted-foreground',
+        badge: 'bg-muted text-muted-foreground',
     },
 };
 
@@ -79,12 +79,12 @@ function FlowStep({ icon, title, description, badge, color }: FlowStepProps) {
             </div>
             <div className="flex-1">
                 <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-gray-900">{title}</h3>
+                    <h3 className="font-semibold text-foreground">{title}</h3>
                     {badge && (
                         <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${colors.badge}`}>{badge}</span>
                     )}
                 </div>
-                <p className="mt-0.5 text-sm text-gray-600">{description}</p>
+                <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
             </div>
         </div>
     );
@@ -97,19 +97,19 @@ function DecisionBranch() {
                 <div className="flex flex-col items-center gap-2 rounded-xl border border-green-200 bg-green-50 px-6 py-4">
                     <CheckCircle className="h-6 w-6 text-green-600" />
                     <span className="text-sm font-medium text-green-700">Yes — reviewed</span>
-                    <p className="text-center text-xs text-gray-500">Request marked as reviewed. No further emails sent.</p>
+                    <p className="text-center text-xs text-muted-foreground">Request marked as reviewed. No further emails sent.</p>
                 </div>
                 <div className="flex flex-col items-center justify-center">
-                    <div className="h-px w-16 border-t-2 border-dashed border-gray-300" />
-                    <div className="my-2 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs font-semibold text-gray-500">
+                    <div className="h-px w-16 border-t-2 border-dashed border-border" />
+                    <div className="my-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-semibold text-muted-foreground">
                         Did they review?
                     </div>
-                    <div className="h-px w-16 border-t-2 border-dashed border-gray-300" />
+                    <div className="h-px w-16 border-t-2 border-dashed border-border" />
                 </div>
                 <div className="flex flex-col items-center gap-2 rounded-xl border border-orange-200 bg-orange-50 px-6 py-4">
                     <XCircle className="h-6 w-6 text-orange-500" />
                     <span className="text-sm font-medium text-orange-700">No — follow up</span>
-                    <p className="text-center text-xs text-gray-500">A follow-up email is sent after 3 days.</p>
+                    <p className="text-center text-xs text-muted-foreground">A follow-up email is sent after 3 days.</p>
                 </div>
             </div>
         </div>
@@ -123,8 +123,8 @@ export default function EmailFlow({ business }: Props) {
             <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto p-4 md:p-6">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h1 className="text-xl font-semibold text-gray-900">Email Automation Flow</h1>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <h1 className="text-xl font-semibold text-foreground">Email Automation Flow</h1>
+                        <p className="mt-1 text-sm text-muted-foreground">
                             How ReviewMate automatically follows up with your customers to collect reviews.
                         </p>
                     </div>
@@ -197,29 +197,29 @@ export default function EmailFlow({ business }: Props) {
                     <div className="grid gap-4 sm:grid-cols-3">
                         <Card>
                             <CardHeader className="pb-2">
-                                <CardTitle className="text-sm font-medium text-gray-500">Emails per customer</CardTitle>
+                                <CardTitle className="text-sm font-medium text-muted-foreground">Emails per customer</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold text-gray-900">2 max</div>
-                                <p className="mt-1 text-xs text-gray-500">Request + 1 follow-up</p>
+                                <div className="text-2xl font-bold text-foreground">2 max</div>
+                                <p className="mt-1 text-xs text-muted-foreground">Request + 1 follow-up</p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader className="pb-2">
-                                <CardTitle className="text-sm font-medium text-gray-500">Follow-up delay</CardTitle>
+                                <CardTitle className="text-sm font-medium text-muted-foreground">Follow-up delay</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold text-gray-900">3 days</div>
-                                <p className="mt-1 text-xs text-gray-500">After initial request</p>
+                                <div className="text-2xl font-bold text-foreground">3 days</div>
+                                <p className="mt-1 text-xs text-muted-foreground">After initial request</p>
                             </CardContent>
                         </Card>
                         <Card>
                             <CardHeader className="pb-2">
-                                <CardTitle className="text-sm font-medium text-gray-500">Template</CardTitle>
+                                <CardTitle className="text-sm font-medium text-muted-foreground">Template</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="text-2xl font-bold text-teal-600">Custom</div>
-                                <p className="mt-1 text-xs text-gray-500">Edit in Templates</p>
+                                <p className="mt-1 text-xs text-muted-foreground">Edit in Templates</p>
                             </CardContent>
                         </Card>
                     </div>

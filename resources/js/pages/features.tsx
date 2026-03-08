@@ -48,7 +48,7 @@ export default function Features() {
         <>
             <Head title="Features — ReviewMate" />
 
-            <div className="min-h-screen bg-white text-gray-900 antialiased">
+            <div className="min-h-screen bg-background text-foreground antialiased">
 
                 {/* Nav */}
                 <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
@@ -61,8 +61,8 @@ export default function Features() {
                         <span className="text-lg font-bold tracking-tight">ReviewMate</span>
                     </Link>
                     <div className="flex items-center gap-4">
-                        <Link href="/pricing" className="text-sm text-gray-500 hover:text-gray-900 transition-colors">Pricing</Link>
-                        <Link href="/login" className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900 transition-colors">
+                        <Link href="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Pricing</Link>
+                        <Link href="/login" className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:border-border hover:text-foreground transition-colors">
                             Sign in
                         </Link>
                     </div>
@@ -73,7 +73,7 @@ export default function Features() {
                     <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl">
                         Everything you need to dominate local Google search
                     </h1>
-                    <p className="mt-4 text-lg text-gray-500">
+                    <p className="mt-4 text-lg text-muted-foreground">
                         ReviewMate handles the full review lifecycle — from request to reply — so you can focus on running your business.
                     </p>
                     <Link
@@ -85,16 +85,16 @@ export default function Features() {
                 </section>
 
                 {/* Features */}
-                <section className="bg-gray-50 py-20">
+                <section className="bg-muted/50 py-20">
                     <div className="mx-auto max-w-6xl px-6">
                         <div className="grid gap-10 md:grid-cols-2">
                             {features.map((feature) => (
-                                <div key={feature.title} className="rounded-2xl border border-gray-100 bg-white p-7 shadow-sm">
-                                    <h3 className="mb-2 text-lg font-semibold text-gray-900">{feature.title}</h3>
-                                    <p className="mb-4 text-sm text-gray-500 leading-relaxed">{feature.description}</p>
+                                <div key={feature.title} className="rounded-2xl border border-border bg-card p-7 shadow-sm">
+                                    <h3 className="mb-2 text-lg font-semibold text-foreground">{feature.title}</h3>
+                                    <p className="mb-4 text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
                                     <ul className="space-y-1.5">
                                         {feature.details.map((d) => (
-                                            <li key={d} className="flex items-start gap-2 text-sm text-gray-600">
+                                            <li key={d} className="flex items-start gap-2 text-sm text-muted-foreground">
                                                 <svg className="mt-0.5 h-4 w-4 shrink-0 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                                     <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                                                 </svg>
@@ -115,7 +115,7 @@ export default function Features() {
                         <p className="mt-3 text-teal-100">Start your free trial — no credit card, takes 10 minutes to set up.</p>
                         <Link
                             href="/login"
-                            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-semibold text-teal-700 shadow-md hover:bg-teal-50 transition-colors"
+                            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-card px-8 py-3.5 text-sm font-semibold text-teal-700 shadow-md hover:bg-teal-50 transition-colors"
                         >
                             Get started free
                         </Link>
@@ -123,13 +123,13 @@ export default function Features() {
                 </section>
 
                 {/* Footer */}
-                <footer className="border-t border-gray-100 py-8">
+                <footer className="border-t border-border py-8">
                     <div className="mx-auto max-w-6xl px-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-                        <span className="text-sm font-semibold text-gray-700">ReviewMate</span>
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
-                            <Link href="/pricing" className="hover:text-gray-600 transition-colors">Pricing</Link>
-                            <Link href="/terms" className="hover:text-gray-600 transition-colors">Terms</Link>
-                            <Link href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</Link>
+                        <span className="text-sm font-semibold text-foreground">ReviewMate</span>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <Link href="/pricing" className="hover:text-muted-foreground transition-colors">Pricing</Link>
+                            <Link href="/terms" className="hover:text-muted-foreground transition-colors">Terms</Link>
+                            <Link href="/privacy" className="hover:text-muted-foreground transition-colors">Privacy</Link>
                             <span>&copy; {new Date().getFullYear()} ReviewMate</span>
                         </div>
                     </div>

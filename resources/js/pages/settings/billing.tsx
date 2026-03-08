@@ -43,7 +43,7 @@ function PlanBadge({ plan }: { plan: Props['plan'] }) {
     if (plan === 'admin') return <Badge className="bg-purple-100 text-purple-700 hover:bg-purple-100">Admin</Badge>;
     if (plan === 'pro') return <Badge className="bg-teal-100 text-teal-700 hover:bg-teal-100">Pro</Badge>;
     if (plan === 'starter') return <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Starter</Badge>;
-    return <Badge className="bg-gray-100 text-gray-500 hover:bg-gray-100">Free</Badge>;
+    return <Badge className="bg-muted text-muted-foreground hover:bg-muted">Free</Badge>;
 }
 
 export default function Billing({ plan, isAdmin, onFreePlan, subscription, prices }: Props) {
@@ -62,8 +62,8 @@ export default function Billing({ plan, isAdmin, onFreePlan, subscription, price
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Billing</h1>
-                        <p className="mt-1 text-sm text-gray-500">Manage your subscription and plan</p>
+                        <h1 className="text-2xl font-bold text-foreground">Billing</h1>
+                        <p className="mt-1 text-sm text-muted-foreground">Manage your subscription and plan</p>
                     </div>
                     <PlanBadge plan={plan} />
                 </div>
@@ -107,14 +107,14 @@ export default function Billing({ plan, isAdmin, onFreePlan, subscription, price
                                     {plan === 'starter' && <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Current</Badge>}
                                 </div>
                                 <div className="flex items-end gap-1">
-                                    <span className="text-3xl font-bold text-gray-900">$49</span>
-                                    <span className="mb-1 text-sm text-gray-500">/month</span>
+                                    <span className="text-3xl font-bold text-foreground">$49</span>
+                                    <span className="mb-1 text-sm text-muted-foreground">/month</span>
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <ul className="space-y-2">
                                     {starterFeatures.map((f) => (
-                                        <li key={f} className="flex items-center gap-2 text-sm text-gray-700">
+                                        <li key={f} className="flex items-center gap-2 text-sm text-foreground">
                                             <CheckCircle className="h-4 w-4 shrink-0 text-teal-600" />
                                             {f}
                                         </li>
@@ -130,7 +130,7 @@ export default function Billing({ plan, isAdmin, onFreePlan, subscription, price
                                     </Button>
                                 )}
                                 {onFreePlan && (
-                                    <p className="text-xs text-gray-400 text-center">Free plan: 1 location · 50 customers · 10 requests/mo</p>
+                                    <p className="text-xs text-muted-foreground text-center">Free plan: 1 location · 50 customers · 10 requests/mo</p>
                                 )}
                             </CardContent>
                         </Card>
@@ -146,14 +146,14 @@ export default function Billing({ plan, isAdmin, onFreePlan, subscription, price
                                     {plan === 'pro' && <Badge className="bg-teal-100 text-teal-700 hover:bg-teal-100">Current</Badge>}
                                 </div>
                                 <div className="flex items-end gap-1">
-                                    <span className="text-3xl font-bold text-gray-900">$99</span>
-                                    <span className="mb-1 text-sm text-gray-500">/month</span>
+                                    <span className="text-3xl font-bold text-foreground">$99</span>
+                                    <span className="mb-1 text-sm text-muted-foreground">/month</span>
                                 </div>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <ul className="space-y-2">
                                     {proFeatures.map((f) => (
-                                        <li key={f} className="flex items-center gap-2 text-sm text-gray-700">
+                                        <li key={f} className="flex items-center gap-2 text-sm text-foreground">
                                             <CheckCircle className="h-4 w-4 shrink-0 text-teal-600" />
                                             {f}
                                         </li>

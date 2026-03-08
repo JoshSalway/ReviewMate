@@ -4,7 +4,7 @@ export default function Login() {
     return (
         <>
             <Head title="Sign in — ReviewMate" />
-            <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
+            <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
                 <div className="w-full max-w-sm">
                     {/* Logo */}
                     <div className="mb-8 flex flex-col items-center gap-3 text-center">
@@ -14,13 +14,13 @@ export default function Login() {
                             </svg>
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900">ReviewMate</h1>
-                            <p className="mt-1 text-sm text-gray-500">Sign in to your account</p>
+                            <h1 className="text-2xl font-bold text-foreground">ReviewMate</h1>
+                            <p className="mt-1 text-sm text-muted-foreground">Sign in to your account</p>
                         </div>
                     </div>
 
                     {/* Card */}
-                    <div className="rounded-xl bg-white p-8 shadow-sm ring-1 ring-gray-100">
+                    <div className="rounded-xl bg-card p-8 shadow-sm ring-1 ring-border">
                         <a
                             href="/auth/redirect"
                             className="flex w-full items-center justify-center gap-2 rounded-lg bg-teal-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-teal-700"
@@ -31,7 +31,7 @@ export default function Login() {
                             </svg>
                         </a>
 
-                        <p className="mt-5 text-center text-xs text-gray-400 leading-relaxed">
+                        <p className="mt-5 text-center text-xs text-muted-foreground leading-relaxed">
                             By signing in or creating an account you agree to our{' '}
                             <a href="/terms" className="text-teal-600 underline hover:text-teal-700">
                                 Terms of Service
@@ -44,8 +44,8 @@ export default function Login() {
                         </p>
                     </div>
 
-                    <p className="mt-6 text-center text-xs text-gray-400">
-                        <a href="/" className="hover:text-gray-600 transition-colors">
+                    <p className="mt-6 text-center text-xs text-muted-foreground">
+                        <a href="/" className="hover:text-foreground transition-colors">
                             &larr; Back to ReviewMate.com.au
                         </a>
                     </p>

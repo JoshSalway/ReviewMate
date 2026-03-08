@@ -42,8 +42,8 @@ export default function NotificationSettings({ preferences }: Props) {
             <Head title="Notification Settings" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6 max-w-2xl">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Notification Settings</h1>
-                    <p className="mt-1 text-sm text-gray-500">Choose which emails ReviewMate sends you.</p>
+                    <h1 className="text-2xl font-bold text-foreground">Notification Settings</h1>
+                    <p className="mt-1 text-sm text-muted-foreground">Choose which emails ReviewMate sends you.</p>
                 </div>
 
                 <Card>
@@ -57,7 +57,7 @@ export default function NotificationSettings({ preferences }: Props) {
                                 <Label htmlFor="weekly-digest" className="text-sm font-medium">
                                     Weekly digest
                                 </Label>
-                                <p className="text-sm text-gray-500 mt-0.5">
+                                <p className="text-sm text-muted-foreground mt-0.5">
                                     A summary of your reviews, ratings, and pending replies every Monday.
                                 </p>
                             </div>
@@ -73,7 +73,7 @@ export default function NotificationSettings({ preferences }: Props) {
                                 <Label htmlFor="new-review-alert" className="text-sm font-medium">
                                     New review alerts
                                 </Label>
-                                <p className="text-sm text-gray-500 mt-0.5">
+                                <p className="text-sm text-muted-foreground mt-0.5">
                                     Get notified by email when a new Google review is synced for your business.
                                 </p>
                             </div>

@@ -100,7 +100,7 @@ export default function Changelog() {
         <>
             <Head title="Changelog — ReviewMate" />
 
-            <div className="min-h-screen bg-white text-gray-900 antialiased">
+            <div className="min-h-screen bg-background text-foreground antialiased">
 
                 {/* Nav */}
                 <nav className="mx-auto flex max-w-4xl items-center justify-between px-6 py-5">
@@ -112,7 +112,7 @@ export default function Changelog() {
                         </div>
                         <span className="text-lg font-bold tracking-tight">ReviewMate</span>
                     </Link>
-                    <Link href="/login" className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:border-gray-300 hover:text-gray-900 transition-colors">
+                    <Link href="/login" className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-muted-foreground hover:border-border hover:text-foreground transition-colors">
                         Sign in
                     </Link>
                 </nav>
@@ -120,28 +120,28 @@ export default function Changelog() {
                 {/* Header */}
                 <section className="mx-auto max-w-3xl px-6 pt-12 pb-10">
                     <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">Changelog</h1>
-                    <p className="mt-3 text-gray-500">Everything new in ReviewMate, most recent first.</p>
+                    <p className="mt-3 text-muted-foreground">Everything new in ReviewMate, most recent first.</p>
                 </section>
 
                 {/* Releases */}
                 <section className="mx-auto max-w-3xl px-6 pb-20">
-                    <div className="relative border-l border-gray-200 pl-8 space-y-12">
+                    <div className="relative border-l border-border pl-8 space-y-12">
                         {releases.map((release) => (
                             <div key={release.version} className="relative">
-                                <div className="absolute -left-10 top-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-teal-500 bg-white">
+                                <div className="absolute -left-10 top-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-teal-500 bg-card">
                                     <div className="h-2 w-2 rounded-full bg-teal-500" />
                                 </div>
                                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                                    <span className="text-xs font-mono text-gray-400">{release.date}</span>
-                                    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${typeBadge[release.type] ?? 'bg-gray-100 text-gray-600'}`}>
+                                    <span className="text-xs font-mono text-muted-foreground">{release.date}</span>
+                                    <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${typeBadge[release.type] ?? 'bg-muted text-muted-foreground'}`}>
                                         {release.type}
                                     </span>
-                                    <span className="text-xs font-mono text-gray-500">v{release.version}</span>
+                                    <span className="text-xs font-mono text-muted-foreground">v{release.version}</span>
                                 </div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-3">{release.title}</h3>
+                                <h3 className="text-lg font-semibold text-foreground mb-3">{release.title}</h3>
                                 <ul className="space-y-1.5">
                                     {release.changes.map((change) => (
-                                        <li key={change} className="flex items-start gap-2 text-sm text-gray-600">
+                                        <li key={change} className="flex items-start gap-2 text-sm text-muted-foreground">
                                             <svg className="mt-0.5 h-4 w-4 shrink-0 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                                                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                                             </svg>
@@ -155,12 +155,12 @@ export default function Changelog() {
                 </section>
 
                 {/* Footer */}
-                <footer className="border-t border-gray-100 py-8">
+                <footer className="border-t border-border py-8">
                     <div className="mx-auto max-w-4xl px-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
-                        <span className="text-sm font-semibold text-gray-700">ReviewMate</span>
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
-                            <Link href="/terms" className="hover:text-gray-600 transition-colors">Terms</Link>
-                            <Link href="/privacy" className="hover:text-gray-600 transition-colors">Privacy</Link>
+                        <span className="text-sm font-semibold text-foreground">ReviewMate</span>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                            <Link href="/terms" className="hover:text-muted-foreground transition-colors">Terms</Link>
+                            <Link href="/privacy" className="hover:text-muted-foreground transition-colors">Privacy</Link>
                             <span>&copy; {new Date().getFullYear()} ReviewMate</span>
                         </div>
                     </div>

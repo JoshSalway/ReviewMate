@@ -120,7 +120,7 @@ function TemplateEditor({
                 </div>
 
                 <div className="space-y-2">
-                    <Label className="text-xs text-gray-500">Insert Variable</Label>
+                    <Label className="text-xs text-muted-foreground">Insert Variable</Label>
                     <div className="flex flex-wrap gap-2">
                         {variables.map((v) => (
                             <button
@@ -150,18 +150,18 @@ function TemplateEditor({
             {/* Preview */}
             <div>
                 <Card className="overflow-hidden">
-                    <CardHeader className="border-b bg-gray-50 py-3">
+                    <CardHeader className="border-b bg-muted py-3">
                         <div className="flex items-center gap-2">
                             <div className="flex gap-1">
                                 <div className="h-3 w-3 rounded-full bg-red-400" />
                                 <div className="h-3 w-3 rounded-full bg-yellow-400" />
                                 <div className="h-3 w-3 rounded-full bg-green-400" />
                             </div>
-                            <span className="text-xs text-gray-500">Preview</span>
+                            <span className="text-xs text-muted-foreground">Preview</span>
                         </div>
                         {!isSms && subject && (
                             <div className="mt-2 text-sm">
-                                <span className="text-gray-500">Subject: </span>
+                                <span className="text-muted-foreground">Subject: </span>
                                 <span className="font-medium"
                                     dangerouslySetInnerHTML={{ __html: renderPreview(subject) }}
                                 />
@@ -177,15 +177,15 @@ function TemplateEditor({
                             </div>
                         ) : (
                             <div className="max-w-lg space-y-3">
-                                <div className="text-sm text-gray-500">
-                                    From: <span className="font-medium text-gray-800">{business.name}</span>
+                                <div className="text-sm text-muted-foreground">
+                                    From: <span className="font-medium text-foreground">{business.name}</span>
                                 </div>
-                                <div className="text-sm text-gray-500">
-                                    To: <span className="font-medium text-gray-800">Jane Smith</span>
+                                <div className="text-sm text-muted-foreground">
+                                    To: <span className="font-medium text-foreground">Jane Smith</span>
                                 </div>
                                 <hr />
                                 <div
-                                    className="prose prose-sm text-gray-700 leading-relaxed"
+                                    className="prose prose-sm text-foreground leading-relaxed"
                                     dangerouslySetInnerHTML={{ __html: renderPreview(body) }}
                                 />
                             </div>
@@ -203,8 +203,8 @@ export default function TemplatesIndex({ business, templates }: Props) {
             <Head title="Templates" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Email Templates</h1>
-                    <p className="mt-1 text-sm text-gray-500">Customise the messages sent to your customers</p>
+                    <h1 className="text-2xl font-bold text-foreground">Email Templates</h1>
+                    <p className="mt-1 text-sm text-muted-foreground">Customise the messages sent to your customers</p>
                 </div>
 
                 <Tabs defaultValue="request">
@@ -226,7 +226,7 @@ export default function TemplatesIndex({ business, templates }: Props) {
                                 />
                             ) : (
                                 <Card>
-                                    <CardContent className="py-12 text-center text-gray-500">
+                                    <CardContent className="py-12 text-center text-muted-foreground">
                                         No template found for this type.
                                     </CardContent>
                                 </Card>
