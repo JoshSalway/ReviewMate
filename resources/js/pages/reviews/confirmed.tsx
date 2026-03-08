@@ -16,12 +16,17 @@ export default function ReviewConfirmed({ customerName, businessName }: Props) {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                     </div>
-                    <h1 className="mb-3 text-3xl font-bold text-foreground">Thank you, {customerName}!</h1>
+                    <h1 className="mb-3 text-3xl font-bold text-foreground">Thanks for sharing that, {customerName}.</h1>
                     <p className="text-lg text-muted-foreground">
-                        Your review means the world to <span className="font-semibold text-foreground">{businessName}</span>.
+                        Your message has been sent privately to the team at{' '}
+                        <span className="font-semibold text-foreground">{businessName}</span>.
                     </p>
                     <p className="mt-4 text-sm text-muted-foreground">
-                        We appreciate you taking the time to share your experience.
+                        We appreciate you taking the time to share your experience — it helps us do better.
+                    </p>
+                    <p className="mt-6 text-sm text-muted-foreground">
+                        Had a great experience you'd like to share publicly?{' '}
+                        <span className="font-medium text-foreground">Leave us a Google review</span> — it means a lot to a small business.
                     </p>
                 </div>
             </div>

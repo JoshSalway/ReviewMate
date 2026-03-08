@@ -1,4 +1,4 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -84,7 +84,7 @@ export default function RequestsIndex({ stats, requests }: Props) {
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
                     <h1 className="text-2xl font-bold text-foreground">Review Requests</h1>
-                    <p className="mt-1 text-sm text-muted-foreground">Track the status of your review requests</p>
+                    <p className="mt-1 text-sm text-muted-foreground">See who's opened your requests, who's reviewed, and who needs a follow-up.</p>
                 </div>
 
                 {/* Stats Cards */}
@@ -145,8 +145,11 @@ export default function RequestsIndex({ stats, requests }: Props) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                                     </svg>
                                 </div>
-                                <h3 className="mb-1 text-base font-semibold text-foreground">No requests sent yet</h3>
+                                <h3 className="mb-1 text-base font-semibold text-foreground">You haven't sent any review requests yet.</h3>
                                 <p className="mb-4 text-sm text-muted-foreground">Use Quick Send to send your first review request.</p>
+                                <Link href="/quick-send" className="mt-4 inline-flex items-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700">
+                                    Send your first request →
+                                </Link>
                             </div>
                         ) : (
                             <div className="divide-y">

@@ -144,7 +144,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                     <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
                         <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
                         <p className="text-sm text-amber-800">
-                            Connect Google Business Profile in Settings to sync your reviews and reply directly from ReviewMate.
+                            <a href="/settings/business" className="font-medium underline hover:text-amber-900">Connect Google Business Profile to start collecting reviews →</a>
                         </p>
                     </div>
                 )}
@@ -155,12 +155,25 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                             <MessageSquare className="h-8 w-8 text-muted-foreground" />
                         </div>
-                        <h3 className="mb-1 text-base font-semibold text-foreground">No reviews yet</h3>
+                        <h3 className="mb-1 text-base font-semibold text-foreground">No reviews yet — your requests are working</h3>
                         <p className="text-sm text-muted-foreground">
-                            Reviews you receive will appear here. Connect Google Business Profile to start syncing.
+                            Most customers reply within 1–3 days — we'll notify you the moment a review comes in. Check back in 24 hours or so.
                         </p>
                     </div>
                 )}
+
+                {/* Average rating summary */}
+                {allReviews.total > 0 && (() => {
+                    const allReviewsList = allReviews.data;
+                    const totalRated = allReviewsList.filter((r) => r.rating > 0);
+                    if (totalRated.length === 0) return null;
+                    const averageRating = totalRated.reduce((sum, r) => sum + r.rating, 0) / totalRated.length;
+                    return (
+                        <p className="text-sm text-muted-foreground">
+                            {averageRating.toFixed(1)} average across {allReviews.total} review{allReviews.total !== 1 ? 's' : ''}
+                        </p>
+                    );
+                })()}
 
                 {/* Needs Reply Section */}
                 {needsReply.total > 0 && (
@@ -217,7 +230,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                                     onClick={() => handleGetSuggestions(review)}
                                                     disabled={state.loading}
                                                 >
-                                                    {state.loading ? 'Generating...' : 'Suggest Reply'}
+                                                    {state.loading ? 'Generating...' : 'Generate AI reply'}
                                                 </Button>
                                             ) : (
                                                 <div className="space-y-3">
@@ -420,6 +433,12 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                             <h2 className="text-lg font-semibold text-foreground">All Reviews</h2>
                             <Badge className="bg-muted text-muted-foreground hover:bg-muted">{allReviews.total}</Badge>
                         </div>
+
+                        {allReviews.total === 1 && (
+                            <div className="mb-4 rounded-lg bg-teal-50 border border-teal-200 px-4 py-3">
+                                <p className="text-sm font-medium text-teal-800">🎉 Your first review via ReviewMate — nice work! Reply to it below to show customers you care.</p>
+                            </div>
+                        )}
 
                         <div className="space-y-4">
                             {allReviews.data.map((review) => (

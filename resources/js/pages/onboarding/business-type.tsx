@@ -57,6 +57,10 @@ export default function BusinessType() {
                     </div>
 
                     <div className="rounded-xl bg-card p-6 shadow-sm ring-1 ring-border">
+                        <div className="mb-6 text-center">
+                            <p className="text-sm text-muted-foreground">We'll set up your personalised review request in under 2 minutes.</p>
+                        </div>
+
                         {/* Business Name & Owner */}
                         <div className="mb-6 grid gap-4 sm:grid-cols-2">
                             <div className="space-y-2">
@@ -109,8 +113,9 @@ export default function BusinessType() {
                             onClick={handleSubmit}
                             disabled={processing || !form.name || !form.type}
                         >
-                            {processing ? 'Continuing...' : 'Continue'}
+                            {processing ? 'Continuing...' : 'Set up my review request →'}
                         </Button>
+                        <p className="mt-3 text-center text-xs text-muted-foreground">No credit card needed to get started.</p>
                     </div>
                 </div>
             </div>

@@ -124,6 +124,26 @@ class OnboardingController extends Controller
 
         $business->update(['onboarding_completed_at' => now()]);
 
-        return redirect()->route('dashboard');
+        return redirect()->route('onboarding.complete');
+    }
+
+    public function complete(Request $request): Response|RedirectResponse
+    {
+        $business = $request->user()->currentBusiness();
+
+        if (! $business) {
+            return redirect()->route('onboarding.business-type');
+        }
+
+        if (! $business->isOnboardingComplete()) {
+            return redirect()->route('onboarding.select-template');
+        }
+
+        return Inertia::render('onboarding/complete', [
+            'business' => [
+                'name' => $business->name,
+                'type' => $business->type,
+            ],
+        ]);
     }
 }

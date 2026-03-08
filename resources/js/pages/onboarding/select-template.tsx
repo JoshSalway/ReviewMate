@@ -70,12 +70,10 @@ export default function SelectTemplate({ business, defaultTemplates }: Props) {
                             <div className="h-px w-12 bg-teal-200" />
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-600 text-sm font-bold text-white">3</div>
                         </div>
-                        <p className="mb-1 text-sm font-medium text-teal-600">Step 3 of 3</p>
-                        <h1 className="text-2xl font-bold text-foreground">Your template is ready</h1>
+                        <p className="mb-1 text-sm font-medium text-teal-600">Step 3 of 3 — almost done!</p>
+                        <h1 className="text-2xl font-bold text-foreground">Your personalised review request is ready 🎉</h1>
                         <p className="mt-2 text-muted-foreground">
-                            We've created a personalised email template for your{' '}
-                            <strong>{typeLabels[business.type] ?? business.type}</strong> business.
-                            You can customise it at any time.
+                            Here's exactly what your customers will receive. We've written it to feel personal, not spammy. You can edit it any time.
                         </p>
                     </div>
 
@@ -83,7 +81,7 @@ export default function SelectTemplate({ business, defaultTemplates }: Props) {
                         {/* Email Preview */}
                         {requestTemplate ? (
                             <div className="mb-6">
-                                <h2 className="mb-3 text-sm font-semibold text-foreground">Review Request Email Preview</h2>
+                                <h2 className="mb-3 text-sm font-semibold text-foreground">This is what your customers will see</h2>
                                 <Card className="overflow-hidden border-border">
                                     <CardHeader className="border-b bg-muted py-3">
                                         <div className="flex items-center gap-2">
@@ -130,10 +128,10 @@ export default function SelectTemplate({ business, defaultTemplates }: Props) {
                                 onClick={handleConfirm}
                                 disabled={processing}
                             >
-                                {processing ? 'Setting up...' : 'Looks great — finish setup'}
+                                {processing ? 'Setting up...' : "Looks good — let's go! →"}
                             </Button>
                             <p className="text-center text-xs text-muted-foreground">
-                                You can customise your templates anytime from the Templates page.
+                                This is your starting point — most businesses tweak it once they see their first few reviews come in.
                             </p>
                         </div>
                     </div>

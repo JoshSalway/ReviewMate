@@ -168,7 +168,7 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                     <div>
                         <h1 className="text-2xl font-bold text-foreground">Auto-Reply to Reviews</h1>
                         <p className="mt-1 text-sm text-muted-foreground">
-                            Let AI reply to your Google reviews automatically — every night, in your voice.
+                            ReviewMate replies to your Google reviews every night — in your voice, automatically. Set it up once and forget about it.
                         </p>
                     </div>
                     {isProPlan ? (
@@ -212,6 +212,11 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                                 <p className="mt-0.5 text-sm text-muted-foreground">
                                     Runs nightly at {schedule.auto_reply_time} {schedule.timezone_abbr}. Replies to reviews that match your settings.
                                 </p>
+                                {!form.auto_reply_enabled && (
+                                    <p className="mt-1.5 text-xs text-teal-700 font-medium">
+                                        Most businesses that turn this on reply to 3× more reviews — without lifting a finger.
+                                    </p>
+                                )}
                             </div>
                             <button
                                 type="button"
@@ -251,6 +256,7 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                                 <p className="mt-0.5 text-xs text-muted-foreground">
                                     Next run: {formatLocalDate(schedule.next_run_at)}
                                 </p>
+                                <p className="mt-1 text-xs text-teal-700">ReviewMate will reply to any new reviews tonight.</p>
                             </div>
                             <div className="rounded-lg border border-border bg-muted p-3">
                                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Follow-up emails</p>
@@ -338,6 +344,7 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
                                 </button>
                             ))}
                         </div>
+                        <p className="mt-3 text-xs text-muted-foreground">Not sure? Friendly works best for most local businesses.</p>
                     </CardContent>
                 </Card>
 

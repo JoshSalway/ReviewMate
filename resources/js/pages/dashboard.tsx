@@ -85,28 +85,28 @@ function EmptyState({ businessName }: { businessName: string }) {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.562.562 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
                 </svg>
             </div>
-            <h2 className="mb-2 text-xl font-semibold text-foreground">Welcome to ReviewMate, {businessName}!</h2>
-            <p className="mb-8 max-w-md text-muted-foreground">Get started by sending your first review request. Here's what to do next:</p>
+            <h2 className="mb-2 text-xl font-semibold text-foreground">You're all set — let's get your first review</h2>
+            <p className="mb-8 max-w-md text-muted-foreground">Add a few happy customers below and we'll ask them for a review. Most businesses see their first Google review within 48 hours.</p>
             <div className="mb-8 w-full max-w-md space-y-3 text-left">
                 <div className="flex items-start gap-3 rounded-lg border border-teal-100 bg-teal-50 p-4">
                     <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-teal-600 text-xs font-bold text-white">1</div>
                     <div>
-                        <p className="font-medium text-foreground">Add your customers</p>
-                        <p className="text-sm text-muted-foreground">Import or add customers who can leave reviews</p>
+                        <p className="font-medium text-foreground">Add past customers</p>
+                        <p className="text-sm text-muted-foreground">Add 5 customers you know were happy with your work — takes 2 minutes.</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-3 rounded-lg border border-border bg-muted p-4">
                     <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted-foreground/40 text-xs font-bold text-white">2</div>
                     <div>
-                        <p className="font-medium text-foreground">Customise your template</p>
-                        <p className="text-sm text-muted-foreground">Personalise the email your customers receive</p>
+                        <p className="font-medium text-foreground">Your message is ready</p>
+                        <p className="text-sm text-muted-foreground">We've written a friendly review request for you. Tweak it or use it as-is.</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-3 rounded-lg border border-border bg-muted p-4">
                     <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted-foreground/40 text-xs font-bold text-white">3</div>
                     <div>
                         <p className="font-medium text-foreground">Send your first request</p>
-                        <p className="text-sm text-muted-foreground">Use Quick Send to get a review from your best customers</p>
+                        <p className="text-sm text-muted-foreground">Hit send — we handle the rest. Most businesses get their first review within 48 hours.</p>
                     </div>
                 </div>
             </div>
@@ -125,6 +125,41 @@ function EmptyState({ businessName }: { businessName: string }) {
 export default function Dashboard({ business, stats, requestStats, recentReviews, chartData, hasData, googleRating, googleReviewCount, googleStatsUpdatedAt, unverifiedClaims }: Props) {
     const [copied, setCopied] = useState(false);
     const [showUnverifiedDetails, setShowUnverifiedDetails] = useState(false);
+
+    // Setup checklist — shown until the business has at least one review
+    const googleConnected = !!(business.google_review_url && business.google_review_url !== '#');
+    const hasCustomers = requestStats.sent > 0;
+    const hasReviews = requestStats.reviewed > 0;
+    const showSetupChecklist = stats.total_reviews === 0;
+
+    const checklistItems = [
+        {
+            label: 'Set up your business',
+            description: undefined as string | undefined,
+            done: true,
+            href: undefined as string | undefined,
+        },
+        {
+            label: 'Connect Google Business Profile',
+            description: 'Sync your reviews and let customers leave one in a tap.' as string | undefined,
+            done: googleConnected,
+            href: '/settings/business' as string | undefined,
+        },
+        {
+            label: 'Add your first customer',
+            description: 'Add a happy customer — takes 30 seconds.' as string | undefined,
+            done: hasCustomers,
+            href: '/customers' as string | undefined,
+        },
+        {
+            label: 'Send your first review request',
+            description: 'Hit send — most businesses get their first review within 48 hours.' as string | undefined,
+            done: hasReviews,
+            href: '/quick-send' as string | undefined,
+        },
+    ];
+    const totalSteps = checklistItems.length;
+    const completedSteps = checklistItems.filter((i) => i.done).length;
 
     const copyReviewLink = () => {
         if (business.google_review_url) {
@@ -169,10 +204,67 @@ export default function Dashboard({ business, stats, requestStats, recentReviews
                     </div>
                 )}
 
+                {/* Setup checklist — only show until they have reviews */}
+                {showSetupChecklist && (
+                    <div className="mb-6 rounded-xl bg-card p-6 ring-1 ring-border shadow-sm">
+                        <div className="mb-4 flex items-center justify-between">
+                            <h2 className="font-semibold text-foreground">Getting started</h2>
+                            <span className="text-sm text-muted-foreground">{completedSteps} of {totalSteps} done</span>
+                        </div>
+                        <div className="space-y-3">
+                            {checklistItems.map((item) => (
+                                <div key={item.label} className="flex items-center gap-3">
+                                    <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${item.done ? 'bg-teal-600 text-white' : 'border-2 border-border'}`}>
+                                        {item.done && <svg className="h-3 w-3" viewBox="0 0 12 12" fill="currentColor"><path d="M10 3L5 8.5 2 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>}
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className={`text-sm ${item.done ? 'text-muted-foreground line-through' : 'text-foreground font-medium'}`}>{item.label}</p>
+                                        {!item.done && item.description && <p className="text-xs text-muted-foreground">{item.description}</p>}
+                                    </div>
+                                    {!item.done && item.href && (
+                                        <Link href={item.href} className="text-xs text-teal-600 hover:text-teal-700 font-medium">Go →</Link>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                        {completedSteps === totalSteps && (
+                            <p className="mt-4 text-center text-sm text-teal-600 font-medium">You're all set — reviews incoming!</p>
+                        )}
+                    </div>
+                )}
+
                 {!hasData ? (
                     <EmptyState businessName={business.name} />
                 ) : (
                     <>
+                        {/* First review celebration — show for first 1-3 reviews */}
+                        {requestStats.reviewed >= 1 && requestStats.reviewed <= 3 && recentReviews.length > 0 && (
+                            <div className="mb-6 rounded-xl bg-teal-50 p-6 ring-1 ring-teal-200 shadow-sm">
+                                <div className="flex items-start gap-4">
+                                    <div className="text-3xl">⭐</div>
+                                    <div className="flex-1">
+                                        <p className="font-semibold text-teal-900">
+                                            {requestStats.reviewed === 1 ? 'Your first review is in!' : `${requestStats.reviewed} reviews in — it's working!`}
+                                        </p>
+                                        {recentReviews[0].body && (
+                                            <p className="mt-1 text-sm text-teal-800 italic">
+                                                "{recentReviews[0].body}"
+                                            </p>
+                                        )}
+                                        <p className="mt-2 text-xs text-teal-700">
+                                            ReviewMate asked — they answered. Keep adding customers to keep the reviews coming.
+                                        </p>
+                                    </div>
+                                    <Link
+                                        href="/reviews"
+                                        className="shrink-0 rounded-lg bg-teal-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-teal-700"
+                                    >
+                                        View review →
+                                    </Link>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Stats Cards */}
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                             <Card>
@@ -210,7 +302,7 @@ export default function Dashboard({ business, stats, requestStats, recentReviews
 
                             <Card className={stats.pending_replies > 0 ? 'border-orange-200' : ''}>
                                 <CardHeader className="pb-2">
-                                    <CardTitle className="text-sm font-medium text-muted-foreground">Pending Replies</CardTitle>
+                                    <CardTitle className="text-sm font-medium text-muted-foreground">Reviews waiting for your reply</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className={`text-3xl font-bold ${stats.pending_replies > 0 ? 'text-orange-500' : 'text-foreground'}`}>
@@ -234,10 +326,16 @@ export default function Dashboard({ business, stats, requestStats, recentReviews
                                     <div className="px-4 text-center">
                                         <div className="text-2xl font-bold text-blue-600">{requestStats.opened}</div>
                                         <div className="text-sm text-muted-foreground">Opened</div>
+                                        {requestStats.sent > 0 && (
+                                            <div className="text-xs text-muted-foreground">{Math.round((requestStats.opened / requestStats.sent) * 100) || 0}% of sent</div>
+                                        )}
                                     </div>
                                     <div className="px-4 text-center">
                                         <div className="text-2xl font-bold text-teal-600">{requestStats.reviewed}</div>
                                         <div className="text-sm text-muted-foreground">Reviewed</div>
+                                        {requestStats.sent > 0 && (
+                                            <div className="text-xs text-muted-foreground">{Math.round((requestStats.reviewed / requestStats.sent) * 100) || 0}% of sent</div>
+                                        )}
                                     </div>
                                 </div>
                             </CardContent>
@@ -392,9 +490,9 @@ export default function Dashboard({ business, stats, requestStats, recentReviews
                                             </div>
                                         ) : (
                                             <div className="space-y-3">
-                                                <p className="text-sm text-muted-foreground">Connect your Google Business account to get your review link.</p>
+                                                <p className="text-sm text-muted-foreground">Connect Google → customers can review you in one tap.</p>
                                                 <Link href="/settings/business">
-                                                    <Button variant="outline" className="w-full">Connect Google</Button>
+                                                    <Button variant="outline" className="w-full">Connect Google Business Profile</Button>
                                                 </Link>
                                             </div>
                                         )}

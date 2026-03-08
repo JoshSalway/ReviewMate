@@ -1,5 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
-import type { FormEvent} from 'react';
+import { Head } from '@inertiajs/react';
 import { useState } from 'react';
 
 function StarIcon() {
@@ -34,7 +33,7 @@ const features = [
             </svg>
         ),
         title: 'Automated review requests',
-        description: 'Send personalised email and SMS review requests after every job or sale — automatically, with smart follow-ups built in.',
+        description: 'Send personalised email and SMS review requests after every job or sale — automatically. Smart follow-ups go out 5 days later. You do nothing.',
     },
     {
         icon: (
@@ -43,7 +42,7 @@ const features = [
             </svg>
         ),
         title: 'AI reply suggestions',
-        description: 'Get three AI-written reply options for any Google review in seconds. Pick one, tweak it, and post — without leaving ReviewMate.',
+        description: 'Replies to reviews in your voice — automatically, every night. Or pick from three AI-written options in seconds and post without leaving ReviewMate.',
     },
     {
         icon: (
@@ -52,7 +51,7 @@ const features = [
             </svg>
         ),
         title: 'Review inbox & alerts',
-        description: 'All your Google reviews in one place. Instant alerts when new reviews come in so you never miss the chance to respond.',
+        description: 'All your Google reviews in one place. Instant alerts when new reviews land so you never miss the chance to respond — and never get caught off guard.',
     },
     {
         icon: (
@@ -61,7 +60,7 @@ const features = [
             </svg>
         ),
         title: 'Analytics & insights',
-        description: 'Track your review count, average rating, request conversion rate, and pending replies. Multi-location support for growing businesses.',
+        description: 'See your review count, average rating, and request conversion rate at a glance. Know exactly what\'s working while you focus on the job.',
     },
     {
         icon: (
@@ -70,7 +69,7 @@ const features = [
             </svg>
         ),
         title: 'Customer management',
-        description: "Import customers from CSV or add them manually. See exactly who's reviewed, who's pending, and who hasn't responded.",
+        description: "Import customers from CSV or add them one by one. See exactly who's reviewed, who's pending, and who needs a nudge — hands-free.",
     },
     {
         icon: (
@@ -79,7 +78,7 @@ const features = [
             </svg>
         ),
         title: 'QR codes & quick send',
-        description: 'Generate a QR code for your counter or receipts. Send a one-off review request in under 10 seconds with Quick Send.',
+        description: 'Print it on your invoices or stick it at the counter. Customers scan and leave a review in 10 seconds — no app, no friction.',
     },
 ];
 
@@ -87,17 +86,17 @@ const steps = [
     {
         number: '01',
         title: 'Add your customers',
-        description: 'Import a CSV or add customers manually. Takes about 2 minutes to get started.',
+        description: 'Add your customers in 2 minutes — or import your whole list in one go. No technical setup required.',
     },
     {
         number: '02',
         title: 'ReviewMate does the asking',
-        description: "Personalised emails and SMS go out at the right time, with a follow-up 5 days later if they haven't reviewed yet.",
+        description: "We send a friendly, personalised review request at the perfect moment — automatically. A gentle follow-up goes out 5 days later if they haven't reviewed yet.",
     },
     {
         number: '03',
         title: 'Watch your rating climb',
-        description: 'Reviews roll in. Reply with AI suggestions in seconds. Your Google ranking improves organically.',
+        description: 'Reviews land on Google while you sleep. Reply with AI suggestions in seconds. Your ranking climbs while you focus on the job.',
     },
 ];
 
@@ -188,67 +187,6 @@ interface Props {
     count?: number;
 }
 
-function HeroWaitlistForm() {
-    const { data, setData, post, processing, errors, wasSuccessful } = useForm({
-        name: '',
-        email: '',
-        business_type: '',
-    });
-
-    function handleSubmit(e: FormEvent) {
-        e.preventDefault();
-        post('/waitlist');
-    }
-
-    if (wasSuccessful) {
-        return (
-            <div className="mt-8 inline-flex items-center gap-3 rounded-xl border border-teal-200 bg-teal-50 px-6 py-4 text-sm text-teal-700">
-                <svg className="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                </svg>
-                <span><strong>You're on the list!</strong> We'll email you when your spot is ready.</span>
-            </div>
-        );
-    }
-
-    return (
-        <form onSubmit={handleSubmit} className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <div className="w-full sm:w-56">
-                <input
-                    type="text"
-                    placeholder="Your name"
-                    value={data.name}
-                    onChange={(e) => setData('name', e.target.value)}
-                    className="w-full rounded-lg border border-border px-4 py-2.5 text-sm text-foreground placeholder-gray-400 shadow-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
-                />
-                {errors.name && <p className="mt-1 text-xs text-red-500">{errors.name}</p>}
-            </div>
-            <div className="w-full sm:w-64">
-                <input
-                    type="email"
-                    placeholder="Work email"
-                    value={data.email}
-                    onChange={(e) => setData('email', e.target.value)}
-                    className="w-full rounded-lg border border-border px-4 py-2.5 text-sm text-foreground placeholder-gray-400 shadow-sm focus:border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-100"
-                />
-                {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email}</p>}
-            </div>
-            <button
-                type="submit"
-                disabled={processing}
-                className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-7 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 disabled:opacity-60 transition-colors"
-            >
-                {processing ? 'Joining…' : 'Join the waitlist'}
-                {!processing && (
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                    </svg>
-                )}
-            </button>
-        </form>
-    );
-}
-
 export default function Welcome({ count }: Props) {
     return (
         <>
@@ -276,20 +214,17 @@ export default function Welcome({ count }: Props) {
 
                 {/* Hero */}
                 <section className="mx-auto max-w-6xl px-6 pt-16 pb-20 text-center">
-                    <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-100 bg-amber-50 px-4 py-1.5 text-sm font-medium text-amber-700">
-                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
-                        Currently in private beta — join the waitlist
-                    </div>
-
                     <h1 className="mx-auto max-w-3xl text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl leading-[1.05]">
                         More 5-star Google reviews.{' '}
                         <span className="text-teal-600">On autopilot.</span>
                     </h1>
 
                     <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground leading-relaxed">
-                        ReviewMate automatically asks your customers for reviews, follows up, and helps you respond with AI — so you spend less time chasing and more time running your business.
+                        ReviewMate automatically asks your happiest customers for a review — at exactly the right moment. Set it up once, forget about it.
+                    </p>
+
+                    <p className="mx-auto mt-3 max-w-sm text-sm text-muted-foreground">
+                        Set up in 2 minutes. Most businesses get their first new review within 48 hours.
                     </p>
 
                     <div className="mt-6 flex items-center justify-center gap-1.5">
@@ -298,13 +233,21 @@ export default function Welcome({ count }: Props) {
 
                     {count !== undefined && count > 0 && (
                         <p className="mt-2 text-sm text-muted-foreground">
-                            {count.toLocaleString()} {count === 1 ? 'business' : 'businesses'} already on the list
+                            {count.toLocaleString()} {count === 1 ? 'business' : 'businesses'} already using ReviewMate
                         </p>
                     )}
 
-                    <HeroWaitlistForm />
-
-                    <p className="mt-3 text-xs text-muted-foreground">We'll email you when your spot is ready. No spam, ever.</p>
+                    <div className="mt-8">
+                        <a
+                            href="/register"
+                            className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 transition-colors"
+                        >
+                            Start free — no card needed
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                            </svg>
+                        </a>
+                    </div>
                 </section>
 
                 {/* Social proof / testimonials */}
@@ -312,6 +255,7 @@ export default function Welcome({ count }: Props) {
                     <div className="mx-auto max-w-6xl px-6">
                         <div className="mb-10 text-center">
                             <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">What customers say</p>
+                            <p className="mt-2 text-sm text-muted-foreground">Most ReviewMate businesses get their first new Google review within 48 hours.</p>
                         </div>
                         <div className="grid gap-6 md:grid-cols-3">
                             {testimonials.map((t) => (
@@ -343,7 +287,7 @@ export default function Welcome({ count }: Props) {
                                     {i < steps.length - 1 && (
                                         <div className="absolute top-8 left-full hidden w-full border-t-2 border-dashed border-border md:block" style={{ width: 'calc(100% - 2rem)', left: 'calc(100% + 1rem)' }} />
                                     )}
-                                    <div className="mb-4 text-6xl font-black text-teal-50 select-none leading-none">{step.number}</div>
+                                    <div className="mb-4 text-6xl font-black text-teal-100 select-none leading-none">{step.number}</div>
                                     <h3 className="mb-2 text-lg font-semibold text-foreground">{step.title}</h3>
                                     <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
                                 </div>
@@ -433,17 +377,24 @@ export default function Welcome({ count }: Props) {
                             <p className="mt-3 text-muted-foreground">No setup fees. No lock-in. Cancel any time.</p>
                         </div>
                         <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-3">
-                            <div className="rounded-2xl border border-border bg-card p-7">
+                            <div className="rounded-2xl border border-border bg-card p-7 flex flex-col">
                                 <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Free</p>
-                                <p className="mb-5 text-4xl font-extrabold text-foreground">$0</p>
-                                <ul className="space-y-2.5 text-sm text-muted-foreground">
+                                <p className="mb-1 text-4xl font-extrabold text-foreground">$0</p>
+                                <p className="mb-5 text-xs text-muted-foreground">No credit card needed. Cancel anytime.</p>
+                                <ul className="space-y-2.5 text-sm text-muted-foreground flex-1">
                                     {['1 business location', 'Up to 50 customers', '10 requests / month', 'AI reply suggestions', 'Review dashboard'].map((f) => (
                                         <li key={f} className="flex items-center gap-2"><CheckIcon />{f}</li>
                                     ))}
                                 </ul>
+                                <a
+                                    href="/register"
+                                    className="mt-6 block w-full rounded-lg border border-border py-2.5 text-center text-sm font-semibold text-foreground hover:border-teal-500 hover:text-teal-700 transition-colors"
+                                >
+                                    Get started free
+                                </a>
                             </div>
 
-                            <div className="relative rounded-2xl border-2 border-teal-500 bg-card p-7 shadow-xl">
+                            <div className="relative rounded-2xl border-2 border-teal-500 bg-card p-7 shadow-xl flex flex-col">
                                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                                     <span className="rounded-full bg-teal-500 px-3 py-1 text-xs font-bold text-white shadow">Most popular</span>
                                 </div>
@@ -453,36 +404,48 @@ export default function Welcome({ count }: Props) {
                                     <span className="mb-1 text-sm text-muted-foreground">/month</span>
                                 </div>
                                 <p className="mb-5 text-xs text-muted-foreground">per location</p>
-                                <ul className="space-y-2.5 text-sm text-muted-foreground">
+                                <ul className="space-y-2.5 text-sm text-muted-foreground flex-1">
                                     {['1 business location', 'Unlimited customers', 'Unlimited requests', 'Automated follow-ups', 'Email & SMS sending', 'Weekly digest emails', 'Reply templates'].map((f) => (
                                         <li key={f} className="flex items-center gap-2"><CheckIcon />{f}</li>
                                     ))}
                                 </ul>
+                                <a
+                                    href="/register"
+                                    className="mt-6 block w-full rounded-lg bg-teal-600 py-2.5 text-center text-sm font-semibold text-white hover:bg-teal-700 transition-colors"
+                                >
+                                    Start free today
+                                </a>
                             </div>
 
-                            <div className="rounded-2xl border border-border bg-card p-7">
+                            <div className="rounded-2xl border border-border bg-card p-7 flex flex-col">
                                 <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-muted-foreground">Pro</p>
                                 <div className="mb-1 flex items-end gap-1">
                                     <span className="text-4xl font-extrabold text-foreground">$99</span>
                                     <span className="mb-1 text-sm text-muted-foreground">/month</span>
                                 </div>
                                 <p className="mb-5 text-xs text-muted-foreground">up to 5 locations</p>
-                                <ul className="space-y-2.5 text-sm text-muted-foreground">
+                                <ul className="space-y-2.5 text-sm text-muted-foreground flex-1">
                                     {['Up to 5 locations', 'Everything in Starter', 'Multi-location analytics', 'Priority support'].map((f) => (
                                         <li key={f} className="flex items-center gap-2"><CheckIcon />{f}</li>
                                     ))}
                                 </ul>
+                                <a
+                                    href="/register"
+                                    className="mt-6 block w-full rounded-lg border border-border py-2.5 text-center text-sm font-semibold text-foreground hover:border-teal-500 hover:text-teal-700 transition-colors"
+                                >
+                                    Get started free
+                                </a>
                             </div>
                         </div>
 
                         <div className="mt-10 text-center">
                             <a
-                                href="/waitlist"
+                                href="/register"
                                 className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 transition-colors"
                             >
-                                Join the waitlist
+                                Start free — no card needed
                             </a>
-                            <p className="mt-2 text-xs text-muted-foreground">We'll notify you when your spot is ready.</p>
+                            <p className="mt-2 text-xs text-muted-foreground">Free plan available. Upgrade any time.</p>
                         </div>
                     </div>
                 </section>
@@ -504,20 +467,17 @@ export default function Welcome({ count }: Props) {
                 {/* Bottom CTA */}
                 <section className="bg-teal-600 py-20">
                     <div className="mx-auto max-w-2xl px-6 text-center">
-                        <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Ready to get more reviews?</h2>
+                        <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">Your next 5-star review is waiting.</h2>
                         <p className="mt-4 text-teal-100 leading-relaxed">
-                            Join Australian small businesses waiting to use ReviewMate and build their Google reputation on autopilot.
+                            Set it up once, forget about it. ReviewMate builds your reputation while you focus on the job.
                         </p>
                         <a
-                            href="/waitlist"
+                            href="/register"
                             className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-3.5 text-sm font-semibold text-teal-700 shadow-md hover:bg-teal-50 transition-colors"
                         >
-                            Join the waitlist
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                            </svg>
+                            Start free today →
                         </a>
-                        <p className="mt-3 text-sm text-teal-100 opacity-80">We'll email you when your spot is ready.</p>
+                        <p className="mt-3 text-sm text-teal-100 opacity-80">Free plan available. No credit card required.</p>
                     </div>
                 </section>
 

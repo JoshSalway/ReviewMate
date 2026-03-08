@@ -31,6 +31,7 @@ use App\Http\Controllers\ReviewRequestController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\WaitlistController;
 use App\Http\Controllers\WidgetSettingsController;
+use App\Http\Middleware\ValidateSessionWithWorkOSForE2e;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -67,9 +68,14 @@ Route::get('/unsubscribe/{token}', [CustomerController::class, 'unsubscribe'])->
 Route::post('stripe/webhook', '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook')
     ->name('cashier.webhook');
 
+// Use E2E-bypass middleware when APP_E2E is active (local only)
+$workosMiddleware = (config('app.e2e', false) && config('app.env') === 'local')
+    ? ValidateSessionWithWorkOSForE2e::class
+    : ValidateSessionWithWorkOS::class;
+
 Route::middleware([
     'auth',
-    ValidateSessionWithWorkOS::class,
+    $workosMiddleware,
     'beta',
 ])->group(function () {
     // Admin: waitlist management (superadmin only)
@@ -91,6 +97,7 @@ Route::middleware([
         Route::post('connect-google', [OnboardingController::class, 'storeConnectGoogle'])->name('connect-google.store');
         Route::get('select-template', [OnboardingController::class, 'selectTemplate'])->name('select-template');
         Route::post('select-template', [OnboardingController::class, 'storeSelectTemplate'])->name('select-template.store');
+        Route::get('complete', [OnboardingController::class, 'complete'])->name('complete');
     });
 
     // Customers
@@ -309,6 +316,25 @@ Route::post('webhooks/housecallpro/{business:uuid}', [HousecallProController::cl
 // Generic incoming webhook — authenticated by secret token in URL, no session required
 Route::post('webhooks/incoming/{token}', [IncomingWebhookController::class, 'handle'])
     ->name('webhooks.incoming');
+
+// E2E test login bypass — only active when APP_E2E=true (local env only)
+if (config('app.e2e', false) && config('app.env') === 'local') {
+    Route::get('/_e2e/login', function (\Illuminate\Http\Request $request) {
+        $email = $request->query('email', 'e2e@reviewmate.test');
+
+        $user = \App\Models\User::where('email', $email)->firstOrFail();
+
+        \Illuminate\Support\Facades\Auth::login($user);
+
+        // Put fake WorkOS tokens in session so the ValidateSessionWithWorkOS
+        // middleware does not redirect us back to login.
+        $request->session()->put('workos_access_token', 'e2e_fake_access_token');
+        $request->session()->put('workos_refresh_token', 'e2e_fake_refresh_token');
+        $request->session()->regenerate();
+
+        return redirect()->route('dashboard');
+    })->name('e2e.login');
+}
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

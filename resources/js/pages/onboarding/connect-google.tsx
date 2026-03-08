@@ -129,7 +129,7 @@ export default function ConnectGoogle({ business, isGoogleConnected, locations }
                 )}
 
                 <div className="mb-4 space-y-2">
-                    <Label htmlFor="place-id">Google Place ID</Label>
+                    <Label htmlFor="place-id">Your Google Place ID</Label>
                     <Input
                         id="place-id"
                         placeholder="e.g. ChIJN1t_tDeuEmsRUsoyG83frY4"
@@ -137,7 +137,7 @@ export default function ConnectGoogle({ business, isGoogleConnected, locations }
                         onChange={(e) => setPlaceId(e.target.value)}
                         className="font-mono text-sm"
                     />
-                    <p className="text-xs text-muted-foreground">Your Place ID uniquely identifies your business on Google Maps.</p>
+                    <p className="text-xs text-muted-foreground">This is a unique code that points customers directly to your Google review page.</p>
                 </div>
 
                 <Collapsible open={showInstructions} onOpenChange={setShowInstructions} className="mb-6">
@@ -211,8 +211,8 @@ export default function ConnectGoogle({ business, isGoogleConnected, locations }
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium text-muted-foreground">3</div>
                         </div>
                         <p className="mb-1 text-sm font-medium text-teal-600">Step 2 of 3</p>
-                        <h1 className="text-2xl font-bold text-foreground">Connect your Google Business</h1>
-                        <p className="mt-2 text-muted-foreground">We need your Google Place ID to send customers directly to your review page.</p>
+                        <h1 className="text-2xl font-bold text-foreground">Connect to Google — so customers can review you in one tap</h1>
+                        <p className="mt-2 text-muted-foreground">This lets customers leave a review without searching for you on Google. Takes 30 seconds.</p>
                     </div>
 
                     <div className="rounded-xl bg-card p-6 shadow-sm ring-1 ring-border">
@@ -237,7 +237,7 @@ export default function ConnectGoogle({ business, isGoogleConnected, locations }
                             {processing ? 'Saving...' : 'Continue'}
                         </Button>
 
-                        <div className="mt-3 text-center">
+                        <div className="mt-3 text-center space-y-1">
                             <button
                                 type="button"
                                 className="text-sm text-muted-foreground hover:text-foreground"
@@ -245,6 +245,7 @@ export default function ConnectGoogle({ business, isGoogleConnected, locations }
                             >
                                 Skip for now
                             </button>
+                            <p className="text-xs text-muted-foreground">You can connect Google later from Settings.</p>
                         </div>
                     </div>
                 </div>

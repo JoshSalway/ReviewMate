@@ -1,4 +1,4 @@
-import { Head, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -48,7 +48,8 @@ const channelBadgeClass: Record<Channel, string> = {
 
 export default function QuickSend({ recentlySent }: Props) {
     const { flash } = usePage<{ flash: { success?: string } }>().props;
-    const [form, setForm] = useState({ name: '', email: '', channel: 'email' as Channel });
+    const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    const [form, setForm] = useState({ name: params.get('name') ?? '', email: params.get('email') ?? '', channel: 'email' as Channel });
     const [processing, setProcessing] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
 
@@ -89,6 +90,7 @@ export default function QuickSend({ recentlySent }: Props) {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <span className="text-sm font-medium text-teal-700">Review request sent successfully!</span>
+                        <Link href="/requests" className="ml-2 underline text-sm font-medium text-teal-700">View in Requests →</Link>
                     </div>
                 )}
 
@@ -141,6 +143,9 @@ export default function QuickSend({ recentlySent }: Props) {
                                         </button>
                                     ))}
                                 </div>
+                                {(form.channel === 'sms' || form.channel === 'both') && (
+                                    <p className="text-xs text-amber-600 mt-1">Make sure to include a phone number for SMS delivery.</p>
+                                )}
                             </div>
 
                             <Button
@@ -164,7 +169,7 @@ export default function QuickSend({ recentlySent }: Props) {
                                     <svg className="mb-3 h-10 w-10 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                                     </svg>
-                                    <p className="text-sm text-muted-foreground">No requests sent yet</p>
+                                    <p className="text-sm text-muted-foreground">Send your first request above — takes 30 seconds.</p>
                                 </div>
                             ) : (
                                 <div className="space-y-3">

@@ -13,7 +13,7 @@ const plans = [
         name: 'Free',
         price: '$0',
         period: null,
-        description: 'For trying ReviewMate — no card needed.',
+        description: 'Free forever. No credit card needed.',
         features: [
             '1 business location',
             'Up to 50 customers',
@@ -23,22 +23,22 @@ const plans = [
             'Email review requests',
             'QR code page',
         ],
-        cta: 'Start for free',
+        cta: 'Get started free',
         highlighted: false,
     },
     {
         name: 'Starter',
         price: '$49',
         period: '/month',
-        description: 'For growing local businesses ready to scale reviews.',
+        description: 'Everything you need to start getting reviews on autopilot.',
         features: [
             '1 business location',
             'Unlimited customers',
             'Unlimited review requests',
             'Email + SMS sending',
-            'Automated follow-ups (day 5)',
+            'Automatic follow-up if they don\'t open the first email — doubles your review rate',
             'Weekly digest emails',
-            'Reply templates',
+            'AI replies to your Google reviews every night — in your voice, automatically',
             'Google Business Profile sync',
             'CSV import / export',
             'Integration: ServiceM8, Xero, Cliniko, Timely, Simpro, Halaxy',
@@ -51,7 +51,7 @@ const plans = [
         name: 'Pro',
         price: '$99',
         period: '/month',
-        description: 'For multi-location businesses and agencies.',
+        description: 'For businesses serious about their reputation. Automated follow-ups, AI replies, and more.',
         features: [
             'Up to 5 business locations',
             'Everything in Starter',
@@ -123,6 +123,9 @@ export default function Pricing() {
                     </h1>
                     <p className="mt-4 text-lg text-muted-foreground">
                         No setup fees. No lock-in contracts. Start free, upgrade when you need to.
+                    </p>
+                    <p className="mt-2 text-sm text-muted-foreground/70">
+                        14-day free trial on paid plans · No contracts · Cancel anytime
                     </p>
                 </section>
 

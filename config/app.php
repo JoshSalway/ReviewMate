@@ -54,6 +54,9 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    // Enable E2E test mode (bypasses WorkOS OAuth — local env only)
+    'e2e' => (bool) env('APP_E2E', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

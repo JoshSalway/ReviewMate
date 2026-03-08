@@ -66,7 +66,7 @@ const statusConfig: Record<CustomerStatus, { label: string; className: string }>
     reviewed: { label: 'Reviewed', className: 'bg-green-100 text-green-700 hover:bg-green-100' },
     pending: { label: 'Pending', className: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-100' },
     no_response: { label: 'No Response', className: 'bg-red-100 text-red-700 hover:bg-red-100' },
-    no_request: { label: 'Not Sent', className: 'bg-muted text-muted-foreground hover:bg-muted' },
+    no_request: { label: 'Ready to request', className: 'bg-muted text-muted-foreground hover:bg-muted' },
 };
 
 function StatusBadge({ status }: { status: CustomerStatus }) {
@@ -141,7 +141,7 @@ export default function CustomersIndex({ customers }: Props) {
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-bold text-foreground">Customers</h1>
-                        <p className="mt-1 text-sm text-muted-foreground">Manage your customer list and review requests</p>
+                        <p className="mt-1 text-sm text-muted-foreground">Add past customers and we'll ask them for a review — takes 2 minutes to set up.</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <a href={customersExport().url} download>
@@ -212,6 +212,7 @@ export default function CustomersIndex({ customers }: Props) {
                                 >
                                     Add Customer
                                 </Button>
+                                <p className="mt-2 text-sm text-muted-foreground">Have a customer list? <button className="text-teal-600 underline hover:text-teal-700" onClick={() => setShowDialog(true)}>Import from CSV</button></p>
                             </div>
                         ) : (
                             <Table>
@@ -272,14 +273,34 @@ export default function CustomersIndex({ customers }: Props) {
                                                         </Button>
                                                     </div>
                                                 ) : (
-                                                    <Button
-                                                        size="sm"
-                                                        variant="ghost"
-                                                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                                        onClick={() => setDeleteConfirm(customer.id)}
-                                                    >
-                                                        Delete
-                                                    </Button>
+                                                    <div className="flex items-center justify-end gap-2">
+                                                        {customer.status === 'no_request' && (
+                                                            <Button
+                                                                size="sm"
+                                                                className="bg-teal-600 hover:bg-teal-700 text-white"
+                                                                onClick={() => router.visit(`/quick-send?name=${encodeURIComponent(customer.name)}&email=${encodeURIComponent(customer.email)}`)}
+                                                            >
+                                                                Send request
+                                                            </Button>
+                                                        )}
+                                                        {customer.status === 'no_response' && (
+                                                            <Button
+                                                                size="sm"
+                                                                variant="outline"
+                                                                onClick={() => router.visit(`/quick-send?name=${encodeURIComponent(customer.name)}&email=${encodeURIComponent(customer.email)}`)}
+                                                            >
+                                                                Re-send
+                                                            </Button>
+                                                        )}
+                                                        <Button
+                                                            size="sm"
+                                                            variant="ghost"
+                                                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                            onClick={() => setDeleteConfirm(customer.id)}
+                                                        >
+                                                            Delete
+                                                        </Button>
+                                                    </div>
                                                 )}
                                             </TableCell>
                                         </TableRow>

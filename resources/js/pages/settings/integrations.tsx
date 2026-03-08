@@ -270,7 +270,7 @@ export default function Integrations({
                 <div>
                     <h1 className="text-2xl font-bold text-foreground">Integrations</h1>
                     <p className="mt-1 text-sm text-muted-foreground">
-                        Connect ReviewMate to your other business tools to automatically send review requests.
+                        Connect your job management software — ReviewMate will automatically send review requests when you close a job. Set it once, forget about it.
                     </p>
                 </div>
 
@@ -285,7 +285,7 @@ export default function Integrations({
                                 <div>
                                     <CardTitle className="text-base">ServiceM8</CardTitle>
                                     <CardDescription className="text-xs">
-                                        For tradies. Auto-sends review requests when a job is completed.
+                                        For tradies. Review requests fire automatically when a job is done.
                                     </CardDescription>
                                 </div>
                             </div>
@@ -294,8 +294,7 @@ export default function Integrations({
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <p className="text-sm text-muted-foreground">
-                            Automatically send Google review requests to customers when a job is marked as complete in ServiceM8.
-                            No manual effort required — ReviewMate handles it for you.
+                            When you complete a job in ServiceM8, ReviewMate automatically sends your customer a review request. Zero manual work.
                         </p>
 
                         {servicem8Connected ? (
@@ -334,7 +333,7 @@ export default function Integrations({
                                 className="bg-teal-600 hover:bg-teal-700 text-white"
                                 onClick={handleServiceM8Connect}
                             >
-                                Connect ServiceM8
+                                Connect ServiceM8 →
                             </Button>
                         )}
                     </CardContent>
@@ -399,7 +398,7 @@ export default function Integrations({
                                 className="bg-teal-600 hover:bg-teal-700 text-white"
                                 onClick={handleXeroConnect}
                             >
-                                Connect Xero
+                                Connect Xero →
                             </Button>
                         )}
                     </CardContent>
@@ -425,8 +424,7 @@ export default function Integrations({
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <p className="text-sm text-muted-foreground">
-                            ReviewMate polls Cliniko daily for completed appointments (physios, chiros, psychologists, etc.)
-                            and automatically sends review requests to patients. Uses your personal Cliniko API key.
+                            When a patient's appointment ends in Cliniko, we send a friendly review request — completely automatic.
                         </p>
 
                         {clinikoConnected ? (
@@ -473,7 +471,7 @@ export default function Integrations({
                                     className="bg-teal-600 hover:bg-teal-700 text-white"
                                     disabled={clinikoSubmitting || !clinikoApiKey.trim()}
                                 >
-                                    {clinikoSubmitting ? 'Connecting...' : 'Connect Cliniko'}
+                                    {clinikoSubmitting ? 'Connecting...' : 'Connect Cliniko →'}
                                 </Button>
                             </form>
                         )}
@@ -500,8 +498,7 @@ export default function Integrations({
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <p className="text-sm text-muted-foreground">
-                            Automatically send a review request when an appointment is completed in Timely. Uses native
-                            webhooks for instant delivery — no polling required.
+                            When a client's appointment wraps up in Timely, we send them a review request. Perfect timing, every time.
                         </p>
 
                         {timelyConnected ? (
@@ -540,7 +537,7 @@ export default function Integrations({
                                 className="bg-teal-600 hover:bg-teal-700 text-white"
                                 onClick={handleTimelyConnect}
                             >
-                                Connect Timely
+                                Connect Timely →
                             </Button>
                         )}
                     </CardContent>
@@ -565,8 +562,7 @@ export default function Integrations({
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <p className="text-sm text-muted-foreground">
-                            Automatically send Google review requests to customers when a job is marked complete in Simpro.
-                            Ideal for larger trade businesses with 5–50 staff. Uses OAuth for a secure connection.
+                            Finish a job in Simpro — we send the review request automatically. You focus on the next job.
                         </p>
 
                         {simproConnected ? (
@@ -623,7 +619,7 @@ export default function Integrations({
                                     className="bg-teal-600 hover:bg-teal-700 text-white"
                                     disabled={simproSubmitting || !simproCompanyUrl.trim()}
                                 >
-                                    {simproSubmitting ? 'Connecting...' : 'Connect Simpro'}
+                                    {simproSubmitting ? 'Connecting...' : 'Connect Simpro →'}
                                 </Button>
                             </form>
                         )}
@@ -699,7 +695,7 @@ export default function Integrations({
                                     className="bg-teal-600 hover:bg-teal-700 text-white"
                                     disabled={halaxySubmitting || !halaxyApiKey.trim()}
                                 >
-                                    {halaxySubmitting ? 'Connecting...' : 'Connect Halaxy'}
+                                    {halaxySubmitting ? 'Connecting...' : 'Connect Halaxy →'}
                                 </Button>
                             </form>
                         )}
@@ -715,9 +711,12 @@ export default function Integrations({
                                     <span className="text-sm font-bold text-foreground">{'{}'}</span>
                                 </div>
                                 <div>
-                                    <CardTitle className="text-base">Custom Webhook</CardTitle>
+                                    <div className="flex items-center gap-2">
+                                        <CardTitle className="text-base">Custom Webhook</CardTitle>
+                                        <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-muted-foreground">Advanced</span>
+                                    </div>
                                     <CardDescription className="text-xs">
-                                        Connect any tool via Zapier, Make, or direct HTTP POST.
+                                        For developers. Connect any tool via Zapier, Make, or direct HTTP POST.
                                     </CardDescription>
                                 </div>
                             </div>
@@ -846,7 +845,7 @@ Content-Type: application/json
                                 className="bg-teal-600 hover:bg-teal-700 text-white"
                                 onClick={handleJobberConnect}
                             >
-                                Connect Jobber
+                                Connect Jobber →
                             </Button>
                         )}
                     </CardContent>
@@ -911,7 +910,7 @@ Content-Type: application/json
                                 className="bg-teal-600 hover:bg-teal-700 text-white"
                                 onClick={handleHousecallProConnect}
                             >
-                                Connect Housecall Pro
+                                Connect Housecall Pro →
                             </Button>
                         )}
                     </CardContent>
