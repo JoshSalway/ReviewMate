@@ -1,0 +1,12 @@
+id: app-a13fb0ca-0bba-47e8-b52f-56c85f4208e6
+name: ReviewMate
+region: ap-southeast-2
+
+environments:
+  - id: env-a13fb0d4-fb41-43c3-ab48-188c8c24e32c
+    name: production
+    branch: main
+
+  - id: env-a13fb0ee-4cec-4531-8b9b-8d3d55b783db
+    name: staging
+    branch: staging
