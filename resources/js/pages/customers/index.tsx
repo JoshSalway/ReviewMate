@@ -1,5 +1,5 @@
-import { Head, router } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, router, usePage } from '@inertiajs/react';
+import { useState, useEffect, useRef } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -29,7 +29,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { index as customersIndex, store as customersStore, destroy as customersDestroy, bulkSend as customersBulkSend, exportMethod as customersExport } from '@/routes/customers';
+import { index as customersIndex, store as customersStore, destroy as customersDestroy, bulkSend as customersBulkSend, exportMethod as customersExport, importMethod as customersImport } from '@/routes/customers';
 import type { BreadcrumbItem } from '@/types';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -62,6 +62,12 @@ interface Props {
     customers: PaginatedCustomers;
 }
 
+interface CsvRow {
+    name: string;
+    email: string;
+    phone: string;
+}
+
 const statusConfig: Record<CustomerStatus, { label: string; className: string }> = {
     reviewed: { label: 'Reviewed', className: 'bg-green-100 text-green-700 hover:bg-green-100' },
     pending: { label: 'Pending', className: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-100' },
@@ -74,14 +80,190 @@ function StatusBadge({ status }: { status: CustomerStatus }) {
     return <Badge className={config.className}>{config.label}</Badge>;
 }
 
+const parseCsv = (text: string): CsvRow[] => {
+    const lines = text.trim().split('\n');
+    const headers = lines[0].toLowerCase().split(',').map(h => h.trim().replace(/"/g, ''));
+    return lines.slice(1).map(line => {
+        const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+        const row: Record<string, string> = {};
+        headers.forEach((h, i) => { row[h] = values[i] ?? ''; });
+        return {
+            name: row['name'] || row['full name'] || row['customer name'] || `${row['first name'] || ''} ${row['last name'] || ''}`.trim(),
+            email: row['email'] || row['email address'] || '',
+            phone: row['phone'] || row['mobile'] || row['phone number'] || row['mobile number'] || '',
+        };
+    }).filter(r => r.name || r.email);
+};
+
+const downloadSample = () => {
+    const csv = 'name,email,phone\nJane Smith,jane@example.com,0412 345 678\nMark Jones,mark@example.com,0423 456 789\nSarah Brown,,0434 567 890';
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'customers-sample.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+};
+
+function ImportCsvDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+    const [parsedRows, setParsedRows] = useState<CsvRow[]>([]);
+    const [fileName, setFileName] = useState('');
+    const [importing, setImporting] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        setFileName(file.name);
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const text = ev.target?.result as string;
+            setParsedRows(parseCsv(text));
+        };
+        reader.readAsText(file);
+    };
+
+    const handleClose = () => {
+        setParsedRows([]);
+        setFileName('');
+        setImporting(false);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+        onClose();
+    };
+
+    const handleImport = () => {
+        if (parsedRows.length === 0) return;
+        setImporting(true);
+        router.post(
+            customersImport().url,
+            { customers: parsedRows as unknown as Record<string, string>[] },
+            {
+                preserveScroll: true,
+                onSuccess: () => handleClose(),
+                onFinish: () => setImporting(false),
+            },
+        );
+    };
+
+    const previewRows = parsedRows.slice(0, 10);
+    const remaining = parsedRows.length - 10;
+    const validRows = parsedRows.filter(r => r.name || r.email);
+
+    return (
+        <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
+            <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle>Import Customers from CSV</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-2">
+                    <div className="flex items-center justify-between">
+                        <p className="text-sm text-muted-foreground">
+                            Upload a CSV file with columns: <span className="font-mono text-xs bg-muted px-1 py-0.5 rounded">name</span>, <span className="font-mono text-xs bg-muted px-1 py-0.5 rounded">email</span>, <span className="font-mono text-xs bg-muted px-1 py-0.5 rounded">phone</span>
+                        </p>
+                        <button
+                            type="button"
+                            className="text-sm text-teal-600 underline hover:text-teal-700"
+                            onClick={downloadSample}
+                        >
+                            Download sample CSV
+                        </button>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="csv-file">CSV File</Label>
+                        <Input
+                            id="csv-file"
+                            type="file"
+                            accept=".csv"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                        />
+                        {fileName && (
+                            <p className="text-xs text-muted-foreground">Selected: {fileName}</p>
+                        )}
+                    </div>
+
+                    {parsedRows.length > 0 && (
+                        <div className="space-y-2">
+                            <p className="text-sm font-medium text-foreground">
+                                Ready to import <span className="text-teal-600 font-semibold">{validRows.length}</span> customer{validRows.length !== 1 ? 's' : ''}
+                            </p>
+                            <div className="rounded-md border overflow-hidden">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Name</TableHead>
+                                            <TableHead>Email</TableHead>
+                                            <TableHead>Phone</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {previewRows.map((row, i) => {
+                                            const isInvalid = !row.name && !row.email;
+                                            return (
+                                                <TableRow key={i} className={isInvalid ? 'bg-red-50' : ''}>
+                                                    <TableCell className={isInvalid ? 'text-red-500' : ''}>
+                                                        {row.name || <span className="text-muted-foreground italic">—</span>}
+                                                    </TableCell>
+                                                    <TableCell className={isInvalid ? 'text-red-500' : 'text-muted-foreground'}>
+                                                        {row.email || <span className="text-muted-foreground italic">—</span>}
+                                                    </TableCell>
+                                                    <TableCell className="text-muted-foreground">
+                                                        {row.phone || <span className="italic">—</span>}
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        })}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                            {remaining > 0 && (
+                                <p className="text-xs text-muted-foreground">…and {remaining} more row{remaining !== 1 ? 's' : ''} not shown</p>
+                            )}
+                        </div>
+                    )}
+                </div>
+                <DialogFooter>
+                    <Button variant="outline" onClick={handleClose} disabled={importing}>
+                        Cancel
+                    </Button>
+                    <Button
+                        className="bg-teal-600 hover:bg-teal-700 text-white"
+                        onClick={handleImport}
+                        disabled={importing || validRows.length === 0}
+                    >
+                        {importing ? 'Importing...' : `Import ${validRows.length > 0 ? validRows.length : ''} customer${validRows.length !== 1 ? 's' : ''}`}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+}
+
 export default function CustomersIndex({ customers }: Props) {
+    const { flash } = usePage<{ flash: { success?: string; error?: string } }>().props;
     const [showDialog, setShowDialog] = useState(false);
+    const [showImportDialog, setShowImportDialog] = useState(false);
     const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
     const [form, setForm] = useState({ name: '', email: '' });
     const [processing, setProcessing] = useState(false);
     const [selected, setSelected] = useState<number[]>([]);
     const [bulkChannel, setBulkChannel] = useState<'email' | 'sms' | 'both'>('email');
     const [bulkSending, setBulkSending] = useState(false);
+    const [flashMessage, setFlashMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+    useEffect(() => {
+        if (flash?.success) {
+            setFlashMessage({ type: 'success', text: flash.success });
+            const timer = setTimeout(() => setFlashMessage(null), 5000);
+            return () => clearTimeout(timer);
+        }
+        if (flash?.error) {
+            setFlashMessage({ type: 'error', text: flash.error });
+            const timer = setTimeout(() => setFlashMessage(null), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [flash]);
 
     const allIds = customers.data.map((c) => c.id);
     const allSelected = allIds.length > 0 && allIds.every((id) => selected.includes(id));
@@ -150,6 +332,12 @@ export default function CustomersIndex({ customers }: Props) {
                             </Button>
                         </a>
                         <Button
+                            variant="outline"
+                            onClick={() => setShowImportDialog(true)}
+                        >
+                            Import CSV
+                        </Button>
+                        <Button
                             className="bg-teal-600 hover:bg-teal-700 text-white"
                             onClick={() => setShowDialog(true)}
                         >
@@ -157,6 +345,24 @@ export default function CustomersIndex({ customers }: Props) {
                         </Button>
                     </div>
                 </div>
+
+                {/* Flash message */}
+                {flashMessage && (
+                    <div className={`flex items-center gap-3 rounded-lg border px-4 py-3 ${flashMessage.type === 'success' ? 'border-teal-200 bg-teal-50' : 'border-red-200 bg-red-50'}`}>
+                        {flashMessage.type === 'success' ? (
+                            <svg className="h-5 w-5 text-teal-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        ) : (
+                            <svg className="h-5 w-5 text-red-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        )}
+                        <span className={`text-sm font-medium ${flashMessage.type === 'success' ? 'text-teal-700' : 'text-red-700'}`}>
+                            {flashMessage.text}
+                        </span>
+                    </div>
+                )}
 
                 {/* Bulk action bar */}
                 {someSelected && (
@@ -212,7 +418,7 @@ export default function CustomersIndex({ customers }: Props) {
                                 >
                                     Add Customer
                                 </Button>
-                                <p className="mt-2 text-sm text-muted-foreground">Have a customer list? <button className="text-teal-600 underline hover:text-teal-700" onClick={() => setShowDialog(true)}>Import from CSV</button></p>
+                                <p className="mt-2 text-sm text-muted-foreground">Have a customer list? <button className="text-teal-600 underline hover:text-teal-700" onClick={() => setShowImportDialog(true)}>Import from CSV</button></p>
                             </div>
                         ) : (
                             <Table>
@@ -370,6 +576,9 @@ export default function CustomersIndex({ customers }: Props) {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            {/* Import CSV Dialog */}
+            <ImportCsvDialog open={showImportDialog} onClose={() => setShowImportDialog(false)} />
         </AppLayout>
     );
 }

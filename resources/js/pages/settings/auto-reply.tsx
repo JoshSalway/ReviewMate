@@ -1,4 +1,5 @@
 import { Head, router } from '@inertiajs/react';
+import type { RequestPayload } from '@inertiajs/core';
 import { useState } from 'react';
 import { AlertCircle, Clock, Sparkles, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -129,7 +130,7 @@ export default function AutoReplySettings({ settings, schedule, businessType, bu
 
     const handleSave = () => {
         setProcessing(true);
-        router.put('/settings/auto-reply', form, {
+        router.put('/settings/auto-reply', form as unknown as RequestPayload, {
             preserveScroll: true,
             onFinish: () => setProcessing(false),
         });

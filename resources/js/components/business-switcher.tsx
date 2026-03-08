@@ -18,6 +18,7 @@ import { switchMethod as switchBus } from '@/routes/businesses';
 
 interface Business {
     id: number;
+    uuid: string;
     name: string;
     type: string;
     is_current: boolean;
@@ -26,13 +27,13 @@ interface Business {
 export function BusinessSwitcher() {
     const { businesses: businessList, currentBusiness } = usePage<{
         businesses: Business[];
-        currentBusiness: { id: number; name: string } | null;
+        currentBusiness: { id: number; uuid: string; name: string } | null;
     }>().props;
 
     const { state } = useSidebar();
 
-    const switchBusiness = (id: number) => {
-        router.post(switchBus({ business: id }).url, {}, {
+    const switchBusiness = (uuid: string) => {
+        router.post(switchBus({ business: uuid }).url, {}, {
             preserveScroll: false,
         });
     };
@@ -70,7 +71,7 @@ export function BusinessSwitcher() {
                         {businessList.map((business) => (
                             <DropdownMenuItem
                                 key={business.id}
-                                onClick={() => switchBusiness(business.id)}
+                                onClick={() => switchBusiness(business.uuid)}
                                 className="gap-2 p-2"
                             >
                                 <div className="flex size-6 items-center justify-center rounded-sm border bg-teal-50">
