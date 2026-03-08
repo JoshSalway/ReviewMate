@@ -185,48 +185,40 @@ class CustomerController extends Controller
 
     public function importCsv(Request $request): RedirectResponse
     {
-        $request->validate([
-            'file' => ['required', 'file', 'mimes:csv,txt', 'max:2048'],
+        $validated = $request->validate([
+            'customers' => ['required', 'array', 'min:1', 'max:500'],
+            'customers.*.name' => ['nullable', 'string', 'max:255'],
+            'customers.*.email' => ['nullable', 'email', 'max:255'],
+            'customers.*.phone' => ['nullable', 'string', 'max:50'],
         ]);
 
         $business = $request->user()->currentBusiness();
-        $file = $request->file('file');
-        $handle = fopen($file->getRealPath(), 'r');
 
-        $header = null;
+        if (! $business) {
+            return back()->with('error', 'No business found.');
+        }
+
         $imported = 0;
-        $skipped = 0;
-
-        while (($row = fgetcsv($handle)) !== false) {
-            if ($header === null) {
-                $header = array_map('strtolower', array_map('trim', $row));
-
+        foreach ($validated['customers'] as $row) {
+            if (empty($row['name']) && empty($row['email'])) {
                 continue;
             }
 
-            $data = array_combine($header, $row);
-
-            $name = trim($data['name'] ?? $data['full name'] ?? $data['customer name'] ?? '');
-            $email = trim($data['email'] ?? $data['email address'] ?? '');
-            $phone = trim($data['phone'] ?? $data['mobile'] ?? $data['phone number'] ?? '');
-
-            if (empty($name)) {
-                $skipped++;
-
+            // Skip duplicates (same email for same business)
+            if (! empty($row['email']) && $business->customers()->where('email', $row['email'])->exists()) {
                 continue;
             }
 
-            $business->customers()->firstOrCreate(
-                array_filter(['email' => $email ?: null, 'phone' => $phone ?: null]),
-                ['name' => $name, 'phone' => $phone ?: null, 'email' => $email ?: null]
-            );
+            $business->customers()->create([
+                'name' => $row['name'] ?? 'Unknown',
+                'email' => $row['email'] ?? null,
+                'phone' => $row['phone'] ?? null,
+            ]);
 
             $imported++;
         }
 
-        fclose($handle);
-
-        return back()->with('success', "Imported {$imported} customer(s). Skipped {$skipped} row(s).");
+        return back()->with('success', "Imported {$imported} customers successfully.");
     }
 
     public function unsubscribe(Request $request, string $token): Response|RedirectResponse
