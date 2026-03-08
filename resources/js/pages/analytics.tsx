@@ -49,7 +49,7 @@ function StarRating({ rating }: { rating: number }) {
     return (
         <span className="flex items-center gap-1">
             <span className="text-yellow-400">{'★'.repeat(full)}{'☆'.repeat(5 - full)}</span>
-            <span className="text-gray-600 text-sm">{rating}</span>
+            <span className="text-muted-foreground text-sm">{rating}</span>
         </span>
     );
 }
@@ -58,9 +58,9 @@ function StatCard({ label, value, sub }: { label: string; value: string | number
     return (
         <Card>
             <CardContent className="pt-5">
-                <p className="text-sm text-gray-500">{label}</p>
-                <p className="mt-1 text-3xl font-bold text-gray-900">{value}</p>
-                {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
+                <p className="text-sm text-muted-foreground">{label}</p>
+                <p className="mt-1 text-3xl font-bold text-foreground">{value}</p>
+                {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
             </CardContent>
         </Card>
     );
@@ -75,8 +75,8 @@ export default function Analytics({ businesses, totals, can_see_all }: Props) {
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Analytics</h1>
-                        <p className="mt-1 text-sm text-gray-500">
+                        <h1 className="text-2xl font-bold text-foreground">Analytics</h1>
+                        <p className="mt-1 text-sm text-muted-foreground">
                             {can_see_all && businesses.length > 1
                                 ? `Aggregated across ${businesses.length} businesses`
                                 : 'Performance overview'}
@@ -126,8 +126,8 @@ export default function Analytics({ businesses, totals, can_see_all }: Props) {
                                     {businesses.map((biz) => (
                                         <TableRow key={biz.id}>
                                             <TableCell>
-                                                <div className="font-medium text-gray-900">{biz.name}</div>
-                                                <div className="text-xs text-gray-400 capitalize">{biz.type?.replace(/_/g, ' ')}</div>
+                                                <div className="font-medium text-foreground">{biz.name}</div>
+                                                <div className="text-xs text-muted-foreground capitalize">{biz.type?.replace(/_/g, ' ')}</div>
                                             </TableCell>
                                             <TableCell className="text-right">{biz.total_reviews}</TableCell>
                                             <TableCell className="text-right">
@@ -139,14 +139,14 @@ export default function Analytics({ businesses, totals, can_see_all }: Props) {
                                                 {biz.pending_replies > 0 ? (
                                                     <span className="font-semibold text-orange-600">{biz.pending_replies}</span>
                                                 ) : (
-                                                    <span className="text-gray-400">—</span>
+                                                    <span className="text-muted-foreground">—</span>
                                                 )}
                                             </TableCell>
                                             <TableCell className="text-right">{biz.reviews_this_month}</TableCell>
                                         </TableRow>
                                     ))}
                                     {/* Totals row */}
-                                    <TableRow className="bg-gray-50 font-semibold">
+                                    <TableRow className="bg-muted font-semibold">
                                         <TableCell>Total</TableCell>
                                         <TableCell className="text-right">{totals.total_reviews}</TableCell>
                                         <TableCell className="text-right">

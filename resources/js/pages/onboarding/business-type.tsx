@@ -40,23 +40,23 @@ export default function BusinessType() {
     return (
         <>
             <Head title="Business Type - Setup" />
-            <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+            <div className="flex min-h-screen items-center justify-center bg-background p-4">
                 <div className="w-full max-w-2xl">
                     {/* Header */}
                     <div className="mb-8 text-center">
                         <div className="mb-4 flex items-center justify-center gap-2">
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-600 text-sm font-bold text-white">1</div>
-                            <div className="h-px w-12 bg-gray-200" />
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-sm font-medium text-gray-400">2</div>
-                            <div className="h-px w-12 bg-gray-200" />
-                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-sm font-medium text-gray-400">3</div>
+                            <div className="h-px w-12 bg-border" />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium text-muted-foreground">2</div>
+                            <div className="h-px w-12 bg-border" />
+                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium text-muted-foreground">3</div>
                         </div>
                         <p className="mb-1 text-sm font-medium text-teal-600">Step 1 of 3</p>
-                        <h1 className="text-2xl font-bold text-gray-900">Tell us about your business</h1>
-                        <p className="mt-2 text-gray-500">We'll customise your review request templates to match your industry.</p>
+                        <h1 className="text-2xl font-bold text-foreground">Tell us about your business</h1>
+                        <p className="mt-2 text-muted-foreground">We'll customise your review request templates to match your industry.</p>
                     </div>
 
-                    <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
+                    <div className="rounded-xl bg-card p-6 shadow-sm ring-1 ring-border">
                         {/* Business Name & Owner */}
                         <div className="mb-6 grid gap-4 sm:grid-cols-2">
                             <div className="space-y-2">
@@ -91,14 +91,14 @@ export default function BusinessType() {
                                         className={`rounded-xl border-2 p-4 text-left transition ${
                                             form.type === type.value
                                                 ? 'border-teal-600 bg-teal-50 shadow-sm'
-                                                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                                : 'border-border hover:border-border hover:bg-muted/50'
                                         }`}
                                     >
                                         <div className="mb-1 text-2xl">{type.emoji}</div>
-                                        <div className={`text-sm font-semibold ${form.type === type.value ? 'text-teal-700' : 'text-gray-800'}`}>
+                                        <div className={`text-sm font-semibold ${form.type === type.value ? 'text-teal-700' : 'text-foreground'}`}>
                                             {type.label}
                                         </div>
-                                        <div className="mt-0.5 text-xs text-gray-400">{type.description}</div>
+                                        <div className="mt-0.5 text-xs text-muted-foreground">{type.description}</div>
                                     </button>
                                 ))}
                             </div>

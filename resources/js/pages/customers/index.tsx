@@ -66,7 +66,7 @@ const statusConfig: Record<CustomerStatus, { label: string; className: string }>
     reviewed: { label: 'Reviewed', className: 'bg-green-100 text-green-700 hover:bg-green-100' },
     pending: { label: 'Pending', className: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-100' },
     no_response: { label: 'No Response', className: 'bg-red-100 text-red-700 hover:bg-red-100' },
-    no_request: { label: 'Not Sent', className: 'bg-gray-100 text-gray-600 hover:bg-gray-100' },
+    no_request: { label: 'Not Sent', className: 'bg-muted text-muted-foreground hover:bg-muted' },
 };
 
 function StatusBadge({ status }: { status: CustomerStatus }) {
@@ -140,8 +140,8 @@ export default function CustomersIndex({ customers }: Props) {
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Customers</h1>
-                        <p className="mt-1 text-sm text-gray-500">Manage your customer list and review requests</p>
+                        <h1 className="text-2xl font-bold text-foreground">Customers</h1>
+                        <p className="mt-1 text-sm text-muted-foreground">Manage your customer list and review requests</p>
                     </div>
                     <div className="flex items-center gap-2">
                         <a href={customersExport().url} download>
@@ -186,7 +186,7 @@ export default function CustomersIndex({ customers }: Props) {
                             <Button
                                 size="sm"
                                 variant="ghost"
-                                className="text-gray-500"
+                                className="text-muted-foreground"
                                 onClick={() => setSelected([])}
                             >
                                 Clear
@@ -199,13 +199,13 @@ export default function CustomersIndex({ customers }: Props) {
                     <CardContent className="p-0">
                         {customers.data.length === 0 ? (
                             <div className="flex flex-col items-center justify-center py-16 text-center">
-                                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                                    <svg className="h-8 w-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                                    <svg className="h-8 w-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="mb-1 text-base font-semibold text-gray-900">No customers yet</h3>
-                                <p className="mb-4 text-sm text-gray-500">Add your first customer to start sending review requests.</p>
+                                <h3 className="mb-1 text-base font-semibold text-foreground">No customers yet</h3>
+                                <p className="mb-4 text-sm text-muted-foreground">Add your first customer to start sending review requests.</p>
                                 <Button
                                     className="bg-teal-600 hover:bg-teal-700 text-white"
                                     onClick={() => setShowDialog(true)}
@@ -245,17 +245,17 @@ export default function CustomersIndex({ customers }: Props) {
                                                 />
                                             </TableCell>
                                             <TableCell className="font-medium">{customer.name}</TableCell>
-                                            <TableCell className="text-gray-500">{customer.email}</TableCell>
+                                            <TableCell className="text-muted-foreground">{customer.email}</TableCell>
                                             <TableCell>
                                                 <StatusBadge status={customer.status} />
                                             </TableCell>
-                                            <TableCell className="text-gray-500">
+                                            <TableCell className="text-muted-foreground">
                                                 {new Date(customer.created_at).toLocaleDateString()}
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 {deleteConfirm === customer.id ? (
                                                     <div className="flex items-center justify-end gap-2">
-                                                        <span className="text-sm text-gray-500">Are you sure?</span>
+                                                        <span className="text-sm text-muted-foreground">Are you sure?</span>
                                                         <Button
                                                             size="sm"
                                                             variant="destructive"

@@ -89,7 +89,7 @@ class OnboardingController extends Controller
     {
         $business = $request->user()->currentBusiness();
 
-        if (! $business || ! $business->google_place_id) {
+        if (! $business) {
             return redirect()->route('onboarding.connect-google');
         }
 

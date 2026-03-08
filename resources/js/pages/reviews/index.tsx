@@ -60,7 +60,7 @@ function StarRating({ rating }: { rating: number }) {
     return (
         <div className="flex items-center gap-0.5">
             {[1, 2, 3, 4, 5].map((star) => (
-                <svg key={star} className={`h-4 w-4 ${star <= rating ? 'text-yellow-400' : 'text-gray-200'}`} fill="currentColor" viewBox="0 0 20 20">
+                <svg key={star} className={`h-4 w-4 ${star <= rating ? 'text-yellow-400' : 'text-muted'}`} fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
             ))}
@@ -128,7 +128,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                 {/* Header */}
                 <div className="flex items-center gap-3">
                     <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Reviews</h1>
+                        <h1 className="text-2xl font-bold text-foreground">Reviews</h1>
                         {needsReply.total > 0 && (
                             <div className="mt-1 flex items-center gap-2">
                                 <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">
@@ -152,11 +152,11 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                 {/* Empty state */}
                 {isEmpty && (
                     <div className="flex flex-col items-center justify-center py-20 text-center">
-                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                            <MessageSquare className="h-8 w-8 text-gray-400" />
+                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                            <MessageSquare className="h-8 w-8 text-muted-foreground" />
                         </div>
-                        <h3 className="mb-1 text-base font-semibold text-gray-900">No reviews yet</h3>
-                        <p className="text-sm text-gray-500">
+                        <h3 className="mb-1 text-base font-semibold text-foreground">No reviews yet</h3>
+                        <p className="text-sm text-muted-foreground">
                             Reviews you receive will appear here. Connect Google Business Profile to start syncing.
                         </p>
                     </div>
@@ -167,7 +167,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                     <section className="space-y-4">
                         <div className="flex items-center gap-2">
                             <AlertCircle className="h-5 w-5 text-amber-500" />
-                            <h2 className="text-lg font-semibold text-gray-900">Needs Reply</h2>
+                            <h2 className="text-lg font-semibold text-foreground">Needs Reply</h2>
                             <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">{needsReply.total}</Badge>
                         </div>
 
@@ -176,14 +176,14 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                 const state = getReviewState(review.id);
                                 return (
                                     <Card key={review.id}>
-                                        <CardHeader className="border-b bg-gray-50">
+                                        <CardHeader className="border-b bg-muted">
                                             <div className="flex items-center gap-3">
                                                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-600 text-sm font-bold text-white">
                                                     {review.reviewer_name.charAt(0).toUpperCase()}
                                                 </div>
                                                 <div>
-                                                    <div className="font-semibold text-gray-900">{review.reviewer_name}</div>
-                                                    <div className="text-xs text-gray-500">
+                                                    <div className="font-semibold text-foreground">{review.reviewer_name}</div>
+                                                    <div className="text-xs text-muted-foreground">
                                                         {review.reviewed_at
                                                             ? new Date(review.reviewed_at).toLocaleDateString('en-AU', {
                                                                 day: 'numeric',
@@ -203,11 +203,11 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                         <CardContent className="space-y-4 pt-5">
                                             <StarRating rating={review.rating} />
                                             {review.body ? (
-                                                <blockquote className="border-l-4 border-teal-200 pl-4 text-gray-700 italic leading-relaxed">
+                                                <blockquote className="border-l-4 border-teal-200 pl-4 text-foreground italic leading-relaxed">
                                                     "{review.body}"
                                                 </blockquote>
                                             ) : (
-                                                <p className="text-sm text-gray-400 italic">No written review</p>
+                                                <p className="text-sm text-muted-foreground italic">No written review</p>
                                             )}
 
                                             {/* Suggestions area */}
@@ -221,7 +221,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                                 </Button>
                                             ) : (
                                                 <div className="space-y-3">
-                                                    <p className="text-sm font-medium text-gray-700">Choose a reply suggestion</p>
+                                                    <p className="text-sm font-medium text-foreground">Choose a reply suggestion</p>
                                                     {state.suggestions.map((suggestion, index) => (
                                                         <button
                                                             key={index}
@@ -230,7 +230,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                                             className={`w-full rounded-lg border-2 p-4 text-left text-sm leading-relaxed transition ${
                                                                 state.selected === index
                                                                     ? 'border-teal-600 bg-teal-50 text-teal-900'
-                                                                    : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                                                                    : 'border-border text-foreground hover:border-border'
                                                             }`}
                                                         >
                                                             <div className="mb-1 flex items-center gap-2">
@@ -238,7 +238,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                                                     className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
                                                                         state.selected === index
                                                                             ? 'border-teal-600 bg-teal-600'
-                                                                            : 'border-gray-300'
+                                                                            : 'border-border'
                                                                     }`}
                                                                 >
                                                                     {state.selected === index && (
@@ -247,7 +247,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                                                         </svg>
                                                                     )}
                                                                 </div>
-                                                                <span className="text-xs font-semibold text-gray-400">
+                                                                <span className="text-xs font-semibold text-muted-foreground">
                                                                     Option {index + 1}
                                                                 </span>
                                                             </div>
@@ -313,7 +313,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                     <section className="space-y-4">
                         <div className="flex items-center gap-2">
                             <CheckCircle className="h-5 w-5 text-teal-600" />
-                            <h2 className="text-lg font-semibold text-gray-900">Replied</h2>
+                            <h2 className="text-lg font-semibold text-foreground">Replied</h2>
                             <Badge className="bg-teal-100 text-teal-700 hover:bg-teal-100">{replied.total}</Badge>
                         </div>
 
@@ -347,11 +347,11 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                     <CardContent className="space-y-3 pt-5">
                                         <StarRating rating={review.rating} />
                                         {review.body ? (
-                                            <blockquote className="border-l-4 border-gray-200 pl-4 text-gray-700 italic leading-relaxed">
+                                            <blockquote className="border-l-4 border-border pl-4 text-foreground italic leading-relaxed">
                                                 "{review.body}"
                                             </blockquote>
                                         ) : (
-                                            <p className="text-sm text-gray-400 italic">No written review</p>
+                                            <p className="text-sm text-muted-foreground italic">No written review</p>
                                         )}
 
                                         {/* Collapsible reply */}
@@ -416,9 +416,9 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                 {allReviews.total > 0 && (
                     <section className="space-y-4">
                         <div className="flex items-center gap-2">
-                            <MessageSquare className="h-5 w-5 text-gray-500" />
-                            <h2 className="text-lg font-semibold text-gray-900">All Reviews</h2>
-                            <Badge className="bg-gray-100 text-gray-600 hover:bg-gray-100">{allReviews.total}</Badge>
+                            <MessageSquare className="h-5 w-5 text-muted-foreground" />
+                            <h2 className="text-lg font-semibold text-foreground">All Reviews</h2>
+                            <Badge className="bg-muted text-muted-foreground hover:bg-muted">{allReviews.total}</Badge>
                         </div>
 
                         <div className="space-y-4">
@@ -451,11 +451,11 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                     <CardContent className="space-y-3 pt-5">
                                         <StarRating rating={review.rating} />
                                         {review.body ? (
-                                            <blockquote className="border-l-4 border-gray-200 pl-4 text-gray-700 italic leading-relaxed">
+                                            <blockquote className="border-l-4 border-border pl-4 text-foreground italic leading-relaxed">
                                                 "{review.body}"
                                             </blockquote>
                                         ) : (
-                                            <p className="text-sm text-gray-400 italic">No written review</p>
+                                            <p className="text-sm text-muted-foreground italic">No written review</p>
                                         )}
                                     </CardContent>
                                 </Card>

@@ -59,7 +59,7 @@ export default function SelectTemplate({ business, defaultTemplates }: Props) {
     return (
         <>
             <Head title="Select Template - Setup" />
-            <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+            <div className="flex min-h-screen items-center justify-center bg-background p-4">
                 <div className="w-full max-w-xl">
                     {/* Header */}
                     <div className="mb-8 text-center">
@@ -71,21 +71,21 @@ export default function SelectTemplate({ business, defaultTemplates }: Props) {
                             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-teal-600 text-sm font-bold text-white">3</div>
                         </div>
                         <p className="mb-1 text-sm font-medium text-teal-600">Step 3 of 3</p>
-                        <h1 className="text-2xl font-bold text-gray-900">Your template is ready</h1>
-                        <p className="mt-2 text-gray-500">
+                        <h1 className="text-2xl font-bold text-foreground">Your template is ready</h1>
+                        <p className="mt-2 text-muted-foreground">
                             We've created a personalised email template for your{' '}
                             <strong>{typeLabels[business.type] ?? business.type}</strong> business.
                             You can customise it at any time.
                         </p>
                     </div>
 
-                    <div className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
+                    <div className="rounded-xl bg-card p-6 shadow-sm ring-1 ring-border">
                         {/* Email Preview */}
                         {requestTemplate ? (
                             <div className="mb-6">
-                                <h2 className="mb-3 text-sm font-semibold text-gray-700">Review Request Email Preview</h2>
-                                <Card className="overflow-hidden border-gray-100">
-                                    <CardHeader className="border-b bg-gray-50 py-3">
+                                <h2 className="mb-3 text-sm font-semibold text-foreground">Review Request Email Preview</h2>
+                                <Card className="overflow-hidden border-border">
+                                    <CardHeader className="border-b bg-muted py-3">
                                         <div className="flex items-center gap-2">
                                             <div className="flex gap-1">
                                                 <div className="h-3 w-3 rounded-full bg-red-400" />
@@ -95,12 +95,12 @@ export default function SelectTemplate({ business, defaultTemplates }: Props) {
                                         </div>
                                         <div className="mt-2 space-y-1 text-sm">
                                             <div>
-                                                <span className="text-gray-400">From: </span>
-                                                <span className="font-medium text-gray-700">{business.name}</span>
+                                                <span className="text-muted-foreground">From: </span>
+                                                <span className="font-medium text-foreground">{business.name}</span>
                                             </div>
                                             <div>
-                                                <span className="text-gray-400">Subject: </span>
-                                                <span className="font-medium text-gray-700"
+                                                <span className="text-muted-foreground">Subject: </span>
+                                                <span className="font-medium text-foreground"
                                                     dangerouslySetInnerHTML={{
                                                         __html: renderPreview(requestTemplate.subject, business.name),
                                                     }}
@@ -110,7 +110,7 @@ export default function SelectTemplate({ business, defaultTemplates }: Props) {
                                     </CardHeader>
                                     <CardContent className="p-5">
                                         <div
-                                            className="text-sm leading-relaxed text-gray-700"
+                                            className="text-sm leading-relaxed text-foreground"
                                             dangerouslySetInnerHTML={{
                                                 __html: renderPreview(requestTemplate.body, business.name),
                                             }}
@@ -119,7 +119,7 @@ export default function SelectTemplate({ business, defaultTemplates }: Props) {
                                 </Card>
                             </div>
                         ) : (
-                            <div className="mb-6 rounded-lg bg-gray-50 p-4 text-center text-sm text-gray-500">
+                            <div className="mb-6 rounded-lg bg-muted p-4 text-center text-sm text-muted-foreground">
                                 Template preview not available. You can customise your templates after setup.
                             </div>
                         )}
@@ -132,7 +132,7 @@ export default function SelectTemplate({ business, defaultTemplates }: Props) {
                             >
                                 {processing ? 'Setting up...' : 'Looks great — finish setup'}
                             </Button>
-                            <p className="text-center text-xs text-gray-400">
+                            <p className="text-center text-xs text-muted-foreground">
                                 You can customise your templates anytime from the Templates page.
                             </p>
                         </div>

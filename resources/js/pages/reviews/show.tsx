@@ -44,7 +44,7 @@ function StarRating({ rating, size = 'md' }: { rating: number; size?: 'sm' | 'md
             {[1, 2, 3, 4, 5].map((star) => (
                 <svg
                     key={star}
-                    className={`${sizeClass} ${star <= rating ? 'text-yellow-400' : 'text-gray-200'}`}
+                    className={`${sizeClass} ${star <= rating ? 'text-yellow-400' : 'text-muted'}`}
                     fill="currentColor"
                     viewBox="0 0 20 20"
                 >
@@ -129,13 +129,13 @@ export default function ReviewShow({ review, replyTemplates }: Props) {
             <Head title={`Review from ${review.reviewer_name}`} />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Review Details</h1>
+                    <h1 className="text-2xl font-bold text-foreground">Review Details</h1>
                 </div>
 
                 <div className="grid gap-6 lg:grid-cols-2">
                     {/* Review Card */}
                     <Card>
-                        <CardHeader className="border-b bg-gray-50">
+                        <CardHeader className="border-b bg-muted">
                             <div className="flex items-start justify-between">
                                 <div>
                                     <div className="flex items-center gap-2">
@@ -143,8 +143,8 @@ export default function ReviewShow({ review, replyTemplates }: Props) {
                                             {review.reviewer_name.charAt(0).toUpperCase()}
                                         </div>
                                         <div>
-                                            <div className="font-semibold text-gray-900">{review.reviewer_name}</div>
-                                            <div className="text-xs text-gray-500">
+                                            <div className="font-semibold text-foreground">{review.reviewer_name}</div>
+                                            <div className="text-xs text-muted-foreground">
                                                 {review.reviewed_at
                                                     ? new Date(review.reviewed_at).toLocaleDateString('en-AU', {
                                                         day: 'numeric',
@@ -166,16 +166,16 @@ export default function ReviewShow({ review, replyTemplates }: Props) {
                         <CardContent className="pt-5">
                             <div className="mb-4 flex items-center gap-3">
                                 <StarRating rating={review.rating} size="lg" />
-                                <span className="text-sm font-medium text-gray-600">
+                                <span className="text-sm font-medium text-muted-foreground">
                                     {ratingLabels[review.rating] ?? `${review.rating} stars`}
                                 </span>
                             </div>
                             {review.body ? (
-                                <blockquote className="border-l-4 border-teal-200 pl-4 text-gray-700 italic leading-relaxed">
+                                <blockquote className="border-l-4 border-teal-200 pl-4 text-foreground italic leading-relaxed">
                                     "{review.body}"
                                 </blockquote>
                             ) : (
-                                <p className="text-sm text-gray-400 italic">No written review</p>
+                                <p className="text-sm text-muted-foreground italic">No written review</p>
                             )}
                         </CardContent>
                     </Card>
@@ -187,13 +187,13 @@ export default function ReviewShow({ review, replyTemplates }: Props) {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             {suggestions.length === 0 ? (
-                                <div className="rounded-lg border border-dashed border-gray-200 p-6 text-center">
+                                <div className="rounded-lg border border-dashed border-border p-6 text-center">
                                     <div className="mb-3 flex justify-center">
-                                        <svg className="h-10 w-10 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg className="h-10 w-10 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
                                         </svg>
                                     </div>
-                                    <p className="mb-4 text-sm text-gray-500">Generate AI reply suggestions tailored to this review.</p>
+                                    <p className="mb-4 text-sm text-muted-foreground">Generate AI reply suggestions tailored to this review.</p>
                                     <Button
                                         className="bg-teal-600 hover:bg-teal-700 text-white"
                                         onClick={handleGetSuggestions}
@@ -213,18 +213,18 @@ export default function ReviewShow({ review, replyTemplates }: Props) {
                                             className={`w-full rounded-lg border-2 p-4 text-left text-sm leading-relaxed transition ${
                                                 selectedSuggestion === index
                                                     ? 'border-teal-600 bg-teal-50 text-teal-900'
-                                                    : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                                                    : 'border-border text-foreground hover:border-border'
                                             }`}
                                         >
                                             <div className="mb-1 flex items-center gap-2">
-                                                <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${selectedSuggestion === index ? 'border-teal-600 bg-teal-600' : 'border-gray-300'}`}>
+                                                <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${selectedSuggestion === index ? 'border-teal-600 bg-teal-600' : 'border-border'}`}>
                                                     {selectedSuggestion === index && (
                                                         <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 12 12">
                                                             <path d="M3.707 5.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 00-1.414-1.414L5 6.586 3.707 5.293z" />
                                                         </svg>
                                                     )}
                                                 </div>
-                                                <span className="text-xs font-semibold text-gray-400">Option {index + 1}</span>
+                                                <span className="text-xs font-semibold text-muted-foreground">Option {index + 1}</span>
                                             </div>
                                             {suggestion}
                                         </button>
@@ -307,7 +307,7 @@ export default function ReviewShow({ review, replyTemplates }: Props) {
                             )}
 
                             {!review.has_google_link && (
-                                <p className="text-xs text-gray-400">
+                                <p className="text-xs text-muted-foreground">
                                     Tip: Connect Google Business Profile in Settings to post replies directly from ReviewMate.
                                 </p>
                             )}
