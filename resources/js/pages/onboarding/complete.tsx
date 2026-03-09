@@ -1,4 +1,6 @@
 import { Head, router } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 
 interface Props {
@@ -8,7 +10,31 @@ interface Props {
     };
 }
 
+const steps = [
+    {
+        emoji: '👥',
+        title: 'Add your happy customers',
+        description: 'Add a few customers you know were happy — takes 2 minutes. Or import your whole list at once.',
+    },
+    {
+        emoji: '✉️',
+        title: 'We send the request — you focus on the job',
+        description: 'ReviewMate sends a friendly, personalised email asking for a review. No chasing, no awkward conversations.',
+    },
+    {
+        emoji: '⭐',
+        title: 'Reviews land on Google while you sleep',
+        description: 'Most businesses get their first new review within 48 hours. We\'ll notify you the moment it arrives.',
+    },
+];
+
 export default function OnboardingComplete({ business }: Props) {
+    const [bouncing, setBouncing] = useState(true);
+    useEffect(() => {
+        const t = setTimeout(() => setBouncing(false), 2000);
+        return () => clearTimeout(t);
+    }, []);
+
     return (
         <>
             <Head title="You're all set! - ReviewMate" />
@@ -16,7 +42,7 @@ export default function OnboardingComplete({ business }: Props) {
                 <div className="w-full max-w-lg">
                     {/* Celebration header */}
                     <div className="mb-8 text-center">
-                        <div className="mb-4 text-5xl">🎉</div>
+                        <div className={`mb-4 text-5xl ${bouncing ? 'animate-bounce' : ''}`}>🎉</div>
                         <h1 className="text-3xl font-bold text-foreground">You're all set!</h1>
                         <p className="mt-2 text-lg text-muted-foreground">
                             {business.name} is ready to collect Google reviews automatically.
@@ -29,39 +55,23 @@ export default function OnboardingComplete({ business }: Props) {
                             Here's how it works
                         </h2>
                         <div className="space-y-5">
-                            <div className="flex gap-4">
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-100 text-lg">
-                                    👥
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-foreground">Add your happy customers</p>
-                                    <p className="mt-0.5 text-sm text-muted-foreground">
-                                        Add a few customers you know were happy — takes 2 minutes. Or import your whole list at once.
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-100 text-lg">
-                                    ✉️
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-foreground">We send the request — you focus on the job</p>
-                                    <p className="mt-0.5 text-sm text-muted-foreground">
-                                        ReviewMate sends a friendly, personalised email asking for a review. No chasing, no awkward conversations.
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="flex gap-4">
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-100 text-lg">
-                                    ⭐
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-foreground">Reviews land on Google while you sleep</p>
-                                    <p className="mt-0.5 text-sm text-muted-foreground">
-                                        Most businesses get their first new review within 48 hours. We'll notify you the moment it arrives.
-                                    </p>
-                                </div>
-                            </div>
+                            {steps.map((step, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, y: 12 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2 + i * 0.1, duration: 0.35 }}
+                                    className="flex gap-4"
+                                >
+                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-100 text-lg">
+                                        {step.emoji}
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold text-foreground">{step.title}</p>
+                                        <p className="mt-0.5 text-sm text-muted-foreground">{step.description}</p>
+                                    </div>
+                                </motion.div>
+                            ))}
                         </div>
                     </div>
 
