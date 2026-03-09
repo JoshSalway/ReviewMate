@@ -1,5 +1,7 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -53,13 +55,20 @@ export default function QuickSend({ recentlySent }: Props) {
     const [processing, setProcessing] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
 
+    const [checkBouncing, setCheckBouncing] = useState(false);
+
     useEffect(() => {
         if (flash?.success) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setShowSuccess(true);
+            setCheckBouncing(true);
             setForm({ name: '', email: '', channel: 'email' });
-            const timer = setTimeout(() => setShowSuccess(false), 4000);
-            return () => clearTimeout(timer);
+            const bounceTimer = setTimeout(() => setCheckBouncing(false), 1000);
+            const timer = setTimeout(() => setShowSuccess(false), 6000);
+            return () => {
+                clearTimeout(timer);
+                clearTimeout(bounceTimer);
+            };
         }
     }, [flash]);
 
@@ -84,15 +93,21 @@ export default function QuickSend({ recentlySent }: Props) {
                     <p className="mt-1 text-sm text-muted-foreground">Send a review request to a customer instantly</p>
                 </div>
 
-                {showSuccess && (
-                    <div className="flex items-center gap-3 rounded-lg border border-teal-200 bg-teal-50 p-4">
-                        <svg className="h-5 w-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        <span className="text-sm font-medium text-teal-700">Review request sent successfully!</span>
-                        <Link href="/requests" className="ml-2 underline text-sm font-medium text-teal-700">View in Requests →</Link>
-                    </div>
-                )}
+                <AnimatePresence>
+                    {showSuccess && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.3 }}
+                            className="flex items-center gap-3 rounded-lg border border-teal-200 bg-teal-50 p-4"
+                        >
+                            <CheckCircle2 className={`h-5 w-5 text-teal-600 shrink-0 ${checkBouncing ? 'animate-bounce' : ''}`} />
+                            <span className="text-sm font-medium text-teal-700">Review request sent successfully!</span>
+                            <Link href="/requests" className="ml-2 underline text-sm font-medium text-teal-700">View in Requests →</Link>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 <div className="grid gap-6 lg:grid-cols-2">
                     {/* Send Form */}
@@ -153,7 +168,15 @@ export default function QuickSend({ recentlySent }: Props) {
                                 onClick={handleSend}
                                 disabled={processing || !form.name || !form.email}
                             >
-                                {processing ? 'Sending...' : 'Send Review Request'}
+                                {processing ? (
+                                    <span className="flex items-center gap-2">
+                                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 22 6.477 22 12h-4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                                        </svg>
+                                        Sending...
+                                    </span>
+                                ) : 'Send Review Request'}
                             </Button>
                         </CardContent>
                     </Card>

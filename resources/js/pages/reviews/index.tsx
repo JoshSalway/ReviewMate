@@ -1,6 +1,7 @@
 import { Head, router } from '@inertiajs/react';
 import { MessageSquare, CheckCircle, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -236,8 +237,13 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                                 <div className="space-y-3">
                                                     <p className="text-sm font-medium text-foreground">Choose a reply suggestion</p>
                                                     {state.suggestions.map((suggestion, index) => (
-                                                        <button
+                                                        <motion.div
                                                             key={index}
+                                                            initial={{ opacity: 0, x: -8 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            transition={{ delay: index * 0.08, duration: 0.25 }}
+                                                        >
+                                                        <button
                                                             type="button"
                                                             onClick={() => handleSelectSuggestion(review.id, index, state.suggestions)}
                                                             className={`w-full rounded-lg border-2 p-4 text-left text-sm leading-relaxed transition ${
@@ -266,6 +272,7 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                                                             </div>
                                                             {suggestion}
                                                         </button>
+                                                        </motion.div>
                                                     ))}
                                                     <Button
                                                         variant="ghost"
@@ -434,11 +441,19 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                             <Badge className="bg-muted text-muted-foreground hover:bg-muted">{allReviews.total}</Badge>
                         </div>
 
-                        {allReviews.total === 1 && (
-                            <div className="mb-4 rounded-lg bg-teal-50 border border-teal-200 px-4 py-3">
-                                <p className="text-sm font-medium text-teal-800">🎉 Your first review via ReviewMate — nice work! Reply to it below to show customers you care.</p>
-                            </div>
-                        )}
+                        <AnimatePresence>
+                            {allReviews.total === 1 && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                                    className="mb-4 rounded-lg bg-teal-50 border border-teal-200 px-4 py-3"
+                                >
+                                    <p className="text-sm font-medium text-teal-800">🎉 Your first review via ReviewMate — nice work! Reply to it below to show customers you care.</p>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
                         <div className="space-y-4">
                             {allReviews.data.map((review) => (

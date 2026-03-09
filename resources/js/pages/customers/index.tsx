@@ -72,7 +72,7 @@ const statusConfig: Record<CustomerStatus, { label: string; className: string }>
     reviewed: { label: 'Reviewed', className: 'bg-green-100 text-green-700 hover:bg-green-100' },
     pending: { label: 'Pending', className: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-100' },
     no_response: { label: 'No Response', className: 'bg-red-100 text-red-700 hover:bg-red-100' },
-    no_request: { label: 'Ready to request', className: 'bg-muted text-muted-foreground hover:bg-muted' },
+    no_request: { label: 'Ready to request', className: 'bg-muted text-muted-foreground hover:bg-muted animate-pulse' },
 };
 
 function StatusBadge({ status }: { status: CustomerStatus }) {
@@ -387,7 +387,15 @@ export default function CustomersIndex({ customers }: Props) {
                                 onClick={handleBulkSend}
                                 disabled={bulkSending}
                             >
-                                {bulkSending ? 'Sending...' : 'Send Review Request'}
+                                {bulkSending ? (
+                                    <span className="flex items-center gap-2">
+                                        <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 22 6.477 22 12h-4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                                        </svg>
+                                        Sending...
+                                    </span>
+                                ) : 'Send Review Request'}
                             </Button>
                             <Button
                                 size="sm"
@@ -442,7 +450,7 @@ export default function CustomersIndex({ customers }: Props) {
                                     {customers.data.map((customer) => (
                                         <TableRow
                                             key={customer.id}
-                                            className={selected.includes(customer.id) ? 'bg-teal-50/50' : ''}
+                                            className={`transition-colors duration-150 cursor-default ${selected.includes(customer.id) ? 'bg-teal-50/50' : 'hover:bg-muted/50'}`}
                                         >
                                             <TableCell>
                                                 <Checkbox
@@ -483,19 +491,26 @@ export default function CustomersIndex({ customers }: Props) {
                                                         {customer.status === 'no_request' && (
                                                             <Button
                                                                 size="sm"
-                                                                className="bg-teal-600 hover:bg-teal-700 text-white"
+                                                                className="bg-teal-600 hover:bg-teal-700 text-white group"
                                                                 onClick={() => router.visit(`/quick-send?name=${encodeURIComponent(customer.name)}&email=${encodeURIComponent(customer.email)}`)}
                                                             >
-                                                                Send request
+                                                                <span className="flex items-center gap-1">
+                                                                    Send request
+                                                                    <span className="translate-x-0 group-hover:translate-x-0.5 transition-transform duration-150">→</span>
+                                                                </span>
                                                             </Button>
                                                         )}
                                                         {customer.status === 'no_response' && (
                                                             <Button
                                                                 size="sm"
                                                                 variant="outline"
+                                                                className="group"
                                                                 onClick={() => router.visit(`/quick-send?name=${encodeURIComponent(customer.name)}&email=${encodeURIComponent(customer.email)}`)}
                                                             >
-                                                                Re-send
+                                                                <span className="flex items-center gap-1">
+                                                                    Re-send
+                                                                    <span className="translate-x-0 group-hover:translate-x-0.5 transition-transform duration-150">→</span>
+                                                                </span>
                                                             </Button>
                                                         )}
                                                         <Button

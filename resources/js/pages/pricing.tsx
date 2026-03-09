@@ -142,7 +142,7 @@ export default function Pricing() {
                             >
                                 {plan.highlighted && (
                                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                                        <span className="rounded-full bg-teal-500 px-3 py-1 text-xs font-bold text-white shadow">Most popular</span>
+                                        <span className="animate-pulse rounded-full bg-teal-500 px-3 py-1 text-xs font-bold text-white shadow">Most popular</span>
                                     </div>
                                 )}
                                 <p className={`mb-1 text-xs font-semibold uppercase tracking-widest ${plan.highlighted ? 'text-teal-600' : 'text-muted-foreground'}`}>
@@ -155,9 +155,9 @@ export default function Pricing() {
                                 <p className="mb-5 text-sm text-muted-foreground">{plan.description}</p>
                                 <Link
                                     href="/login"
-                                    className={`mb-6 block w-full rounded-xl py-2.5 text-center text-sm font-semibold transition-colors ${plan.highlighted
-                                        ? 'bg-teal-600 text-white hover:bg-teal-700'
-                                        : 'border border-border text-foreground hover:border-border hover:bg-muted/50'
+                                    className={`mb-6 block w-full rounded-xl py-2.5 text-center text-sm font-semibold transition-all duration-200 ${plan.highlighted
+                                        ? 'relative overflow-hidden bg-teal-600 text-white hover:bg-teal-700 hover:shadow-lg hover:-translate-y-0.5 before:absolute before:inset-0 before:bg-white/10 before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-500 before:skew-x-12'
+                                        : 'border border-border text-foreground hover:border-border hover:bg-muted/50 hover:shadow-lg hover:-translate-y-0.5'
                                     }`}
                                 >
                                     {plan.cta}
@@ -195,7 +195,7 @@ export default function Pricing() {
                     <p className="text-muted-foreground mb-4">Ready to get more reviews on autopilot?</p>
                     <Link
                         href="/login"
-                        className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 transition-colors"
+                        className="inline-flex items-center gap-2 rounded-xl bg-teal-600 px-8 py-3.5 text-sm font-semibold text-white shadow-md hover:bg-teal-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
                     >
                         Start free — no credit card needed
                     </Link>

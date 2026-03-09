@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -58,6 +58,27 @@ interface Props {
     googleReviewCount: number | null;
     googleStatsUpdatedAt: string | null;
     unverifiedClaims: UnverifiedClaim[];
+}
+
+function AnimatedNumber({ value }: { value: number }) {
+    const [display, setDisplay] = useState(0);
+    useEffect(() => {
+        if (value === 0) return;
+        let start = 0;
+        const duration = 800;
+        const step = value / (duration / 16);
+        const timer = setInterval(() => {
+            start += step;
+            if (start >= value) {
+                setDisplay(value);
+                clearInterval(timer);
+            } else {
+                setDisplay(Math.floor(start));
+            }
+        }, 16);
+        return () => clearInterval(timer);
+    }, [value]);
+    return <>{display}</>;
 }
 
 function StarRating({ rating }: { rating: number }) {
@@ -320,18 +341,18 @@ export default function Dashboard({ business, stats, requestStats, recentReviews
                             <CardContent className="py-4">
                                 <div className="grid grid-cols-3 divide-x">
                                     <div className="px-4 text-center first:pl-0 last:pr-0">
-                                        <div className="text-2xl font-bold text-foreground">{requestStats.sent}</div>
+                                        <div className="text-2xl font-bold text-foreground"><AnimatedNumber value={requestStats.sent} /></div>
                                         <div className="text-sm text-muted-foreground">Sent</div>
                                     </div>
                                     <div className="px-4 text-center">
-                                        <div className="text-2xl font-bold text-blue-600">{requestStats.opened}</div>
+                                        <div className="text-2xl font-bold text-blue-600"><AnimatedNumber value={requestStats.opened} /></div>
                                         <div className="text-sm text-muted-foreground">Opened</div>
                                         {requestStats.sent > 0 && (
                                             <div className="text-xs text-muted-foreground">{Math.round((requestStats.opened / requestStats.sent) * 100) || 0}% of sent</div>
                                         )}
                                     </div>
                                     <div className="px-4 text-center">
-                                        <div className="text-2xl font-bold text-teal-600">{requestStats.reviewed}</div>
+                                        <div className="text-2xl font-bold text-teal-600"><AnimatedNumber value={requestStats.reviewed} /></div>
                                         <div className="text-sm text-muted-foreground">Reviewed</div>
                                         {requestStats.sent > 0 && (
                                             <div className="text-xs text-muted-foreground">{Math.round((requestStats.reviewed / requestStats.sent) * 100) || 0}% of sent</div>
