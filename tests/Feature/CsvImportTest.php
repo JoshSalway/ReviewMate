@@ -3,7 +3,6 @@
 use App\Models\Business;
 use App\Models\Customer;
 use App\Models\User;
-use Illuminate\Http\UploadedFile;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
@@ -11,20 +10,13 @@ beforeEach(function () {
     $this->actingAs($this->user);
 });
 
-function makeCsvFile(string $content): UploadedFile
-{
-    $path = tempnam(sys_get_temp_dir(), 'csv').'.csv';
-    file_put_contents($path, $content);
-
-    return new UploadedFile($path, 'customers.csv', 'text/csv', null, true);
-}
-
 test('users can import customers from csv', function () {
-    $csv = "name,email,phone\nJohn Smith,john@example.com,0400111222\nJane Doe,jane@example.com,0400333444";
-    $file = makeCsvFile($csv);
-
-    $this->post('/customers/import', ['file' => $file])
-        ->assertRedirect();
+    $this->post('/customers/import', [
+        'customers' => [
+            ['name' => 'John Smith', 'email' => 'john@example.com', 'phone' => '0400111222'],
+            ['name' => 'Jane Doe', 'email' => 'jane@example.com', 'phone' => '0400333444'],
+        ],
+    ])->assertRedirect();
 
     expect($this->business->customers()->count())->toBe(2);
     $this->assertDatabaseHas('customers', [
@@ -34,12 +26,13 @@ test('users can import customers from csv', function () {
     ]);
 });
 
-test('csv import skips rows without a name', function () {
-    $csv = "name,email\n,john@example.com\nJane Doe,jane@example.com";
-    $file = makeCsvFile($csv);
-
-    $this->post('/customers/import', ['file' => $file])
-        ->assertRedirect();
+test('csv import skips rows without a name or email', function () {
+    $this->post('/customers/import', [
+        'customers' => [
+            ['name' => '', 'email' => ''],
+            ['name' => 'Jane Doe', 'email' => 'jane@example.com'],
+        ],
+    ])->assertRedirect();
 
     expect($this->business->customers()->count())->toBe(1);
 });
@@ -51,23 +44,28 @@ test('csv import does not create duplicates for existing email', function () {
         'email' => 'john@example.com',
     ]);
 
-    $csv = "name,email\nJohn Smith,john@example.com";
-    $file = makeCsvFile($csv);
-
-    $this->post('/customers/import', ['file' => $file])
-        ->assertRedirect();
+    $this->post('/customers/import', [
+        'customers' => [
+            ['name' => 'John Smith', 'email' => 'john@example.com'],
+        ],
+    ])->assertRedirect();
 
     expect($this->business->customers()->count())->toBe(1);
 });
 
-test('csv import requires a file', function () {
+test('csv import requires customers array', function () {
     $this->post('/customers/import', [])
-        ->assertSessionHasErrors('file');
+        ->assertSessionHasErrors('customers');
 });
 
-test('csv import only accepts csv files', function () {
-    $file = UploadedFile::fake()->create('data.pdf', 100, 'application/pdf');
+test('csv import rejects empty customers array', function () {
+    $this->post('/customers/import', ['customers' => []])
+        ->assertSessionHasErrors('customers');
+});
 
-    $this->post('/customers/import', ['file' => $file])
-        ->assertSessionHasErrors('file');
+test('csv import rejects more than 500 customers', function () {
+    $customers = array_fill(0, 501, ['name' => 'Test', 'email' => 'test@example.com']);
+
+    $this->post('/customers/import', ['customers' => $customers])
+        ->assertSessionHasErrors('customers');
 });

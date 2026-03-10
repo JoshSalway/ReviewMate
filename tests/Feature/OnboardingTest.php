@@ -71,7 +71,7 @@ test('select-template step completes onboarding', function () {
     ]);
 
     $this->post('/onboarding/select-template')
-        ->assertRedirect('/dashboard');
+        ->assertRedirect('/onboarding/complete');
 
     expect($business->fresh()->isOnboardingComplete())->toBeTrue();
 });
@@ -189,6 +189,6 @@ test('onboarding creates default email templates', function () {
     ]);
     $this->assertDatabaseHas('email_templates', [
         'business_id' => $business->id,
-        'type' => 'followup',
+        'type' => 'follow_up',
     ]);
 });
