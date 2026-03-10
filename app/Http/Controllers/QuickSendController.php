@@ -36,6 +36,10 @@ class QuickSendController extends Controller
                 'name' => $business->name,
             ],
             'recentlySent' => $recentlySent,
+            'prefill' => [
+                'name' => $request->query('name', ''),
+                'email' => $request->query('email', ''),
+            ],
         ]);
     }
 
