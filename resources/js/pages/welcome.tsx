@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { useState } from 'react';
+import { SeoHead } from '@/components/seo-head';
 
 function StarIcon() {
     return (
@@ -190,7 +191,21 @@ interface Props {
 export default function Welcome({ count }: Props) {
     return (
         <>
-            <Head title="ReviewMate — More 5-star Google reviews, automatically" />
+            <SeoHead
+                title="ReviewMate — More 5-star Google reviews, automatically"
+                description="ReviewMate automatically asks your customers for Google reviews after every job. Set it up in 2 minutes, get 5-star reviews on autopilot. Free to start."
+            />
+            <Head>
+                <script type="application/ld+json">{JSON.stringify({
+                    '@context': 'https://schema.org',
+                    '@type': 'SoftwareApplication',
+                    name: 'ReviewMate',
+                    description: 'Automatically collect Google reviews from your customers. Set it up once, get reviews on autopilot.',
+                    applicationCategory: 'BusinessApplication',
+                    operatingSystem: 'Web',
+                    offers: { '@type': 'Offer', price: '0', priceCurrency: 'AUD' },
+                })}</script>
+            </Head>
 
             <div className="min-h-screen bg-background text-foreground antialiased">
 

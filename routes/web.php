@@ -37,6 +37,25 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
+Route::get('/robots.txt', function () {
+    $content = "User-agent: *\nAllow: /\n\nSitemap: " . url('/sitemap.xml');
+    if (app()->environment('staging', 'local')) {
+        $content = "User-agent: *\nDisallow: /\n";
+    }
+    return response($content, 200, ['Content-Type' => 'text/plain']);
+});
+
+Route::get('/sitemap.xml', function () {
+    $urls = collect([
+        ['loc' => url('/'), 'priority' => '1.0', 'changefreq' => 'weekly'],
+        ['loc' => url('/pricing'), 'priority' => '0.8', 'changefreq' => 'monthly'],
+        ['loc' => url('/features'), 'priority' => '0.7', 'changefreq' => 'monthly'],
+        ['loc' => url('/terms'), 'priority' => '0.3'],
+        ['loc' => url('/privacy'), 'priority' => '0.3'],
+    ]);
+    return response()->view('sitemap', ['urls' => $urls], 200, ['Content-Type' => 'application/xml']);
+});
+
 Route::get('/', [WaitlistController::class, 'index'])->name('home');
 Route::get('/waitlist', [WaitlistController::class, 'waitlistPage'])->name('waitlist');
 Route::post('/waitlist', [WaitlistController::class, 'store'])->middleware('throttle:10,1')->name('waitlist.store');

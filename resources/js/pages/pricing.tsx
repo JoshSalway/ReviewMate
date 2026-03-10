@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { SeoHead } from '@/components/seo-head';
 
 function CheckIcon() {
     return (
@@ -94,7 +95,10 @@ const faqs = [
 export default function Pricing() {
     return (
         <>
-            <Head title="Pricing — ReviewMate" />
+            <SeoHead
+                title="Pricing — ReviewMate"
+                description="Start free, upgrade when you're ready. ReviewMate's Starter plan is $49/month — less than the value of one new 5-star review. No contracts, cancel anytime."
+            />
 
             <div className="min-h-screen bg-background text-foreground antialiased">
 
