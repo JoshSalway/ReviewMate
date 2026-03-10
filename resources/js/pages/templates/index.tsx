@@ -203,7 +203,7 @@ export default function TemplatesIndex({ business, templates }: Props) {
             <Head title="Templates" />
             <div className="flex h-full flex-1 flex-col gap-6 p-4 md:p-6">
                 <div>
-                    <h1 className="text-2xl font-bold text-foreground">Email Templates</h1>
+                    <h1 className="text-2xl font-bold text-foreground">Message Templates</h1>
                     <p className="mt-1 text-sm text-muted-foreground">Customise the messages sent to your customers</p>
                 </div>
 

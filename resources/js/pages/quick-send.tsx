@@ -34,6 +34,10 @@ interface Props {
         name: string;
     };
     recentlySent: RecentlySentItem[];
+    prefill?: {
+        name: string;
+        email: string;
+    };
 }
 
 const channelOptions: { value: Channel; label: string; description: string }[] = [
@@ -48,10 +52,9 @@ const channelBadgeClass: Record<Channel, string> = {
     both: 'bg-teal-100 text-teal-700 hover:bg-teal-100',
 };
 
-export default function QuickSend({ recentlySent }: Props) {
+export default function QuickSend({ recentlySent, prefill }: Props) {
     const { flash } = usePage<{ flash: { success?: string } }>().props;
-    const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-    const [form, setForm] = useState({ name: params.get('name') ?? '', email: params.get('email') ?? '', channel: 'email' as Channel });
+    const [form, setForm] = useState({ name: prefill?.name ?? '', email: prefill?.email ?? '', channel: 'email' as Channel });
     const [processing, setProcessing] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
 

@@ -24,8 +24,9 @@ class QuickSendController extends Controller
             ->get()
             ->map(fn ($req) => [
                 'id' => $req->id,
-                'customer_name' => $req->customer->name,
-                'customer_email' => $req->customer->email,
+                'customer_name' => $req->customer?->name ?? 'Unknown',
+                'customer_email' => $req->customer?->email ?? '',
+                'channel' => $req->channel,
                 'status' => $req->status,
                 'sent_at' => $req->sent_at?->diffForHumans(),
             ]);
@@ -36,6 +37,10 @@ class QuickSendController extends Controller
                 'name' => $business->name,
             ],
             'recentlySent' => $recentlySent,
+            'prefill' => [
+                'name' => $request->query('name', ''),
+                'email' => $request->query('email', ''),
+            ],
         ]);
     }
 

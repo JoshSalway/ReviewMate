@@ -132,6 +132,41 @@ test('quick send queues email when channel is email', function () {
     Mail::assertQueued(ReviewRequestMail::class);
 });
 
+test('quick send page includes channel field in recently_sent items', function () {
+    $customer = Customer::factory()->create(['business_id' => $this->business->id]);
+    ReviewRequest::factory()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $customer->id,
+        'channel' => 'email',
+    ]);
+
+    $this->get('/quick-send')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('recentlySent', 1)
+            ->where('recentlySent.0.channel', 'email')
+        );
+});
+
+test('quick send page passes prefill name and email from query params as Inertia props', function () {
+    $this->get('/quick-send?name=John&email=john@example.com')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('quick-send')
+            ->where('prefill.name', 'John')
+            ->where('prefill.email', 'john@example.com')
+        );
+});
+
+test('quick send page returns empty prefill when no query params provided', function () {
+    $this->get('/quick-send')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('prefill.name', '')
+            ->where('prefill.email', '')
+        );
+});
+
 test('quick send enforces free plan monthly limit', function () {
     ReviewRequest::factory()->count(10)->create([
         'business_id' => $this->business->id,
