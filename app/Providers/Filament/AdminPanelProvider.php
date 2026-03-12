@@ -54,5 +54,6 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->authGuard('web');
+        // Access control: User::canAccessPanel() checks role === 'superadmin'
     }
 }
