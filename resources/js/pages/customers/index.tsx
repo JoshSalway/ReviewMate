@@ -60,6 +60,10 @@ interface PaginatedCustomers {
 
 interface Props {
     customers: PaginatedCustomers;
+    filters: {
+        search?: string;
+        status?: string;
+    };
 }
 
 interface CsvRow {
@@ -240,7 +244,7 @@ function ImportCsvDialog({ open, onClose }: { open: boolean; onClose: () => void
     );
 }
 
-export default function CustomersIndex({ customers }: Props) {
+export default function CustomersIndex({ customers, filters }: Props) {
     const { flash } = usePage<{ flash: { success?: string; error?: string } }>().props;
     const [showDialog, setShowDialog] = useState(false);
     const [showImportDialog, setShowImportDialog] = useState(false);
@@ -251,6 +255,23 @@ export default function CustomersIndex({ customers }: Props) {
     const [bulkChannel, setBulkChannel] = useState<'email' | 'sms' | 'both'>('email');
     const [bulkSending, setBulkSending] = useState(false);
     const [flashMessage, setFlashMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+    const [search, setSearch] = useState(filters.search ?? '');
+    const [statusFilter, setStatusFilter] = useState(filters.status ?? '');
+    const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const handleSearchChange = (value: string) => {
+        setSearch(value);
+        if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+        searchTimeoutRef.current = setTimeout(() => {
+            router.get(customersIndex(), { search: value || undefined, status: statusFilter || undefined }, { preserveState: true, replace: true });
+        }, 350);
+    };
+
+    const handleStatusChange = (value: string) => {
+        const newStatus = value === 'all' ? '' : value;
+        setStatusFilter(newStatus);
+        router.get(customersIndex(), { search: search || undefined, status: newStatus || undefined }, { preserveState: true, replace: true });
+    };
 
     useEffect(() => {
         if (flash?.success) {
@@ -363,6 +384,30 @@ export default function CustomersIndex({ customers }: Props) {
                         </span>
                     </div>
                 )}
+
+                {/* Search and filter */}
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <Input
+                        placeholder="Search by name or email..."
+                        value={search}
+                        onChange={(e) => handleSearchChange(e.target.value)}
+                        className="sm:max-w-xs"
+                        data-testid="customer-search"
+                    />
+                    <Select value={statusFilter || 'all'} onValueChange={handleStatusChange}>
+                        <SelectTrigger className="w-48" data-testid="customer-status-filter">
+                            <SelectValue placeholder="All statuses" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All statuses</SelectItem>
+                            <SelectItem value="no_request">No Request</SelectItem>
+                            <SelectItem value="sent">Sent</SelectItem>
+                            <SelectItem value="opened">Opened</SelectItem>
+                            <SelectItem value="reviewed">Reviewed</SelectItem>
+                            <SelectItem value="no_response">No Response</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
 
                 {/* Bulk action bar */}
                 {someSelected && (
