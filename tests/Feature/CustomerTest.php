@@ -2,6 +2,7 @@
 
 use App\Models\Business;
 use App\Models\Customer;
+use App\Models\ReviewRequest;
 use App\Models\User;
 
 beforeEach(function () {
@@ -70,5 +71,80 @@ test('users cannot see other businesses customers', function () {
     $this->get('/customers')
         ->assertInertia(fn ($page) => $page
             ->has('customers.data', 2)
+        );
+});
+
+test('customers index returns filters prop', function () {
+    $this->get('/customers?search=jane&status=reviewed')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('filters')
+            ->where('filters.search', 'jane')
+            ->where('filters.status', 'reviewed')
+        );
+});
+
+test('search filter returns only matching customers by name', function () {
+    Customer::factory()->create(['business_id' => $this->business->id, 'name' => 'Jane Smith', 'email' => 'jane@example.com']);
+    Customer::factory()->create(['business_id' => $this->business->id, 'name' => 'Bob Jones', 'email' => 'bob@example.com']);
+
+    $this->get('/customers?search=jane')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('customers.data', 1)
+            ->where('customers.data.0.name', 'Jane Smith')
+        );
+});
+
+test('search filter returns matching customers by email', function () {
+    Customer::factory()->create(['business_id' => $this->business->id, 'name' => 'Alice Brown', 'email' => 'alice@example.com']);
+    Customer::factory()->create(['business_id' => $this->business->id, 'name' => 'Bob Jones', 'email' => 'bob@example.com']);
+
+    $this->get('/customers?search=alice%40example.com')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('customers.data', 1)
+            ->where('customers.data.0.email', 'alice@example.com')
+        );
+});
+
+test('status filter returns only customers with no request', function () {
+    $customerWithRequest = Customer::factory()->create(['business_id' => $this->business->id]);
+    $customerWithoutRequest = Customer::factory()->create(['business_id' => $this->business->id]);
+
+    ReviewRequest::factory()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $customerWithRequest->id,
+        'status' => 'sent',
+    ]);
+
+    $this->get('/customers?status=no_request')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('customers.data', 1)
+            ->where('customers.data.0.id', $customerWithoutRequest->id)
+        );
+});
+
+test('status filter returns only reviewed customers', function () {
+    $reviewedCustomer = Customer::factory()->create(['business_id' => $this->business->id]);
+    $sentCustomer = Customer::factory()->create(['business_id' => $this->business->id]);
+
+    ReviewRequest::factory()->reviewed()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $reviewedCustomer->id,
+    ]);
+
+    ReviewRequest::factory()->create([
+        'business_id' => $this->business->id,
+        'customer_id' => $sentCustomer->id,
+        'status' => 'sent',
+    ]);
+
+    $this->get('/customers?status=reviewed')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('customers.data', 1)
+            ->where('customers.data.0.id', $reviewedCustomer->id)
         );
 });
