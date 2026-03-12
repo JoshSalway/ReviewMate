@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { useState } from 'react';
 import { SeoHead } from '@/components/seo-head';
 
 function CheckIcon() {
@@ -67,19 +68,35 @@ const plans = [
 
 const faqs = [
     {
-        question: 'Is there a free plan?',
-        answer: 'Yes — 1 location, 50 customers, 10 requests per month. No credit card required.',
+        question: 'How does the free trial work?',
+        answer: 'Start free with up to 3 customers. No credit card required. Upgrade anytime when you\'re ready to grow.',
     },
     {
-        question: 'How does the 14-day free trial work?',
-        answer: 'Sign up for a paid plan and get 14 days free. If you cancel before the trial ends, you will not be charged. No card hold.',
+        question: 'Can I cancel anytime?',
+        answer: 'Yes. Cancel with one click from your billing settings. No lock-in contracts, no cancellation fees.',
     },
     {
-        question: 'Can I cancel any time?',
-        answer: 'Yes. No lock-in contracts. Cancel from your billing settings. You keep access until the end of your billing period.',
+        question: 'How do the Google review requests work?',
+        answer: 'You send a request via email or SMS to your customer. They tap a link, choose a star rating, and if it\'s 4–5 stars they\'re guided to leave a review on Google. It takes them 30 seconds.',
     },
     {
-        question: 'What currency is this?',
+        question: 'Which SMS provider do you use?',
+        answer: 'We use ClickSend for Australian numbers — one of the cheapest providers for AU SMS at around $0.03–0.04/message. International numbers use Twilio as a fallback.',
+    },
+    {
+        question: 'Do my customers need an account?',
+        answer: 'No. Your customers receive a simple email or SMS and tap a link. No app, no login, no friction.',
+    },
+    {
+        question: 'What integrations do you support?',
+        answer: 'We integrate with ServiceM8, Xero, Cliniko, Timely, Simpro, Halaxy, and more via webhooks. New integrations are added regularly.',
+    },
+    {
+        question: 'Is my data safe?',
+        answer: 'Yes. All data is encrypted in transit (HTTPS) and at rest. We\'re hosted on enterprise-grade infrastructure and never share your customer data with third parties.',
+    },
+    {
+        question: 'What currency are the prices in?',
         answer: 'All prices are in Australian dollars (AUD). GST is not included for ABN-registered businesses.',
     },
     {
@@ -91,6 +108,39 @@ const faqs = [
         answer: 'Yes. Upgrade or downgrade from your billing settings. Upgrades take effect immediately.',
     },
 ];
+
+function FaqAccordion({ items }: { items: { question: string; answer: string }[] }) {
+    const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+    return (
+        <div className="divide-y divide-border rounded-xl border border-border overflow-hidden">
+            {items.map((item, index) => {
+                const isOpen = openIndex === index;
+                return (
+                    <div key={item.question}>
+                        <button
+                            onClick={() => setOpenIndex(isOpen ? null : index)}
+                            className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+                            aria-expanded={isOpen}
+                        >
+                            <span className="font-semibold text-foreground">{item.question}</span>
+                            <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border text-muted-foreground transition-transform duration-200 ${isOpen ? 'rotate-45' : ''}`}>
+                                <svg className="h-3 w-3" fill="none" viewBox="0 0 12 12" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 1v10M1 6h10" />
+                                </svg>
+                            </span>
+                        </button>
+                        {isOpen && (
+                            <div className="px-6 pb-5">
+                                <p className="text-sm text-muted-foreground leading-relaxed">{item.answer}</p>
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
 
 export default function Pricing() {
     return (
@@ -182,15 +232,8 @@ export default function Pricing() {
                 {/* FAQ */}
                 <section className="bg-muted/50 py-20">
                     <div className="mx-auto max-w-3xl px-6">
-                        <h2 className="mb-10 text-center text-2xl font-bold tracking-tight sm:text-3xl">Pricing FAQ</h2>
-                        <div className="divide-y divide-border">
-                            {faqs.map((faq) => (
-                                <div key={faq.question} className="py-5">
-                                    <p className="font-semibold text-foreground">{faq.question}</p>
-                                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{faq.answer}</p>
-                                </div>
-                            ))}
-                        </div>
+                        <h2 className="mb-10 text-center text-2xl font-bold tracking-tight sm:text-3xl">Frequently asked questions</h2>
+                        <FaqAccordion items={faqs} />
                     </div>
                 </section>
 
