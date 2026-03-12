@@ -177,6 +177,7 @@ function ImportCsvDialog({ open, onClose }: { open: boolean; onClose: () => void
                             accept=".csv"
                             ref={fileInputRef}
                             onChange={handleFileChange}
+                            data-testid="csv-file-input"
                         />
                         {fileName && (
                             <p className="text-xs text-muted-foreground">Selected: {fileName}</p>
@@ -334,6 +335,7 @@ export default function CustomersIndex({ customers }: Props) {
                         <Button
                             variant="outline"
                             onClick={() => setShowImportDialog(true)}
+                            data-testid="import-csv-button"
                         >
                             Import CSV
                         </Button>
