@@ -69,3 +69,11 @@ test('subscribe requires authentication', function () {
     $this->post('/settings/billing/subscribe', ['price' => 'price_starter'])
         ->assertRedirect('/login');
 });
+
+test('billing page returns 200 for authenticated users', function () {
+    $this->get('/settings/billing')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('settings/billing')
+        );
+});
