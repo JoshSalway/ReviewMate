@@ -95,6 +95,45 @@ class ReviewController extends Controller
         return back()->with('success', 'Reply posted to Google.');
     }
 
+    public function bulkReply(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'review_ids' => 'required|array|min:1',
+            'review_ids.*' => 'required|integer',
+            'reply' => 'required|string|max:4096',
+        ]);
+
+        $business = $request->user()->currentBusiness();
+        $reply = $request->input('reply');
+        $reviewIds = $request->input('review_ids');
+
+        $reviews = Review::whereIn('id', $reviewIds)
+            ->where('business_id', $business?->id)
+            ->whereNotNull('google_review_name')
+            ->whereNull('google_reply')
+            ->get();
+
+        abort_if($reviews->isEmpty(), 422, 'No eligible reviews found.');
+
+        $service = app(GoogleBusinessProfileService::class);
+        $count = 0;
+
+        foreach ($reviews as $review) {
+            rescue(function () use ($service, $business, $review, $reply) {
+                $service->postReply($business, $review->google_review_name, $reply);
+            });
+
+            $review->update([
+                'google_reply' => $reply,
+                'google_reply_posted_at' => now(),
+            ]);
+
+            $count++;
+        }
+
+        return redirect()->route('reviews.index')->with('success', "Reply posted to {$count} review".($count === 1 ? '' : 's').'.');
+    }
+
     public function replySuggestions(Request $request, Review $review): JsonResponse
     {
         $business = $request->user()->currentBusiness();
