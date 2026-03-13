@@ -187,6 +187,11 @@ class SyncGoogleReviews implements ShouldQueue
             'review_request_id' => $bestRequest->id,
         ]);
 
+        // Cancel any pending follow-up — the customer has already reviewed
+        if ($bestRequest->followed_up_at === null) {
+            $bestRequest->update(['followed_up_at' => now()]);
+        }
+
         $bestRequest->markAsReviewed();
 
         // Send referral invite to the customer who left the review
