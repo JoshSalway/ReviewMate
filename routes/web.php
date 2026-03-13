@@ -134,6 +134,7 @@ Route::middleware([
 
     // Reviews
     Route::get('reviews', [ReviewController::class, 'index'])->name('reviews.index');
+    Route::post('reviews/bulk-reply', [ReviewController::class, 'bulkReply'])->name('reviews.bulk-reply');
     Route::get('reviews/{review}', [ReviewController::class, 'show'])->name('reviews.show');
     Route::post('reviews/{review}/reply-suggestions', [ReviewController::class, 'replySuggestions'])->name('reviews.reply-suggestions');
     Route::post('reviews/{review}/reply', [ReviewController::class, 'postReply'])->name('reviews.reply');

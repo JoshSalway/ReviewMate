@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { index as reviewsIndex, reply as replyRoute, replySuggestions as replySuggestionsRoute } from '@/routes/reviews';
@@ -73,6 +74,10 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
     const [reviewStates, setReviewStates] = useState<Record<number, ReviewState>>({});
     const [expandedReplies, setExpandedReplies] = useState<Record<number, boolean>>({});
 
+    // Bulk reply state
+    const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+    const [bulkReply, setBulkReply] = useState('');
+
     const getReviewState = (id: number): ReviewState =>
         reviewStates[id] ?? { suggestions: [], selected: null, reply: '', loading: false };
 
@@ -118,6 +123,44 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
 
     const toggleReply = (id: number) => {
         setExpandedReplies((prev) => ({ ...prev, [id]: !prev[id] }));
+    };
+
+    // Bulk selection handlers
+    const toggleSelect = (id: number) => {
+        setSelectedIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(id)) {
+                next.delete(id);
+            } else {
+                next.add(id);
+            }
+            return next;
+        });
+    };
+
+    const allSelected = needsReply.data.length > 0 && needsReply.data.every((r) => selectedIds.has(r.id));
+    const someSelected = needsReply.data.some((r) => selectedIds.has(r.id));
+
+    const toggleSelectAll = () => {
+        if (allSelected) {
+            setSelectedIds(new Set());
+        } else {
+            setSelectedIds(new Set(needsReply.data.map((r) => r.id)));
+        }
+    };
+
+    const handleBulkReply = () => {
+        if (!bulkReply.trim() || selectedIds.size === 0) return;
+        router.post(
+            '/reviews/bulk-reply',
+            { review_ids: Array.from(selectedIds), reply: bulkReply },
+            {
+                onSuccess: () => {
+                    setSelectedIds(new Set());
+                    setBulkReply('');
+                },
+            },
+        );
     };
 
     const isEmpty = needsReply.total === 0 && replied.total === 0 && allReviews.total === 0;
@@ -183,15 +226,36 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                             <AlertCircle className="h-5 w-5 text-amber-500" />
                             <h2 className="text-lg font-semibold text-foreground">Needs Reply</h2>
                             <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100">{needsReply.total}</Badge>
+
+                            {/* Select all checkbox */}
+                            <div className="ml-auto flex items-center gap-2">
+                                <Checkbox
+                                    id="select-all"
+                                    checked={allSelected}
+                                    data-state={someSelected && !allSelected ? 'indeterminate' : undefined}
+                                    onCheckedChange={toggleSelectAll}
+                                    aria-label="Select all reviews"
+                                />
+                                <label htmlFor="select-all" className="text-sm text-muted-foreground cursor-pointer select-none">
+                                    Select all
+                                </label>
+                            </div>
                         </div>
 
                         <div className="space-y-4">
                             {needsReply.data.map((review) => {
                                 const state = getReviewState(review.id);
+                                const isSelected = selectedIds.has(review.id);
                                 return (
-                                    <Card key={review.id}>
+                                    <Card key={review.id} className={isSelected ? 'ring-2 ring-teal-500' : ''}>
                                         <CardHeader className="border-b bg-muted">
                                             <div className="flex items-center gap-3">
+                                                {/* Per-review checkbox */}
+                                                <Checkbox
+                                                    checked={isSelected}
+                                                    onCheckedChange={() => toggleSelect(review.id)}
+                                                    aria-label={`Select review by ${review.reviewer_name}`}
+                                                />
                                                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-600 text-sm font-bold text-white">
                                                     {review.reviewer_name.charAt(0).toUpperCase()}
                                                 </div>
@@ -514,6 +578,48 @@ export default function ReviewsIndex({ needsReply, replied, allReviews, isGoogle
                     </section>
                 )}
             </div>
+
+            {/* Floating bulk action bar */}
+            <AnimatePresence>
+                {selectedIds.size > 0 && (
+                    <motion.div
+                        initial={{ y: 100, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: 100, opacity: 0 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        className="fixed bottom-0 left-0 right-0 z-50 border-t border-teal-200 bg-white shadow-lg p-4"
+                    >
+                        <div className="mx-auto max-w-3xl space-y-3">
+                            <div className="flex items-center justify-between">
+                                <span className="text-sm font-semibold text-teal-700">
+                                    {selectedIds.size} review{selectedIds.size !== 1 ? 's' : ''} selected
+                                </span>
+                                <button
+                                    type="button"
+                                    className="text-xs text-muted-foreground hover:text-foreground"
+                                    onClick={() => setSelectedIds(new Set())}
+                                >
+                                    Deselect all
+                                </button>
+                            </div>
+                            <Textarea
+                                placeholder="Write a reply to post on all selected reviews..."
+                                value={bulkReply}
+                                onChange={(e) => setBulkReply(e.target.value)}
+                                rows={3}
+                                className="resize-none"
+                            />
+                            <Button
+                                className="w-full bg-teal-600 hover:bg-teal-700 text-white"
+                                disabled={!bulkReply.trim()}
+                                onClick={handleBulkReply}
+                            >
+                                Reply to {selectedIds.size} selected review{selectedIds.size !== 1 ? 's' : ''}
+                            </Button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </AppLayout>
     );
 }
