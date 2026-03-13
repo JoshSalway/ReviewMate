@@ -177,6 +177,7 @@ function ImportCsvDialog({ open, onClose }: { open: boolean; onClose: () => void
                             accept=".csv"
                             ref={fileInputRef}
                             onChange={handleFileChange}
+                            data-testid="csv-file-input"
                         />
                         {fileName && (
                             <p className="text-xs text-muted-foreground">Selected: {fileName}</p>
@@ -254,14 +255,16 @@ export default function CustomersIndex({ customers }: Props) {
 
     useEffect(() => {
         if (flash?.success) {
-            setFlashMessage({ type: 'success', text: flash.success });
-            const timer = setTimeout(() => setFlashMessage(null), 5000);
-            return () => clearTimeout(timer);
+            const message = flash.success;
+            const timer = setTimeout(() => setFlashMessage({ type: 'success', text: message }), 0);
+            const dismissTimer = setTimeout(() => setFlashMessage(null), 5000);
+            return () => { clearTimeout(timer); clearTimeout(dismissTimer); };
         }
         if (flash?.error) {
-            setFlashMessage({ type: 'error', text: flash.error });
-            const timer = setTimeout(() => setFlashMessage(null), 5000);
-            return () => clearTimeout(timer);
+            const message = flash.error;
+            const timer = setTimeout(() => setFlashMessage({ type: 'error', text: message }), 0);
+            const dismissTimer = setTimeout(() => setFlashMessage(null), 5000);
+            return () => { clearTimeout(timer); clearTimeout(dismissTimer); };
         }
     }, [flash]);
 
@@ -334,6 +337,7 @@ export default function CustomersIndex({ customers }: Props) {
                         <Button
                             variant="outline"
                             onClick={() => setShowImportDialog(true)}
+                            data-testid="import-csv-button"
                         >
                             Import CSV
                         </Button>

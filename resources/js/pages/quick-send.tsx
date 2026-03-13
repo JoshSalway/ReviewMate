@@ -38,6 +38,7 @@ interface Props {
         name: string;
         email: string;
     };
+    at_request_limit: boolean;
 }
 
 const channelOptions: { value: Channel; label: string; description: string }[] = [
@@ -52,7 +53,7 @@ const channelBadgeClass: Record<Channel, string> = {
     both: 'bg-teal-100 text-teal-700 hover:bg-teal-100',
 };
 
-export default function QuickSend({ recentlySent, prefill }: Props) {
+export default function QuickSend({ recentlySent, prefill, at_request_limit }: Props) {
     const { flash } = usePage<{ flash: { success?: string } }>().props;
     const [form, setForm] = useState({ name: prefill?.name ?? '', email: prefill?.email ?? '', channel: 'email' as Channel });
     const [processing, setProcessing] = useState(false);
@@ -111,6 +112,21 @@ export default function QuickSend({ recentlySent, prefill }: Props) {
                         </motion.div>
                     )}
                 </AnimatePresence>
+
+                {at_request_limit && (
+                    <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
+                        <svg className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div className="flex-1">
+                            <p className="font-medium text-amber-800">You've reached your free plan limit of 10 requests this month.</p>
+                            <p className="mt-1 text-sm text-amber-700">Upgrade to Starter or Pro for unlimited review requests.</p>
+                            <Link href="/settings/billing" className="mt-2 inline-block rounded-md bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-700">
+                                Upgrade now
+                            </Link>
+                        </div>
+                    </div>
+                )}
 
                 <div className="grid gap-6 lg:grid-cols-2">
                     {/* Send Form */}

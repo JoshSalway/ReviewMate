@@ -182,3 +182,31 @@ test('quick send enforces free plan monthly limit', function () {
 
     Mail::assertNothingQueued();
 });
+
+test('quick send page passes at_request_limit as false when under free plan limit', function () {
+    ReviewRequest::factory()->count(5)->create([
+        'business_id' => $this->business->id,
+        'customer_id' => Customer::factory()->create(['business_id' => $this->business->id])->id,
+        'created_at' => now(),
+    ]);
+
+    $this->get('/quick-send')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('at_request_limit', false)
+        );
+});
+
+test('quick send page passes at_request_limit as true when free plan limit is reached', function () {
+    ReviewRequest::factory()->count(10)->create([
+        'business_id' => $this->business->id,
+        'customer_id' => Customer::factory()->create(['business_id' => $this->business->id])->id,
+        'created_at' => now(),
+    ]);
+
+    $this->get('/quick-send')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('at_request_limit', true)
+        );
+});

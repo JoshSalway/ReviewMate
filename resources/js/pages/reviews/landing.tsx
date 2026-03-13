@@ -21,17 +21,6 @@ export default function ReviewLanding({ token, businessName, googleReviewUrl }: 
 
     const googleUrl = googleReviewUrl ?? 'https://www.google.com/search?q=' + encodeURIComponent(businessName + ' reviews');
 
-    const handleGoogleClick = () => {
-        if (rating === null) return;
-        // Record that they chose Google (happy path)
-        router.post(
-            `/r/${token}/feedback`,
-            { rating, feedback: null },
-            { preserveScroll: true },
-        );
-        window.location.href = googleUrl;
-    };
-
     const handleSubmitFeedback = () => {
         if (rating === null) return;
         setSubmitting(true);

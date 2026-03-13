@@ -15,7 +15,8 @@ class QuickSendController extends Controller
 {
     public function index(Request $request): Response
     {
-        $business = $request->user()->currentBusiness();
+        $user = $request->user();
+        $business = $user->currentBusiness();
 
         $recentlySent = $business->reviewRequests()
             ->with('customer')
@@ -31,6 +32,15 @@ class QuickSendController extends Controller
                 'sent_at' => $req->sent_at?->diffForHumans(),
             ]);
 
+        $atRequestLimit = false;
+        if ($user->onFreePlan()) {
+            $monthlyCount = $business->reviewRequests()
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->count();
+            $atRequestLimit = $monthlyCount >= 10;
+        }
+
         return Inertia::render('quick-send', [
             'business' => [
                 'id' => $business->id,
@@ -41,6 +51,7 @@ class QuickSendController extends Controller
                 'name' => $request->query('name', ''),
                 'email' => $request->query('email', ''),
             ],
+            'at_request_limit' => $atRequestLimit,
         ]);
     }
 
