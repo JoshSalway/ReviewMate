@@ -16,6 +16,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface Preferences {
     weekly_digest: boolean;
     new_review_alert: boolean;
+    negative_review_alert: boolean;
 }
 
 interface Props {
@@ -81,6 +82,22 @@ export default function NotificationSettings({ preferences }: Props) {
                                 id="new-review-alert"
                                 checked={form.new_review_alert}
                                 onCheckedChange={() => toggle('new_review_alert')}
+                            />
+                        </div>
+
+                        <div className="border-t pt-5 flex items-center justify-between gap-4">
+                            <div>
+                                <Label htmlFor="negative-review-alert" className="text-sm font-medium">
+                                    Negative review alerts
+                                </Label>
+                                <p className="text-sm text-muted-foreground mt-0.5">
+                                    Get an immediate alert when a 1 or 2-star review arrives so you can respond quickly.
+                                </p>
+                            </div>
+                            <Switch
+                                id="negative-review-alert"
+                                checked={form.negative_review_alert}
+                                onCheckedChange={() => toggle('negative_review_alert')}
                             />
                         </div>
                     </CardContent>
