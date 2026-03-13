@@ -38,10 +38,11 @@ use Inertia\Inertia;
 use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
 Route::get('/robots.txt', function () {
-    $content = "User-agent: *\nAllow: /\n\nSitemap: " . url('/sitemap.xml');
+    $content = "User-agent: *\nAllow: /\n\nSitemap: ".url('/sitemap.xml');
     if (app()->environment('staging', 'local')) {
         $content = "User-agent: *\nDisallow: /\n";
     }
+
     return response($content, 200, ['Content-Type' => 'text/plain']);
 });
 
@@ -53,6 +54,7 @@ Route::get('/sitemap.xml', function () {
         ['loc' => url('/terms'), 'priority' => '0.3'],
         ['loc' => url('/privacy'), 'priority' => '0.3'],
     ]);
+
     return response()->view('sitemap', ['urls' => $urls], 200, ['Content-Type' => 'application/xml']);
 });
 

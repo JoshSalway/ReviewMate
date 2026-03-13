@@ -19,17 +19,6 @@ interface Props {
     defaultTemplates: DefaultTemplate[];
 }
 
-const typeLabels: Record<string, string> = {
-    tradie: 'Tradie',
-    cafe: 'Cafe / Restaurant',
-    salon: 'Salon / Barber',
-    healthcare: 'Healthcare',
-    real_estate: 'Real Estate',
-    retail: 'Retail',
-    pet_services: 'Pet Services',
-    fitness: 'Fitness',
-    other: 'Business',
-};
 
 function renderPreview(body: string, businessName: string) {
     return body
