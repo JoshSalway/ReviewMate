@@ -23,7 +23,7 @@ class CustomerController extends Controller
             ->with('latestReviewRequest')
             ->when($request->search, fn ($q) => $q->where(function ($q) use ($request) {
                 $q->where('name', 'like', "%{$request->search}%")
-                  ->orWhere('email', 'like', "%{$request->search}%");
+                    ->orWhere('email', 'like', "%{$request->search}%");
             }))
             ->when($request->status, function ($q) use ($request) {
                 if ($request->status === 'no_request') {
