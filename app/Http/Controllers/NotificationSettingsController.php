@@ -17,6 +17,7 @@ class NotificationSettingsController extends Controller
             'preferences' => [
                 'weekly_digest' => $user->notificationPreference('weekly_digest'),
                 'new_review_alert' => $user->notificationPreference('new_review_alert'),
+                'negative_review_alert' => $user->notificationPreference('negative_review_alert'),
             ],
         ]);
     }
@@ -26,6 +27,7 @@ class NotificationSettingsController extends Controller
         $validated = $request->validate([
             'weekly_digest' => ['required', 'boolean'],
             'new_review_alert' => ['required', 'boolean'],
+            'negative_review_alert' => ['required', 'boolean'],
         ]);
 
         $request->user()->update(['notification_preferences' => $validated]);

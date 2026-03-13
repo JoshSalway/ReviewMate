@@ -43,23 +43,26 @@ test('user can update notification preferences', function () {
     $this->put('/settings/notifications', [
         'weekly_digest' => false,
         'new_review_alert' => true,
+        'negative_review_alert' => true,
     ])->assertRedirect()
         ->assertSessionHas('success');
 
     expect($this->user->fresh()->notificationPreference('weekly_digest'))->toBeFalse();
     expect($this->user->fresh()->notificationPreference('new_review_alert'))->toBeTrue();
+    expect($this->user->fresh()->notificationPreference('negative_review_alert'))->toBeTrue();
 });
 
 test('notification preferences require boolean values', function () {
     $this->put('/settings/notifications', [
         'weekly_digest' => 'maybe',
         'new_review_alert' => 'sometimes',
-    ])->assertSessionHasErrors(['weekly_digest', 'new_review_alert']);
+        'negative_review_alert' => 'perhaps',
+    ])->assertSessionHasErrors(['weekly_digest', 'new_review_alert', 'negative_review_alert']);
 });
 
 test('both notification preference fields are required', function () {
     $this->put('/settings/notifications', [])
-        ->assertSessionHasErrors(['weekly_digest', 'new_review_alert']);
+        ->assertSessionHasErrors(['weekly_digest', 'new_review_alert', 'negative_review_alert']);
 });
 
 // --- SendWeeklyDigests job ---

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Mail\NegativeReviewAlert;
 use App\Mail\NewReviewAlertMail;
 use App\Mail\ReferralInviteMail;
 use App\Models\Business;
@@ -85,6 +86,12 @@ class SyncGoogleReviews implements ShouldQueue
                 if ($user && $user->notificationPreference('new_review_alert')) {
                     Mail::to($user->email, $user->name)
                         ->queue(new NewReviewAlertMail($user, $this->business, $review));
+                }
+
+                // Send negative review alert for 1–2 star reviews
+                if ($review->rating <= 2 && $user && $user->notificationPreference('negative_review_alert')) {
+                    Mail::to($user->email, $user->name)
+                        ->queue(new NegativeReviewAlert($review, $this->business));
                 }
             }
         }
