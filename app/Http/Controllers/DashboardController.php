@@ -17,6 +17,16 @@ class DashboardController extends Controller
             return redirect()->route('onboarding.business-type');
         }
 
+        $totalReviewsThisMonth = $business->reviews()
+            ->whereMonth('reviewed_at', now()->month)
+            ->whereYear('reviewed_at', now()->year)
+            ->count();
+
+        $requestsSentThisMonth = $business->reviewRequests()
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
+
         $stats = [
             'average_rating' => $business->averageRating(),
             'total_reviews' => $business->reviews()->count(),
@@ -26,14 +36,10 @@ class DashboardController extends Controller
                 ->whereNotNull('google_review_name')
                 ->whereNull('google_reply')
                 ->count(),
-            'reviews_this_month' => $business->reviews()
-                ->whereMonth('reviewed_at', now()->month)
-                ->whereYear('reviewed_at', now()->year)
-                ->count(),
-            'requests_this_month' => $business->reviewRequests()
-                ->whereMonth('created_at', now()->month)
-                ->whereYear('created_at', now()->year)
-                ->count(),
+            'reviews_this_month' => $totalReviewsThisMonth,
+            'total_reviews_this_month' => $totalReviewsThisMonth,
+            'requests_this_month' => $requestsSentThisMonth,
+            'requests_sent_this_month' => $requestsSentThisMonth,
         ];
 
         $requestStats = [

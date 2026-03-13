@@ -98,7 +98,7 @@ function StarRating({ rating }: { rating: number }) {
     );
 }
 
-function EmptyState({ businessName }: { businessName: string }) {
+function EmptyState() {
     return (
         <div className="flex flex-col items-center justify-center py-16 text-center">
             <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-teal-50">
@@ -255,7 +255,7 @@ export default function Dashboard({ business, stats, requestStats, recentReviews
                 )}
 
                 {!hasData ? (
-                    <EmptyState businessName={business.name} />
+                    <EmptyState />
                 ) : (
                     <>
                         {/* First review celebration — show for first 1-3 reviews */}

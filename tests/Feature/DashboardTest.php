@@ -57,3 +57,21 @@ test('dashboard shows correct stats', function () {
             ->has('recentReviews')
         );
 });
+
+test('dashboard stats contain all required keys', function () {
+    $user = User::factory()->create();
+    $business = Business::factory()->onboarded()->create(['user_id' => $user->id]);
+
+    $this->actingAs($user);
+
+    $this->get('/dashboard')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('dashboard')
+            ->has('stats.average_rating')
+            ->has('stats.total_reviews_this_month')
+            ->has('stats.requests_sent_this_month')
+            ->has('stats.conversion_rate')
+            ->has('stats.pending_replies')
+        );
+});

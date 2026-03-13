@@ -21,8 +21,20 @@ class CustomerController extends Controller
 
         $customers = $business->customers()
             ->with('latestReviewRequest')
+            ->when($request->search, fn ($q) => $q->where(function ($q) use ($request) {
+                $q->where('name', 'like', "%{$request->search}%")
+                    ->orWhere('email', 'like', "%{$request->search}%");
+            }))
+            ->when($request->status, function ($q) use ($request) {
+                if ($request->status === 'no_request') {
+                    $q->whereDoesntHave('reviewRequests');
+                } else {
+                    $q->whereHas('latestReviewRequest', fn ($rq) => $rq->where('status', $request->status));
+                }
+            })
             ->latest()
             ->paginate(20)
+            ->withQueryString()
             ->through(fn ($customer) => [
                 'id' => $customer->id,
                 'name' => $customer->name,
@@ -35,6 +47,7 @@ class CustomerController extends Controller
 
         return Inertia::render('customers/index', [
             'customers' => $customers,
+            'filters' => $request->only(['search', 'status']),
         ]);
     }
 
