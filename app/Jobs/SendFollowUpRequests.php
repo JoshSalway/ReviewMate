@@ -28,6 +28,7 @@ class SendFollowUpRequests implements ShouldQueue
             ->whereNotIn('status', ['reviewed', 'self_confirmed', 'unverified_claim'])
             ->whereNull('followed_up_at')
             ->whereNull('reviewed_at')
+            ->whereDoesntHave('reviews')
             ->get();
 
         foreach ($requests as $request) {
